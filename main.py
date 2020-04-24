@@ -145,23 +145,23 @@ while True:
             if player.y_velocity >= 0:
                 player.y_velocity = 0.0
 
-        elif((player.y_velocity >= 0.0) and (player.y < tile.y)):
-            if player.y < tile.top:
-                if multi <= 5:
-                    multi += 1
-                else:
-                    multi = 5
+        elif((player.y_velocity >= 0.0) and (player.y < tile.top)):
+            if multi <= 3:
+                multi += 0.1
+            else:
+                multi = 3
 
-                player.y_velocity += (player.weight * multi)
-                if player.y_velocity < AIR_CAP:
-                    player.y_velocity = AIR_CAP
+            player.y_velocity += (player.weight * multi)
+            if player.y_velocity < AIR_CAP:
+                player.y_velocity = AIR_CAP
 
-                if player.y > tile.top:
-                    player.y_velocity = 0.0
+        elif player.y > tile.top:
+            player.y_velocity = 0.0
 
     print(player)
 
     player.calculatePosition()
+    
     #Render the screen
     screen.fill(BLACK)
     screen.blit(pygame.image.load(tile.tile_image), [tile.x, tile.y])
