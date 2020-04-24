@@ -31,9 +31,9 @@ class Player(object):
     def calculatePosition(self):
         # Make it so the player wraps around on the left and right (if enabled)
         if (wrap_around):
-            if player.x == WIDTH - 1 and player.x_velocity <= 0:
+            if (((player.x >= WIDTH - 10) and (player.x <= WIDTH)) and player.x_velocity >= 0):
                 player.x = 0
-            elif player.x == 0 and player.x_velocity >= 0:
+            elif ((player.x >= 0) and (player.x <= 10)) and (player.x_velocity <= 0):
                 player.x = WIDTH - 1
         
         # Calculate the players next position using their coordinates
