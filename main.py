@@ -9,6 +9,7 @@
 # Import things I might need
 import pygame
 import sys
+import level
 
 # Allows us to use another folder than the folder this file is located
 sys.path.insert(1, "./Sprites")
@@ -20,10 +21,10 @@ class Player(object):
     def __init__(self, player_skin = None, player_number = 0):
         self.player_number = player_number
         self.player_skin = player_skin
-        self.x = 100.0
-        self.y = 100.0
-        self.x_velocity = 0.0
-        self.y_velocity = 0.0
+        self.x = 100.00
+        self.y = 100.00
+        self.x_velocity = 0.00
+        self.y_velocity = 0.00
     
     def death():
         pass
@@ -32,9 +33,9 @@ class Player(object):
         # Make it so the player wraps around on the left and right (if enabled)
         if (wrap_around):
             if (((player.x >= WIDTH - 10) and (player.x <= WIDTH)) and player.x_velocity >= 0):
-                player.x = 0
+                player.x = 11
             elif ((player.x >= 0) and (player.x <= 10)) and (player.x_velocity <= 0):
-                player.x = WIDTH - 1
+                player.x = WIDTH - 11
         
         # Calculate the players next position using their coordinates
         # (This will probably be improved in the future)
@@ -70,8 +71,8 @@ skin = pygame.image.load(player.player_skin)
 wrap_around = True
 
 # Define some in game constants (used for the Physics "engine")
-SPEED_CAP = 10.0
-FRICTION = 0.2
+SPEED_CAP = 10.00
+FRICTION = 0.002
 
 while True:
     events = pygame.event.get()
@@ -84,14 +85,14 @@ while True:
     if keys[pygame.K_RIGHT]:
         # Cap the player's horizontal speed to the right
         if (player.x_velocity <= SPEED_CAP):
-            player.x_velocity += 0.5
+            player.x_velocity += 0.50
         elif (player.x_velocity >= SPEED_CAP):
             player.x_velocity = SPEED_CAP
             
     elif keys[pygame.K_LEFT]:
         # Cap the player's horizontal speed to the left
         if (player.x_velocity >= -SPEED_CAP):
-            player.x_velocity -= 0.5
+            player.x_velocity -= 0.50
         elif (player.x_velocity <= -SPEED_CAP):
             player.x_velocity = -SPEED_CAP
     
