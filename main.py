@@ -6,6 +6,9 @@
 #                it'll be a fun challenge!                             #
 ########################################################################
 
+# Enable/Disable DEBUG mode
+DEBUG = True
+
 # Import things I might need
 import pygame
 import sys
@@ -18,16 +21,47 @@ sys.path.insert(1, "./Sprites")
 
 # Class for the player
 class Player(object):
-    def __init__(self, player_skin = None, weight = 0.2, player_number = 0):
+    def __init__(self, player_skin = None, height = 0, weight = 0.2, player_number = 0):
         self.player_number = player_number
+        # Used to determine what sprites to load for the player
         self.player_skin = player_skin
-        self.x = 100.00
-        self.y = 100.00
+        self.x = 100
+        self.y = 100
         self.x_velocity = 0.00
         self.y_velocity = 0.00
+        # Number is from height of the player sprite in pixles
+        self.height = height
         self.weight = weight
     
+    def gravity(self, gravity):
+        p_weight = self.weight
+        if ((player.y_velocity >= VSPEED_CAP) and (player.y_velocity < 0)):
+            if p_weight <= gravity:
+                    p_weight += gravity
+            else:
+                p_weight = gravity
+            player.y_velocity += (player.weight * p_weight)
+
+            if player.y_velocity >= 0:
+                player.y_velocity = 0.0
+
+        elif((player.y_velocity >= 0.0) and (player.y < tile.top)):
+            if p_weight <= gravity:
+                p_weight += gravity
+            else:
+                p_weight = gravity
+
+            player.y_velocity += (player.weight * p_weight)
+            if player.y_velocity < VSPEED_CAP:
+                player.y_velocity = VSPEED_CAP
+
+        elif player.y > tile.top:
+            player.y_velocity = 0.0
+    
     def death():
+        pass
+
+    def respawn():
         pass
 
     def calculatePosition(self):
@@ -50,6 +84,11 @@ class Player(object):
 
 
 ##########--END CLASSES--##########
+#---------------------------------#
+##########--BEING FUNCTIONS--######
+
+
+##########--END FUNCTIONS--#########
 
 # Inialize pygame stuff
 pygame.init()
@@ -58,7 +97,7 @@ pygame.init()
 pygame.display.set_caption("Mario vs Luigi")
 
 # Create a player
-player = Player("Sprites/idle.png")
+player = Player("Sprites/idle.png", 20)
 
 # Define some constants
 SIZE = WIDTH, HEIGHT = 320, 240
@@ -73,13 +112,14 @@ wrap_around = True
 
 # Define some in game constants (used for the Physics "engine")
 SPEED_CAP = 8.0
-AIR_CAP = -8.0
+VSPEED_CAP = -8.0
 FRICTION = 0.1
 ACCELERATION = 0.1
 V_ACCELERATION = 0.1
+GRAVITY = 2.5
 
 # Define misc variables
-multi = 0
+
 
 while True:
     events = pygame.event.get()
@@ -107,6 +147,7 @@ while True:
         elif (player.x_velocity <= -SPEED_CAP):
             player.x_velocity = -SPEED_CAP
     
+    # Apply friction to the player if they are not holding a button (slow them to a hault)
     else:
         if ((player.x_velocity <= SPEED_CAP) and (player.x_velocity > 0)):
             if ((player.x_velocity <= SPEED_CAP) and (player.x_velocity > 0)):
@@ -125,45 +166,29 @@ while True:
                 player.x_velocity = 0.0
 
     # Generate player y velocity
+    # Check to see if the player can jump
     if keys[pygame.K_UP]:
-        # Cap the player's vertical speed
-        if (player.y_velocity >= AIR_CAP):
-            player.y_velocity -= V_ACCELERATION
-            if player.y_velocity <= AIR_CAP:
-                player.y_velocity = AIR_CAP
-        elif (player.y_velocity >= AIR_CAP):
-            player.y_velocity = AIR_CAP
-    
+        if (player.y >= tile.top):
+            # Cap the player's vertical speed
+            if (player.y_velocity > VSPEED_CAP):
+                player.y_velocity = VSPEED_CAP
+            elif (player.y_velocity < VSPEED_CAP):
+                player.y_velocity = VSPEED_CAP
+        else:
+            # If the player can't jump, continue to apply gravity
+            player.gravity(GRAVITY)
+
+    # Apply gravity to the player
     else:
-        if ((player.y_velocity >= AIR_CAP) and (player.y_velocity < 0)):
-            if multi <= 3:
-                    multi += 0.1
-            else:
-                multi = 5
-            player.y_velocity += (player.weight * multi)
+        player.gravity(GRAVITY)
 
-            if player.y_velocity >= 0:
-                player.y_velocity = 0.0
-
-        elif((player.y_velocity >= 0.0) and (player.y < tile.top)):
-            if multi <= 3:
-                multi += 0.1
-            else:
-                multi = 3
-
-            player.y_velocity += (player.weight * multi)
-            if player.y_velocity < AIR_CAP:
-                player.y_velocity = AIR_CAP
-
-        elif player.y > tile.top:
-            player.y_velocity = 0.0
-
-    print(player)
+    if (DEBUG):
+        print(player)
 
     player.calculatePosition()
     
     #Render the screen
     screen.fill(BLACK)
     screen.blit(pygame.image.load(tile.tile_image), [tile.x, tile.y])
-    screen.blit(skin, [player.x, player.y])
+    screen.blit(skin, [player.x, player.y - player.height])
     pygame.display.flip()
