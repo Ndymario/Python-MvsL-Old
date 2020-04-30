@@ -93,6 +93,8 @@ class Player(object):
 # Inialize pygame stuff
 pygame.init()
 
+clock = pygame.time.Clock()
+
 # Make the window title
 pygame.display.set_caption("Mario vs Luigi")
 
@@ -119,7 +121,6 @@ V_ACCELERATION = 0.1
 GRAVITY = 2.5
 
 # Define misc variables
-
 
 while True:
     events = pygame.event.get()
@@ -184,6 +185,9 @@ while True:
 
     if (DEBUG):
         print(player)
+
+    # Limit the framerate to 60 FPS
+    clock.tick(60)
 
     player.calculatePosition()
     
