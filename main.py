@@ -21,10 +21,10 @@ sys.path.insert(1, "./Sprites")
 
 # Class for the player
 class Player(object):
-    def __init__(self, player_skin = None, height = 0, weight = 0.2, player_number = 0):
+    def __init__(self, skin = None, height = 0, weight = 0.2, player_number = 0):
         self.player_number = player_number
         # Used to determine what sprites to load for the player
-        self.player_skin = player_skin
+        self.skin = skin
         self.x = 100
         self.y = 100
         self.x_velocity = 0.00
@@ -249,7 +249,7 @@ while True:
     screen.fill(BLACK)
     for i in range(len(levelchunk1)):
         screen.blit(pygame.image.load(levelchunk1[i-1].tile_image), [xc[i-1], yc[i-1]])
-    screen.blit(player.skin, [player.x, player.y - player.height])
+    screen.blit(pygame.image.load(player.skin), [player.x, player.y - player.height])
     pygame.display.flip()
 
 
