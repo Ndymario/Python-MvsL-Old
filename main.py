@@ -120,11 +120,11 @@ class Player(object):
 
 def check_colision():
     for i in range(len(levelchunk1)):
-        if (player.x >= levelchunk1[i-1].left -11) and player.x <= levelchunk1[i-1].right + 5 and player.y -1 > levelchunk1[i-1].top and player.y - 1 <=levelchunk1[i-1].y: 
-            if player.x - levelchunk1[i-1].left-11 < levelchunk1[i-1].right - player.x:
+        if (player.x >= levelchunk1[i-1].left -11) and player.x <= levelchunk1[i-1].right + 8 and player.y -1 > levelchunk1[i-1].top and player.y - 1 <=levelchunk1[i-1].y: 
+            if player.x - levelchunk1[i-1].left-11 < levelchunk1[i-1].right - player.x + 3:
                 return levelchunk1[i-1].left -11
             else:
-                return levelchunk1[i-1].right + 5
+                return levelchunk1[i-1].right + 8
     return False
   
 ##########--END FUNCTIONS--########
