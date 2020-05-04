@@ -91,7 +91,7 @@ class Player(object):
     def check_fall(self):
         for i in range(len(levelchunk1)):
             if (player.y >= levelchunk1[i-1].top) and player.y <= levelchunk1[i-1].top + 10\
-                and player.x <= levelchunk1[i-1].width + levelchunk1[i-1].x and player.x >=levelchunk1[i-1].x - 16: 
+                and player.x <= levelchunk1[i-1].width + levelchunk1[i-1].x and player.x >=levelchunk1[i-1].x - 15: 
                 return levelchunk1[i-1].top
         return False
 
@@ -120,11 +120,11 @@ class Player(object):
 
 def check_colision():
     for i in range(len(levelchunk1)):
-        if (player.x >= levelchunk1[i-1].left -11) and player.x <= levelchunk1[i-1].right + 8 and player.y -1 > levelchunk1[i-1].top and player.y - 1 <=levelchunk1[i-1].y: 
-            if player.x - levelchunk1[i-1].left-11 < levelchunk1[i-1].right - player.x + 3:
+        if (player.x >= levelchunk1[i-1].left -11) and player.x <= levelchunk1[i-1].right + 9 and player.y -1 > levelchunk1[i-1].top and player.y - 1 <=levelchunk1[i-1].y: 
+            if player.x - levelchunk1[i-1].left-11 < levelchunk1[i-1].right - player.x + 4:
                 return levelchunk1[i-1].left -11
             else:
-                return levelchunk1[i-1].right + 8
+                return levelchunk1[i-1].right + 9
     return False
   
 ##########--END FUNCTIONS--########
