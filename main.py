@@ -66,6 +66,18 @@ class Player(object):
 
     def respawn(self):
         pass
+    
+    def check_jump(self):
+        for i in range(len(levelchunk1)):
+            if (player.y == levelchunk1[i-1].top) and player.x <= levelchunk1[i-1].width + levelchunk1[i-1].x and player.x >=levelchunk1[i-1].x - levelchunk1[i-1].x: 
+                return True
+        return False
+
+    def check_fall(self):
+        for i in range(len(levelchunk1)):
+            if (player.y >= levelchunk1[i-1].top) and player.y <= levelchunk1[i-1].top + 10 and player.x <= levelchunk1[i-1].width + levelchunk1[i-1].x and player.x >=levelchunk1[i-1].x - 16: 
+                return levelchunk1[i-1].top
+        return False
 
     # Check to see if the player can jump
     def check_jump(self):
@@ -96,16 +108,28 @@ class Player(object):
         self.x += self.x_velocity
         self.y += self.y_velocity
 
+    
     # Print stats of the player when called
     def __str__(self):
         return "Player X Velocity: {}\nPlayer Y Velocity: {}\nPlayer X: {}\nPlayer Y: {}"\
             .format(player.x_velocity, player.y_velocity, player.x, player.y)
-
+  
 ##########--END CLASSES--##########
 #---------------------------------#
-##########--BEING FUNCTIONS--#######
+##########--BEING FUNCTIONS--######
 
-##########--END FUNCTIONS--#########
+def check_colision():
+    for i in range(len(levelchunk1)):
+        if (player.x >= levelchunk1[i-1].left -11) and player.x <= levelchunk1[i-1].right + 5 and player.y -1 > levelchunk1[i-1].top and player.y - 1 <=levelchunk1[i-1].y: 
+            if player.x - levelchunk1[i-1].left-11 < levelchunk1[i-1].right - player.x:
+                return levelchunk1[i-1].left -11
+            else:
+                return levelchunk1[i-1].right + 5
+    return False
+  
+##########--END FUNCTIONS--########
+#---------------------------------#
+##########-Begin Main Code-########
 
 # Inialize pygame stuff
 pygame.init()
@@ -162,6 +186,7 @@ while True:
                 player.x_velocity = SPEED_CAP
         elif (player.x_velocity >= SPEED_CAP):
             player.x_velocity = SPEED_CAP
+ 
             
     elif keys[left]:
         # Cap the player's horizontal speed to the left
@@ -171,9 +196,9 @@ while True:
                 player.x_velocity = -SPEED_CAP
         elif (player.x_velocity <= -SPEED_CAP):
             player.x_velocity = -SPEED_CAP
-    
+            
     # Apply friction to the player if they are not holding a button (slow them to a hault)
-    else:
+    else:          
         if ((player.x_velocity <= SPEED_CAP) and (player.x_velocity > 0)):
             if ((player.x_velocity <= SPEED_CAP) and (player.x_velocity > 0)):
                 player.x_velocity -= FRICTION
@@ -184,9 +209,9 @@ while True:
 
         elif ((player.x_velocity >= -SPEED_CAP) and (player.x_velocity < 0)):
             if ((player.x_velocity >= -SPEED_CAP) and (player.x_velocity < 0)):
-                player.x_velocity += FRICTION
-                if player.x_velocity > 0:
-                    player.x_velocity = 0.0
+                    player.x_velocity += FRICTION
+                    if player.x_velocity > 0:
+                        player.x_velocity = 0.0
             else:
                 player.x_velocity = 0.0
 
@@ -205,7 +230,7 @@ while True:
     # Apply gravity to the player
     else:
         player.gravity(GRAVITY)
-
+    
     if (DEBUG):
         print(player)
 
@@ -213,6 +238,12 @@ while True:
     clock.tick(60)
 
     player.calculatePosition()
+    if player.check_fall() != False:
+        player.y = player.check_fall()
+        player.y_velocity = 0.0
+    if check_colision() != False:
+        player.x = check_colision()
+        player.x_velocity = 0.0
     
     #Render the screen
     screen.fill(BLACK)
