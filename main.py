@@ -7,7 +7,7 @@
 ########################################################################
 
 # Enable/Disable DEBUG mode
-DEBUG = True
+DEBUG = False
 
 # Import things I might need
 import pygame
@@ -21,10 +21,10 @@ sys.path.insert(1, "./Sprites")
 
 # Class for the player
 class Player(object):
-    def __init__(self, player_skin = None, height = 0, weight = 0.2, player_number = 0):
+    def __init__(self, skin = None, height = 0, weight = 0.2, player_number = 0):
         self.player_number = player_number
         # Used to determine what sprites to load for the player
-        self.player_skin = player_skin
+        self.skin = skin
         self.x = 100
         self.y = 100
         self.x_velocity = 0.00
@@ -38,6 +38,7 @@ class Player(object):
         if ((player.y_velocity >= VSPEED_CAP) and (player.y_velocity < 0)):
             if p_weight <= gravity:
                     p_weight += gravity
+                    
             else:
                 p_weight = gravity
             player.y_velocity += (player.weight * p_weight)
@@ -45,7 +46,7 @@ class Player(object):
             if player.y_velocity >= 0:
                 player.y_velocity = 0.0
 
-        elif((player.y_velocity >= 0.0) and (player.y < tile.top)):
+        elif((player.y_velocity >= 0.0) and (player.check_fall() ==False)):
             if p_weight <= gravity:
                 p_weight += gravity
             else:
@@ -55,14 +56,44 @@ class Player(object):
             if player.y_velocity < VSPEED_CAP:
                 player.y_velocity = VSPEED_CAP
 
-        elif player.y > tile.top:
-            player.y_velocity = 0.0
+        else:
+            if player.check_fall() != False:
+                player.y_velocity = 0.0
+                player.y = player.check_fall()
     
-    def death():
+    def death(self):
         pass
 
-    def respawn():
+    def respawn(self):
         pass
+    
+    def check_jump(self):
+        for i in range(len(levelchunk1)):
+            if (player.y == levelchunk1[i-1].top) and player.x <= levelchunk1[i-1].width + levelchunk1[i-1].x and player.x >=levelchunk1[i-1].x - levelchunk1[i-1].x: 
+                return True
+        return False
+
+    def check_fall(self):
+        for i in range(len(levelchunk1)):
+            if (player.y >= levelchunk1[i-1].top) and player.y <= levelchunk1[i-1].top + 10 and player.x <= levelchunk1[i-1].width + levelchunk1[i-1].x and player.x >=levelchunk1[i-1].x - 16: 
+                return levelchunk1[i-1].top
+        return False
+
+    # Check to see if the player can jump
+    def check_jump(self):
+        for i in range(len(levelchunk1)):
+            if (player.y == levelchunk1[i-1].top) and player.x <= levelchunk1[i-1].width + levelchunk1[i-1].x\
+                and player.x >=levelchunk1[i-1].x - levelchunk1[i-1].x: 
+                return True
+        return False
+
+    # Check to see if the player should have gravity applied
+    def check_fall(self):
+        for i in range(len(levelchunk1)):
+            if (player.y >= levelchunk1[i-1].top) and player.y <= levelchunk1[i-1].top + 10\
+                and player.x <= levelchunk1[i-1].width + levelchunk1[i-1].x and player.x >=levelchunk1[i-1].x - 16: 
+                return levelchunk1[i-1].top
+        return False
 
     def calculatePosition(self):
         # Make it so the player wraps around on the left and right (if enabled)
@@ -77,18 +108,28 @@ class Player(object):
         self.x += self.x_velocity
         self.y += self.y_velocity
 
+    
     # Print stats of the player when called
     def __str__(self):
         return "Player X Velocity: {}\nPlayer Y Velocity: {}\nPlayer X: {}\nPlayer Y: {}"\
             .format(player.x_velocity, player.y_velocity, player.x, player.y)
-
-
+  
 ##########--END CLASSES--##########
 #---------------------------------#
 ##########--BEING FUNCTIONS--######
 
-
-##########--END FUNCTIONS--#########
+def check_colision():
+    for i in range(len(levelchunk1)):
+        if (player.x >= levelchunk1[i-1].left -11) and player.x <= levelchunk1[i-1].right + 8 and player.y -1 > levelchunk1[i-1].top and player.y - 1 <=levelchunk1[i-1].y: 
+            if player.x - levelchunk1[i-1].left-11 < levelchunk1[i-1].right - player.x + 3:
+                return levelchunk1[i-1].left -11
+            else:
+                return levelchunk1[i-1].right + 8
+    return False
+  
+##########--END FUNCTIONS--########
+#---------------------------------#
+##########-Begin Main Code-########
 
 # Inialize pygame stuff
 pygame.init()
@@ -99,15 +140,13 @@ clock = pygame.time.Clock()
 pygame.display.set_caption("Mario vs Luigi")
 
 # Create a player
-player = Player("Sprites/idle.png", 20)
-
+player = Player("Sprites/idle.png",20)
 # Define some constants
 SIZE = WIDTH, HEIGHT = 320, 240
 BLACK = (0, 0, 0)
 
 # Setup the screen and other display stuff
 screen = pygame.display.set_mode(SIZE)
-skin = pygame.image.load(player.player_skin)
 
 # Define some settings variables
 wrap_around = True
@@ -121,6 +160,15 @@ V_ACCELERATION = 0.1
 GRAVITY = 2.5
 
 # Define misc variables
+xc = [85,115,130,145,160,100,70,115]
+yc = [150,150,150,150,150,150,150,135]
+frame = 1
+
+# Define player controls
+up = pygame.K_UP
+down = pygame.K_DOWN
+left = pygame.K_LEFT
+right = pygame.K_RIGHT
 
 while True:
     events = pygame.event.get()
@@ -130,7 +178,7 @@ while True:
     keys = pygame.key.get_pressed()
 
     # Generate player x velocity
-    if keys[pygame.K_RIGHT]:
+    if keys[right]:
         # Cap the player's horizontal speed to the right
         if (player.x_velocity <= SPEED_CAP):
             player.x_velocity += ACCELERATION
@@ -138,8 +186,9 @@ while True:
                 player.x_velocity = SPEED_CAP
         elif (player.x_velocity >= SPEED_CAP):
             player.x_velocity = SPEED_CAP
+ 
             
-    elif keys[pygame.K_LEFT]:
+    elif keys[left]:
         # Cap the player's horizontal speed to the left
         if (player.x_velocity >= -SPEED_CAP):
             player.x_velocity -= ACCELERATION
@@ -147,9 +196,9 @@ while True:
                 player.x_velocity = -SPEED_CAP
         elif (player.x_velocity <= -SPEED_CAP):
             player.x_velocity = -SPEED_CAP
-    
+            
     # Apply friction to the player if they are not holding a button (slow them to a hault)
-    else:
+    else:          
         if ((player.x_velocity <= SPEED_CAP) and (player.x_velocity > 0)):
             if ((player.x_velocity <= SPEED_CAP) and (player.x_velocity > 0)):
                 player.x_velocity -= FRICTION
@@ -160,17 +209,16 @@ while True:
 
         elif ((player.x_velocity >= -SPEED_CAP) and (player.x_velocity < 0)):
             if ((player.x_velocity >= -SPEED_CAP) and (player.x_velocity < 0)):
-                player.x_velocity += FRICTION
-                if player.x_velocity > 0:
-                    player.x_velocity = 0.0
+                    player.x_velocity += FRICTION
+                    if player.x_velocity > 0:
+                        player.x_velocity = 0.0
             else:
                 player.x_velocity = 0.0
 
     # Generate player y velocity
     # Check to see if the player can jump
-    if keys[pygame.K_UP]:
-        if (player.y >= tile.top):
-            # Cap the player's vertical speed
+    if keys[up]:
+        if player.check_jump() == True:
             if (player.y_velocity > VSPEED_CAP):
                 player.y_velocity = VSPEED_CAP
             elif (player.y_velocity < VSPEED_CAP):
@@ -182,7 +230,7 @@ while True:
     # Apply gravity to the player
     else:
         player.gravity(GRAVITY)
-
+    
     if (DEBUG):
         print(player)
 
@@ -190,9 +238,21 @@ while True:
     clock.tick(60)
 
     player.calculatePosition()
+    if player.check_fall() != False:
+        player.y = player.check_fall()
+        player.y_velocity = 0.0
+    if check_colision() != False:
+        player.x = check_colision()
+        player.x_velocity = 0.0
     
     #Render the screen
     screen.fill(BLACK)
-    screen.blit(pygame.image.load(tile.tile_image), [tile.x, tile.y])
-    screen.blit(skin, [player.x, player.y - player.height])
+    for i in range(len(levelchunk1)):
+        screen.blit(pygame.image.load(levelchunk1[i-1].tile_image), [xc[i-1], yc[i-1]])
+    screen.blit(pygame.image.load(player.skin), [player.x, player.y - player.height])
     pygame.display.flip()
+
+
+
+
+
