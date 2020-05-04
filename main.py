@@ -46,7 +46,7 @@ class Player(object):
             if player.y_velocity >= 0:
                 player.y_velocity = 0.0
 
-        elif((player.y_velocity >= 0.0) and (player.check_fall() == False)):
+        elif((player.y_velocity >= 0.0) and (player.check_fall() ==False)):
             if p_weight <= gravity:
                 p_weight += gravity
             else:
@@ -55,14 +55,16 @@ class Player(object):
             player.y_velocity += (player.weight * p_weight)
             if player.y_velocity < VSPEED_CAP:
                 player.y_velocity = VSPEED_CAP
-        elif player.check_fall() != False:
-            player.y_velocity = 0.0
-            player.y = player.check_fall()
+
+        else:
+            if player.check_fall() != False:
+                player.y_velocity = 0.0
+                player.y = player.check_fall()
     
-    def death():
+    def death(self):
         pass
 
-    def respawn():
+    def respawn(self):
         pass
     
     def check_jump(self):
@@ -74,6 +76,22 @@ class Player(object):
     def check_fall(self):
         for i in range(len(levelchunk1)):
             if (player.y >= levelchunk1[i-1].top) and player.y <= levelchunk1[i-1].top + 10 and player.x <= levelchunk1[i-1].width + levelchunk1[i-1].x and player.x >=levelchunk1[i-1].x - 16: 
+                return levelchunk1[i-1].top
+        return False
+
+    # Check to see if the player can jump
+    def check_jump(self):
+        for i in range(len(levelchunk1)):
+            if (player.y == levelchunk1[i-1].top) and player.x <= levelchunk1[i-1].width + levelchunk1[i-1].x\
+                and player.x >=levelchunk1[i-1].x - levelchunk1[i-1].x: 
+                return True
+        return False
+
+    # Check to see if the player should have gravity applied
+    def check_fall(self):
+        for i in range(len(levelchunk1)):
+            if (player.y >= levelchunk1[i-1].top) and player.y <= levelchunk1[i-1].top + 10\
+                and player.x <= levelchunk1[i-1].width + levelchunk1[i-1].x and player.x >=levelchunk1[i-1].x - 16: 
                 return levelchunk1[i-1].top
         return False
 
@@ -95,8 +113,10 @@ class Player(object):
     def __str__(self):
         return "Player X Velocity: {}\nPlayer Y Velocity: {}\nPlayer X: {}\nPlayer Y: {}"\
             .format(player.x_velocity, player.y_velocity, player.x, player.y)
-
-
+  
+##########--END CLASSES--##########
+#---------------------------------#
+##########--BEING FUNCTIONS--######
 
 def check_colision():
     for i in range(len(levelchunk1)):
@@ -105,14 +125,11 @@ def check_colision():
                 return levelchunk1[i-1].left -11
             else:
                 return levelchunk1[i-1].right + 5
-    return False        
-
-##########--END CLASSES--##########
+    return False
+  
+##########--END FUNCTIONS--########
 #---------------------------------#
-##########--BEING FUNCTIONS--######
-
-
-##########--END FUNCTIONS--#########
+##########-Begin Main Code-########
 
 # Inialize pygame stuff
 pygame.init()
@@ -123,7 +140,7 @@ clock = pygame.time.Clock()
 pygame.display.set_caption("Mario vs Luigi")
 
 # Create a player
-player = Player("Sprites/luigi1.png",20)
+player = Player("Sprites/idle.png",20)
 # Define some constants
 SIZE = WIDTH, HEIGHT = 320, 240
 BLACK = (0, 0, 0)
@@ -147,6 +164,12 @@ xc = [85,115,130,145,160,100,70,115]
 yc = [150,150,150,150,150,150,150,135]
 frame = 1
 
+# Define player controls
+up = pygame.K_UP
+down = pygame.K_DOWN
+left = pygame.K_LEFT
+right = pygame.K_RIGHT
+
 while True:
     events = pygame.event.get()
     for event in events:
@@ -155,7 +178,7 @@ while True:
     keys = pygame.key.get_pressed()
 
     # Generate player x velocity
-    if keys[pygame.K_d]:
+    if keys[right]:
         # Cap the player's horizontal speed to the right
         if (player.x_velocity <= SPEED_CAP):
             player.x_velocity += ACCELERATION
@@ -165,7 +188,7 @@ while True:
             player.x_velocity = SPEED_CAP
  
             
-    elif keys[pygame.K_a]:
+    elif keys[left]:
         # Cap the player's horizontal speed to the left
         if (player.x_velocity >= -SPEED_CAP):
             player.x_velocity -= ACCELERATION
@@ -194,7 +217,7 @@ while True:
 
     # Generate player y velocity
     # Check to see if the player can jump
-    if keys[pygame.K_w]:
+    if keys[up]:
         if player.check_jump() == True:
             if (player.y_velocity > VSPEED_CAP):
                 player.y_velocity = VSPEED_CAP
@@ -226,29 +249,7 @@ while True:
     screen.fill(BLACK)
     for i in range(len(levelchunk1)):
         screen.blit(pygame.image.load(levelchunk1[i-1].tile_image), [xc[i-1], yc[i-1]])
-    if frame < 11:
-        skin = pygame.image.load("Sprites/luigi1.png")
-        frame += 1
-    elif frame < 21:
-        skin = pygame.image.load("Sprites/luigi2.png")
-        frame += 1
-    elif frame < 31:
-        skin = pygame.image.load("Sprites/luigi3.png")
-        frame+= 1
-    elif frame < 41:
-        skin = pygame.image.load("Sprites/luigi4.png")
-        frame += 1
-    elif frame < 51:
-        skin = pygame.image.load("Sprites/luigi5.png")
-        frame+= 1
-    elif frame < 61:
-        skin = pygame.image.load("Sprites/luigi6.png")
-        frame += 1
-    else:
-       skin = pygame.image.load("Sprites/luigi1.png")
-       frame = 1
-        
-    screen.blit(skin, [player.x, player.y - player.height])
+    screen.blit(player.skin, [player.x, player.y - player.height])
     pygame.display.flip()
 
 
