@@ -1,3 +1,9 @@
+########################################################################
+#   Author: Nolan Y.                                                   #
+#                                                                      #
+#   Description: Player class/functions                                #
+########################################################################
+
 from level import *
 SIZE = WIDTH, HEIGHT = 320, 240
 wrap_around = True
