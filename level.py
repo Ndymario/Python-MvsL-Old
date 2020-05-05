@@ -98,6 +98,13 @@ class Level():
             if (y  >= tile.top) and y < tile.top + 8 and x > tile.x - 18 and x < tile.x + tile.width: 
                 return tile
         return False
+    
+  def hit_under_tile(self, x, y,player):
+        if player.y_velocity < 0:
+            for tile in self.tiles:
+                if (y >= tile.top) and y < tile.y + 8 and x > tile.x - 18 and x < tile.x + tile.width: 
+                    return tile
+        return False
 
   def in_tile(self, x, y):
       for tile in self.tiles:

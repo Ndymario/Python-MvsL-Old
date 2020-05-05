@@ -135,13 +135,15 @@ while True:
     clock.tick(60)
 
     player.calculatePosition()
+    if level.hit_under_tile(player.x,player.y - 33,player) != False:
+        player.y = level.hit_under_tile(player.x,player.y - 33,player).y + 33
+        player.y_velocity = 0.0
     if player.check_fall(level) != False:
         player.y = player.check_fall(level)
         player.y_velocity = 0.0
     if player.check_colision(level) != False:
         player.x = player.check_colision(level)
         player.x_velocity = 0.0
-    
     #Render the screen
     screen.fill(BLACK)
     for tile in level.tiles:
