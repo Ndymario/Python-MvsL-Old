@@ -26,21 +26,24 @@ sys.path.insert(1, "./Sprites")
 ##########--BEING FUNCTIONS--######
 
 def check_colision():
-    for i in range(len(levelchunk1)):
-        if (player.x >= levelchunk1[i-1].left -11) and player.x <= levelchunk1[i-1].right + 9 and player.y -1 > levelchunk1[i-1].top and player.y - 1 <=levelchunk1[i-1].y: 
-            if player.x - levelchunk1[i-1].left-11 < levelchunk1[i-1].right - player.x:
-                return levelchunk1[i-1].left -11
+    for tile in levelchunk1:
+        if (player.x >= tile.left -11) and player.x <= tile.right + 8 and player.y -1 > tile.top and player.y - 1 <=tile.y: 
+            if player.x - tile.left-11 < tile.right - player.x + 3:
+                return tile.left -11
             else:
-                return levelchunk1[i-1].right + 9
+                return tile.right + 8
     return False
   
 ##########--END FUNCTIONS--########
 #---------------------------------#
 ##########-Begin Main Code-########
 
+# Load Level Data
+levelchunk1 = []
+level = Level("Levels/1-1.lvl")
+
 # Inialize pygame stuff
 pygame.init()
-
 clock = pygame.time.Clock()
 
 # Make the window title
@@ -122,7 +125,7 @@ while True:
     # Generate player y velocity
     # Check to see if the player can jump
     if keys[up]:
-        if player.check_jump() == True:
+        if player.check_jump(level) == True:
             if (player.y_velocity > VSPEED_CAP):
                 player.y_velocity = VSPEED_CAP
             elif (player.y_velocity < VSPEED_CAP):
@@ -133,7 +136,7 @@ while True:
 
     # Apply gravity to the player
     else:
-        player.gravity(GRAVITY)
+        player.gravity(GRAVITY,level)
     
     if (DEBUG):
         print(player)
@@ -142,8 +145,8 @@ while True:
     clock.tick(60)
 
     player.calculatePosition()
-    if player.check_fall() != False:
-        player.y = player.check_fall()
+    if player.check_fall(level) != False:
+        player.y = player.check_fall(level)
         player.y_velocity = 0.0
     if check_colision() != False:
         player.x = check_colision()
@@ -151,8 +154,11 @@ while True:
     
     #Render the screen
     screen.fill(BLACK)
-    for i in range(len(levelchunk1)):
-        screen.blit(pygame.image.load(levelchunk1[i-1].tile_image), [levelchunk1[i-1].x, levelchunk1[i-1].y])
+    for tile in level.tiles:
+        for w in range(int(tile.width / 16)):
+            for h in range(int(tile.height / 16)):
+                print (tile.width, tile.height,h , w)
+                screen.blit(pygame.image.load(tile.tile_image), [tile.x + (w * 16), tile.y + (h * 16)])
     screen.blit(pygame.image.load(player.skin), [player.x, player.y - player.height])
     pygame.display.flip()
 

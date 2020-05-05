@@ -1,5 +1,5 @@
 ########################################################################
-#   Author: Nolan Y.                                                   #
+#   Author: Nolan Y. / bbomb64 / Christopher D.                        #
 #                                                                      #
 #   Description: Level/Tile handeler                                   #
 ########################################################################
@@ -9,20 +9,94 @@ import sys
 sys.path.insert(1, "./Tiles")
 
 class Tile(object):
-    def __init__(self, tile_image, tile_friction, x, y, height = 16, width = 16):
+    def __init__(self, tile_image, tile_friction, x, y, width = 16, height = 16):
         self.tile_image = tile_image
         self.tile_friction = tile_friction
         self.x = x
         self.y = y
         self.top = y - height
         self.width = width
-        self.left = x - (width/2)
-        self.right = x + (width/2)
+        self.height = height
+        self.left = x 
+        self.right = x + width
 
     def __str__(self):
         return "Tile X Coord: {}\nTile Y Coord: {}".format(self.x, self.y)
 
-levelchunk1 = [Tile("Tiles/Grass_Top.png", 0.0, 85,  150),Tile("Tiles/Grass_Top.png", 0.0, 70,  150), Tile("Tiles/Grass_Top.png", 0.0, 130,  150), \
-    Tile("Tiles/Grass_Top.png", 0.0, 145,  150), Tile("Tiles/Grass_Top.png", 0.0, 160,  150), Tile("Tiles/Grass_Top.png", 0.0, 100,  150),\
-    Tile("Tiles/Grass_Top.png", 0.0, 70,  150), Tile("Tiles/Grass_Top.png", 0.0, 115,  80)]
-tile = Tile("Tiles/Grass_Top.png", 0.0, 100,  150)
+class Level():
+  def __init__(self, fn):
+    self.fn = fn
+    self.file = None
+    self.bg_id = None
+    self.tiles = []
+    self.sprites = []
+
+    self.open_file()
+    self.read_bg()
+    self.read_tiles()
+    self.read_sprites()
+
+  def open_file(self):
+    self.file = open(self.fn, "rb")
+
+    file_magic = self.file.read(4)
+    if file_magic != b'PLVL':
+      print("File is not a valid level file!")
+      exit(1)
+
+  def read_bg(self):
+    self.bg_id = int.from_bytes(self.file.read(2), byteorder='big')
+
+  def read_tiles(self):
+    self.file.read(4) # do nothing with magic
+    
+    # read all tiles in chunk
+    at_end = False
+    while not at_end:
+
+      tile = {
+        "id": None,
+        "x": None,
+        "y": None,
+        "width": None,
+        "height": None,
+      }
+
+      for i in range(5):
+        short = self.file.read(2)
+        print (short)
+        if short == b'\xff\xff': 
+          at_end = True
+          break
+        tile[list(tile)[i]] = int.from_bytes(short,  byteorder='big')
+      if not at_end:
+        self.tiles.append(Tile("Tiles/Grass_Top.png", tile["x"] * 16, tile["y"] * 16, tile["width"] * 16, tile["height"] * 16))
+
+  def read_sprites(self):
+    self.file.read(4) # do nothing with magic
+
+    # read all sprites in chunk
+    at_end = False
+    while not at_end:
+
+      sprite = {
+          "id": None,
+          "x": None,
+          "y": None,
+      }
+      
+      for i in range(3):
+        short = self.file.read(2)
+        if short == b'\xff\xff': 
+          at_end = True
+          break
+        sprite[list(sprite)[i]] = int.from_bytes(short,  byteorder='big')
+      if not at_end:
+        self.sprites.append(sprite)
+
+  def tile_on(self, x, y):
+        for tile in self.tiles:
+            if (y == tile.top) and x <= tile.x\
+                and x >=tile.x - tile.width: 
+                return tile
+        return False

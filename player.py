@@ -22,7 +22,7 @@ class Player(object):
         self.weight = weight
         self.VSPEED_CAP = -8
     
-    def gravity(self, gravity):
+    def gravity(self, gravity,level):
         p_weight = self.weight
         if ((self.y_velocity >= self.VSPEED_CAP) and (self.y_velocity < 0)):
             if p_weight <= gravity:
@@ -35,7 +35,7 @@ class Player(object):
             if self.y_velocity >= 0:
                 self.y_velocity = 0.0
 
-        elif((self.y_velocity >= 0.0) and (self.check_fall() ==False)):
+        elif((self.y_velocity >= 0.0) and (self.check_fall(level) ==False)):
             if p_weight <= gravity:
                 p_weight += gravity
             else:
@@ -46,42 +46,28 @@ class Player(object):
                 self.y_velocity = self.VSPEED_CAP
 
         else:
-            if self.check_fall() != False:
+            if self.check_fall(level) != False:
                 self.y_velocity = 0.0
-                self.y = self.check_fall()
+                self.y = self.check_fall(level)
     
     def death(self):
         pass
 
     def respawn(self):
         pass
-    
-    def check_jump(self):
-        for i in range(len(levelchunk1)):
-            if (self.y == levelchunk1[i-1].top) and self.x <= levelchunk1[i-1].width + levelchunk1[i-1].x and self.x >=levelchunk1[i-1].x - levelchunk1[i-1].x: 
-                return True
-        return False
 
-    def check_fall(self):
-        for i in range(len(levelchunk1)):
-            if (self.y >= levelchunk1[i-1].top) and self.y <= levelchunk1[i-1].top + 10 and self.x <= levelchunk1[i-1].width + levelchunk1[i-1].x and self.x >=levelchunk1[i-1].x - 16: 
-                return levelchunk1[i-1].top
-        return False
 
-    # Check to see if the player can jump
-    def check_jump(self):
-        for i in range(len(levelchunk1)):
-            if (self.y == levelchunk1[i-1].top) and self.x <= levelchunk1[i-1].width + levelchunk1[i-1].x\
-                and self.x >=levelchunk1[i-1].x - levelchunk1[i-1].x: 
-                return True
+    def check_jump(self,level):
+        if level.tile_on(self.x, self.y) != False:
+            return True
         return False
 
     # Check to see if the player should have gravity applied
-    def check_fall(self):
-        for i in range(len(levelchunk1)):
-            if (self.y >= levelchunk1[i-1].top) and self.y <= levelchunk1[i-1].top + 10\
-                and self.x <= levelchunk1[i-1].width + levelchunk1[i-1].x and self.x >=levelchunk1[i-1].x - 15: 
-                return levelchunk1[i-1].top
+    def check_fall(self,level):
+        if level.tile_on(self.x, self.y) != False:
+            if (self.y >= level.tile_on(self.x, self.y).top) and self.y <= level.tile_on(self.x, self.y).top + level.tile_on(self.x, self.y).height\
+                and self.x <= level.tile_on(self.x, self.y).width + level.tile_on(self.x, self.y).x and self.x >=level.tile_on(self.x, self.y).x: 
+                return level.tile_on(self.x, self.y).top
         return False
 
     def calculatePosition(self):
