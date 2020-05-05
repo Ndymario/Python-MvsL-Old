@@ -64,13 +64,12 @@ class Level():
 
       for i in range(5):
         short = self.file.read(2)
-        print (short)
         if short == b'\xff\xff': 
           at_end = True
           break
         tile[list(tile)[i]] = int.from_bytes(short,  byteorder='big')
       if not at_end:
-        self.tiles.append(Tile("Tiles/Grass_Top.png", tile["x"] * 16, tile["y"] * 16, tile["width"] * 16, tile["height"] * 16))
+        self.tiles.append(Tile("Tiles/Grass_Top.png",1, tile["x"] * 16, tile["y"] * 16, tile["width"] * 16, tile["height"] * 16))
 
   def read_sprites(self):
     self.file.read(4) # do nothing with magic
@@ -96,7 +95,13 @@ class Level():
 
   def tile_on(self, x, y):
         for tile in self.tiles:
-            if (y == tile.top) and x <= tile.x\
-                and x >=tile.x - tile.width: 
+            if (y  >= tile.top) and y < tile.top + 8 and x > tile.x - 18 and x < tile.x + tile.width: 
                 return tile
         return False
+
+  def in_tile(self, x, y):
+      for tile in self.tiles:
+          if (y > tile.top) and y <= tile.y and x <= tile.width + tile.x and x >=tile.x - 18:
+              return tile
+      return False
+

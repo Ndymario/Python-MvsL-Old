@@ -64,10 +64,8 @@ class Player(object):
 
     # Check to see if the player should have gravity applied
     def check_fall(self,level):
-        if level.tile_on(self.x, self.y) != False:
-            if (self.y >= level.tile_on(self.x, self.y).top) and self.y <= level.tile_on(self.x, self.y).top + level.tile_on(self.x, self.y).height\
-                and self.x <= level.tile_on(self.x, self.y).width + level.tile_on(self.x, self.y).x and self.x >=level.tile_on(self.x, self.y).x: 
-                return level.tile_on(self.x, self.y).top
+        if level.tile_on(self.x,self.y) != False:
+            return level.tile_on(self.x, self.y).top
         return False
 
     def calculatePosition(self):
@@ -83,6 +81,19 @@ class Player(object):
         self.x += self.x_velocity
         self.y += self.y_velocity
 
+    # Check if player touches sides of block
+    def check_colision(self,level):
+        if level.in_tile(self.x,self.y) != False:
+            if self.x - level.in_tile(self.x,self.y).left - 16 < level.in_tile(self.x,self.y).right - self.x:
+                return level.in_tile(self.x,self.y).left - 18
+            else:
+                return level.in_tile(self.x,self.y).right
+        elif level.in_tile(self.x,self.y - 30) != False:
+            if self.x - level.in_tile(self.x,self.y-30).left - 16 < level.in_tile(self.x,self.y-30).right - self.x:
+                return level.in_tile(self.x,self.y-30).left - 18
+            else:
+                return level.in_tile(self.x,self.y-30).right
+        return False
     
     # Print stats of the player when called
     def __str__(self):

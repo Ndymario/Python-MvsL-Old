@@ -1,6 +1,5 @@
 ########################################################################
-#   Author: Nolan Y.                                                   #
-#                                                                      #
+#   Author: Nolan Y. / bbomb64 / Christopher D.                        #                                                                      #
 #   Description: My goal is to recreate the New Super Mario Bros.      #
 #                DS gamemode Mario vs Luigi. Even if it's not perfect, #
 #                it'll be a fun challenge!                             #
@@ -24,15 +23,6 @@ sys.path.insert(1, "./Sprites")
 ##########--END CLASSES--##########
 #---------------------------------#
 ##########--BEING FUNCTIONS--######
-
-def check_colision():
-    for tile in levelchunk1:
-        if (player.x >= tile.left -11) and player.x <= tile.right + 8 and player.y -1 > tile.top and player.y - 1 <=tile.y: 
-            if player.x - tile.left-11 < tile.right - player.x + 3:
-                return tile.left -11
-            else:
-                return tile.right + 8
-    return False
   
 ##########--END FUNCTIONS--########
 #---------------------------------#
@@ -132,7 +122,7 @@ while True:
                 player.y_velocity = VSPEED_CAP
         else:
             # If the player can't jump, continue to apply gravity
-            player.gravity(GRAVITY)
+            player.gravity(GRAVITY,level)
 
     # Apply gravity to the player
     else:
@@ -148,8 +138,8 @@ while True:
     if player.check_fall(level) != False:
         player.y = player.check_fall(level)
         player.y_velocity = 0.0
-    if check_colision() != False:
-        player.x = check_colision()
+    if player.check_colision(level) != False:
+        player.x = player.check_colision(level)
         player.x_velocity = 0.0
     
     #Render the screen
@@ -157,7 +147,6 @@ while True:
     for tile in level.tiles:
         for w in range(int(tile.width / 16)):
             for h in range(int(tile.height / 16)):
-                print (tile.width, tile.height,h , w)
                 screen.blit(pygame.image.load(tile.tile_image), [tile.x + (w * 16), tile.y + (h * 16)])
     screen.blit(pygame.image.load(player.skin), [player.x, player.y - player.height])
     pygame.display.flip()
