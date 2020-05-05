@@ -17,6 +17,13 @@ from level import *
 # Allows us to use another folder than the folder this file is located
 sys.path.insert(1, "./Sprites")
 
+levelchunk1 = []
+
+level = Level("Levels/1-1.lvl")
+
+for tile in level.tiles:
+    levelchunk1.append(Tile("Tiles/Grass_Top.png", 1, tile["x"] * 16, tile["y"] * 16, tile["width"] * 16, tile["height"] * 16))
+
 ##########--BEGIN CLASSES--##########
 
 # Class for the player
@@ -68,31 +75,15 @@ class Player(object):
         pass
     
     def check_jump(self):
-        for i in range(len(levelchunk1)):
-            if (player.y == levelchunk1[i-1].top) and player.x <= levelchunk1[i-1].width + levelchunk1[i-1].x and player.x >=levelchunk1[i-1].x - levelchunk1[i-1].x: 
+        for tile in levelchunk1:
+            if (player.y == tile.top) and player.x <= tile.width + tile.x and player.x >=tile.x - tile.x: 
                 return True
         return False
 
     def check_fall(self):
-        for i in range(len(levelchunk1)):
-            if (player.y >= levelchunk1[i-1].top) and player.y <= levelchunk1[i-1].top + 10 and player.x <= levelchunk1[i-1].width + levelchunk1[i-1].x and player.x >=levelchunk1[i-1].x - 16: 
-                return levelchunk1[i-1].top
-        return False
-
-    # Check to see if the player can jump
-    def check_jump(self):
-        for i in range(len(levelchunk1)):
-            if (player.y == levelchunk1[i-1].top) and player.x <= levelchunk1[i-1].width + levelchunk1[i-1].x\
-                and player.x >=levelchunk1[i-1].x - levelchunk1[i-1].x: 
-                return True
-        return False
-
-    # Check to see if the player should have gravity applied
-    def check_fall(self):
-        for i in range(len(levelchunk1)):
-            if (player.y >= levelchunk1[i-1].top) and player.y <= levelchunk1[i-1].top + 10\
-                and player.x <= levelchunk1[i-1].width + levelchunk1[i-1].x and player.x >=levelchunk1[i-1].x - 16: 
-                return levelchunk1[i-1].top
+        for tile in levelchunk1:
+            if (player.y >= tile.top) and player.y <= tile.top + 10 and player.x <= tile.width + tile.x and player.x >=tile.x - 16: 
+                return tile.top
         return False
 
     def calculatePosition(self):
@@ -119,12 +110,12 @@ class Player(object):
 ##########--BEING FUNCTIONS--######
 
 def check_colision():
-    for i in range(len(levelchunk1)):
-        if (player.x >= levelchunk1[i-1].left -11) and player.x <= levelchunk1[i-1].right + 8 and player.y -1 > levelchunk1[i-1].top and player.y - 1 <=levelchunk1[i-1].y: 
-            if player.x - levelchunk1[i-1].left-11 < levelchunk1[i-1].right - player.x + 3:
-                return levelchunk1[i-1].left -11
+    for tile in levelchunk1:
+        if (player.x >= tile.left -11) and player.x <= tile.right + 8 and player.y -1 > tile.top and player.y - 1 <=tile.y: 
+            if player.x - tile.left-11 < tile.right - player.x + 3:
+                return tile.left -11
             else:
-                return levelchunk1[i-1].right + 8
+                return tile.right + 8
     return False
   
 ##########--END FUNCTIONS--########
@@ -247,8 +238,10 @@ while True:
     
     #Render the screen
     screen.fill(BLACK)
-    for i in range(len(levelchunk1)):
-        screen.blit(pygame.image.load(levelchunk1[i-1].tile_image), [xc[i-1], yc[i-1]])
+    for tile in levelchunk1:
+        for w in range(tile.width // 16):
+            for h in range(tile.height // 16):
+                screen.blit(pygame.image.load(tile.tile_image), [tile.x + (w * 16), tile.y + (h * 16)])
     screen.blit(pygame.image.load(player.skin), [player.x, player.y - player.height])
     pygame.display.flip()
 
