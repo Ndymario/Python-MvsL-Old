@@ -75,30 +75,14 @@ class Player(object):
         pass
     
     def check_jump(self):
-        for tile in level.tiles:
+        for tile in levelchunk1:
             if (player.y == tile.top) and player.x <= tile.width + tile.x and player.x >=tile.x - tile.x: 
                 return True
         return False
 
     def check_fall(self):
-        for tile in level.tiles:
+        for tile in levelchunk1:
             if (player.y >= tile.top) and player.y <= tile.top + 10 and player.x <= tile.width + tile.x and player.x >=tile.x - 16: 
-                return tile.top
-        return False
-
-    # Check to see if the player can jump
-    def check_jump(self):
-        for tile in level.tiles:
-            if (player.y == tile.top) and player.x <= tile.width + tile.x\
-                and player.x >=tile.x - tile.x: 
-                return True
-        return False
-
-    # Check to see if the player should have gravity applied
-    def check_fall(self):
-        for tile in level.tiles:
-            if (player.y >= tile.top) and player.y <= tile.top + 10\
-                and player.x <= tile.width + tile.x and player.x >=tile.x - 16: 
                 return tile.top
         return False
 
@@ -126,7 +110,7 @@ class Player(object):
 ##########--BEING FUNCTIONS--######
 
 def check_colision():
-    for tile in level.tiles:
+    for tile in levelchunk1:
         if (player.x >= tile.left -11) and player.x <= tile.right + 8 and player.y -1 > tile.top and player.y - 1 <=tile.y: 
             if player.x - tile.left-11 < tile.right - player.x + 3:
                 return tile.left -11
