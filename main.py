@@ -17,12 +17,114 @@ from player import *
 # Allows us to use another folder than the folder this file is located
 sys.path.insert(1, "./Sprites")
 
+<<<<<<< HEAD
 #---------------------------------#
 ##########--BEGIN CLASSES--##########
+=======
+levelchunk1 = []
+
+level = Level("Levels/1-1.lvl")
+
+for tile in level.tiles:
+    levelchunk1.append(Tile("Tiles/Grass_Top.png", 1, tile["x"] * 16, tile["y"] * 16, tile["width"] * 16, tile["height"] * 16))
+
+##########--BEGIN CLASSES--##########
+
+# Class for the player
+class Player(object):
+    def __init__(self, skin = None, height = 0, weight = 0.2, player_number = 0):
+        self.player_number = player_number
+        # Used to determine what sprites to load for the player
+        self.skin = skin
+        self.x = 100
+        self.y = 100
+        self.x_velocity = 0.00
+        self.y_velocity = 0.00
+        # Number is from height of the player sprite in pixles
+        self.height = height
+        self.weight = weight
+    
+    def gravity(self, gravity):
+        p_weight = self.weight
+        if ((player.y_velocity >= VSPEED_CAP) and (player.y_velocity < 0)):
+            if p_weight <= gravity:
+                    p_weight += gravity
+                    
+            else:
+                p_weight = gravity
+            player.y_velocity += (player.weight * p_weight)
+
+            if player.y_velocity >= 0:
+                player.y_velocity = 0.0
+
+        elif((player.y_velocity >= 0.0) and (player.check_fall() ==False)):
+            if p_weight <= gravity:
+                p_weight += gravity
+            else:
+                p_weight = gravity
+
+            player.y_velocity += (player.weight * p_weight)
+            if player.y_velocity < VSPEED_CAP:
+                player.y_velocity = VSPEED_CAP
+
+        else:
+            if player.check_fall() != False:
+                player.y_velocity = 0.0
+                player.y = player.check_fall()
+    
+    def death(self):
+        pass
+
+    def respawn(self):
+        pass
+    
+    def check_jump(self):
+        for tile in levelchunk1:
+            if (player.y == tile.top) and player.x <= tile.width + tile.x and player.x >=tile.x - tile.x: 
+                return True
+        return False
+
+    def check_fall(self):
+        for tile in levelchunk1:
+            if (player.y >= tile.top) and player.y <= tile.top + 10 and player.x <= tile.width + tile.x and player.x >=tile.x - 16: 
+                return tile.top
+        return False
+
+    def calculatePosition(self):
+        # Make it so the player wraps around on the left and right (if enabled)
+        if (wrap_around):
+            if (((player.x >= WIDTH - 10) and (player.x <= WIDTH)) and player.x_velocity >= 0):
+                player.x = 11
+            elif ((player.x >= 0) and (player.x <= 10)) and (player.x_velocity <= 0):
+                player.x = WIDTH - 11
+        
+        # Calculate the players next position using their coordinates
+        # (This will probably be improved in the future)
+        self.x += self.x_velocity
+        self.y += self.y_velocity
+
+    
+    # Print stats of the player when called
+    def __str__(self):
+        return "Player X Velocity: {}\nPlayer Y Velocity: {}\nPlayer X: {}\nPlayer Y: {}"\
+            .format(player.x_velocity, player.y_velocity, player.x, player.y)
+>>>>>>> 99f3c28ba75db2e0a9c4a3722fb0839d4a7d15ae
   
 ##########--END CLASSES--##########
 #---------------------------------#
 ##########--BEING FUNCTIONS--######
+<<<<<<< HEAD
+=======
+
+def check_colision():
+    for tile in levelchunk1:
+        if (player.x >= tile.left -11) and player.x <= tile.right + 8 and player.y -1 > tile.top and player.y - 1 <=tile.y: 
+            if player.x - tile.left-11 < tile.right - player.x + 3:
+                return tile.left -11
+            else:
+                return tile.right + 8
+    return False
+>>>>>>> 99f3c28ba75db2e0a9c4a3722fb0839d4a7d15ae
   
 ##########--END FUNCTIONS--########
 #---------------------------------#
@@ -146,9 +248,15 @@ while True:
         player.x_velocity = 0.0
     #Render the screen
     screen.fill(BLACK)
+<<<<<<< HEAD
     for tile in level.tiles:
         for w in range(int(tile.width / 16)):
             for h in range(int(tile.height / 16)):
+=======
+    for tile in levelchunk1:
+        for w in range(tile.width // 16):
+            for h in range(tile.height // 16):
+>>>>>>> 99f3c28ba75db2e0a9c4a3722fb0839d4a7d15ae
                 screen.blit(pygame.image.load(tile.tile_image), [tile.x + (w * 16), tile.y + (h * 16)])
     screen.blit(pygame.image.load(player.skin), [player.x, player.y - player.height])
     pygame.display.flip()
