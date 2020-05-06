@@ -111,4 +111,3 @@ class Level():
           if (y > tile.top) and y <= tile.y and x <= tile.width + tile.x and x >=tile.x - 18:
               return tile
       return False
-
