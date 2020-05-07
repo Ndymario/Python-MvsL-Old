@@ -58,7 +58,7 @@ frame = 1
 
 # Create a player
 player = Player("Sprites/idle.png",18)
-playerL = Player("Sprites/idle.png",20)
+playerL = Player("Sprites/idle.png",18)
 players = [player,playerL]
 
 # Define player controls
@@ -76,23 +76,25 @@ while True:
 
     # Generate player x velocity
     if keys[right]:
-        # Cap the player's horizontal speed to the right
-        if (player.x_velocity <= SPEED_CAP):
-            player.x_velocity += ACCELERATION
-            if player.x_velocity >= SPEED_CAP:
+        if player.check_colision(level) == False:
+            # Cap the player's horizontal speed to the right
+            if (player.x_velocity <= SPEED_CAP):
+                player.x_velocity += ACCELERATION
+                if player.x_velocity >= SPEED_CAP:
+                    player.x_velocity = SPEED_CAP
+            elif (player.x_velocity >= SPEED_CAP):
                 player.x_velocity = SPEED_CAP
-        elif (player.x_velocity >= SPEED_CAP):
-            player.x_velocity = SPEED_CAP
  
             
     elif keys[left]:
-        # Cap the player's horizontal speed to the left
-        if (player.x_velocity >= -SPEED_CAP):
-            player.x_velocity -= ACCELERATION
-            if player.x_velocity <= -SPEED_CAP:
+        if player.check_colision(level) == False:
+            # Cap the player's horizontal speed to the left
+            if (player.x_velocity >= -SPEED_CAP):
+                player.x_velocity -= ACCELERATION
+                if player.x_velocity <= -SPEED_CAP:
+                    player.x_velocity = -SPEED_CAP
+            elif (player.x_velocity <= -SPEED_CAP):
                 player.x_velocity = -SPEED_CAP
-        elif (player.x_velocity <= -SPEED_CAP):
-            player.x_velocity = -SPEED_CAP
             
     # Apply friction to the player if they are not holding a button (slow them to a hault)
     else:          
@@ -135,21 +137,29 @@ while True:
     clock.tick(60)
 
     player.calculatePosition()
-    if level.hit_under_tile(player.x,player.y - 33,player) != False:
-        player.y = level.hit_under_tile(player.x,player.y - 33,player).y + 33
+    if level.hit_under_tile(player.x,player.y - 20,player) != False:
+        player.y = level.hit_under_tile(player.x,player.y - 20,player).y + 20
         player.y_velocity = 0.0
-    if player.check_fall(level) != False:
-        player.y = player.check_fall(level)
+    if level.tile_on(player.x,player.y) != False:
+        player.y = level.tile_on(player.x,player.y).top
         player.y_velocity = 0.0
     if player.check_colision(level) != False:
         player.x = player.check_colision(level)
         player.x_velocity = 0.0
+    if player.check_fall(level) != False:
+        player.y = player.check_fall(level)
+        player.y_velocity = 0.0
+    if level.bottom_lr_tile_collision(player.x,player.y) != False:
+        player.x = level.bottom_lr_tile_collision(player.x,player.y)
+        player.x_velocity = 0.0
+    
+    
     #Render the screen
     screen.fill(BLACK)
     for tile in level.tiles:
         for w in range(int(tile.width / 16)):
             for h in range(int(tile.height / 16)):
-                screen.blit(pygame.image.load(tile.tile_image), [tile.x + (w * 16), tile.y + (h * 16)])
+                screen.blit(pygame.image.load(tile.tile_image), [tile.x + (w * 16), tile.y - (h * 16)])
     screen.blit(pygame.image.load(player.skin), [player.x, player.y - player.height])
     pygame.display.flip()
 

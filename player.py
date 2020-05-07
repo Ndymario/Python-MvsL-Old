@@ -6,7 +6,7 @@
 
 from level import *
 SIZE = WIDTH, HEIGHT = 320, 240
-wrap_around = True
+wrap_around = False
 
 class Player(object):
     def __init__(self, skin = None, height = 0, weight = 0.2, player_number = 0):
@@ -66,6 +66,8 @@ class Player(object):
     def check_fall(self,level):
         if level.tile_on(self.x,self.y) != False:
             return level.tile_on(self.x, self.y).top
+        if level.in_tile(self.x,self.y) != False:
+            return level.in_tile(self.x,self.y).top
         return False
 
     def calculatePosition(self):
@@ -83,16 +85,10 @@ class Player(object):
 
     # Check if player touches sides of block
     def check_colision(self,level):
-        if level.in_tile(self.x,self.y) != False:
-            if self.x - level.in_tile(self.x,self.y).left - 16 < level.in_tile(self.x,self.y).right - self.x:
-                return level.in_tile(self.x,self.y).left - 18
-            else:
-                return level.in_tile(self.x,self.y).right
-        elif level.in_tile(self.x,self.y - 30) != False:
-            if self.x - level.in_tile(self.x,self.y-30).left - 16 < level.in_tile(self.x,self.y-30).right - self.x:
-                return level.in_tile(self.x,self.y-30).left - 18
-            else:
-                return level.in_tile(self.x,self.y-30).right
+        if level.lr_tile_collision(self.x,self.y,self.x_velocity) != False:
+            return level.lr_tile_collision(self.x,self.y,self.x_velocity)
+        if level.lr_tile_collision(self.x,self.y - 24,self.x_velocity) != False:
+            return level.lr_tile_collision(self.x,self.y - 24,self.x_velocity)
         return False
     
     # Print stats of the player when called
