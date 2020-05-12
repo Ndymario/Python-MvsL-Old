@@ -97,7 +97,7 @@ while True:
                 player.x_velocity = -SPEED_CAP
             
     # Apply friction to the player if they are not holding a button (slow them to a hault)
-    else:          
+    else:
         if ((player.x_velocity <= SPEED_CAP) and (player.x_velocity > 0)):
             if ((player.x_velocity <= SPEED_CAP) and (player.x_velocity > 0)):
                 player.x_velocity -= FRICTION
@@ -162,8 +162,3 @@ while True:
                 screen.blit(pygame.image.load(tile.tile_image), [tile.x + (w * 16), tile.y - (h * 16)])
     screen.blit(pygame.image.load(player.skin), [player.x, player.y - player.height])
     pygame.display.flip()
-
-
-
-
-

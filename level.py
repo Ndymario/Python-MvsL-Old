@@ -17,7 +17,7 @@ class Tile(object):
         self.top = y - height
         self.width = width
         self.height = height
-        self.left = x 
+        self.left = x
         self.right = x + width
 
     def __str__(self):
@@ -64,7 +64,7 @@ class Level():
 
       for i in range(5):
         short = self.file.read(2)
-        if short == b'\xff\xff': 
+        if short == b'\xff\xff':
           at_end = True
           break
         tile[list(tile)[i]] = int.from_bytes(short,  byteorder='big')
@@ -86,7 +86,7 @@ class Level():
       
       for i in range(3):
         short = self.file.read(2)
-        if short == b'\xff\xff': 
+        if short == b'\xff\xff':
           at_end = True
           break
         sprite[list(sprite)[i]] = int.from_bytes(short,  byteorder='big')
@@ -95,14 +95,14 @@ class Level():
 
   def tile_on(self, x, y):
         for tile in self.tiles:
-            if (y  >= tile.top) and y <= tile.top + 8 and x > tile.x - 18 and x < tile.x + tile.width: 
+            if (y  >= tile.top) and y <= tile.top + 8 and x > tile.x - 18 and x < tile.x + tile.width:
                 return tile
         return False
     
   def hit_under_tile(self, x, y,player):
         if player.y_velocity < 0:
             for tile in self.tiles:
-                if (y > tile.y - 6) and y < tile.y and x > tile.x - 18 and x < tile.x + tile.width: 
+                if (y > tile.y - 6) and y < tile.y and x > tile.x - 18 and x < tile.x + tile.width:
                     return tile
         return False
 
@@ -131,4 +131,3 @@ class Level():
           if (y <= tile.top + tile.height) and y > tile.top and x >= tile.x + tile.width - 10 and x < tile.x + tile.width:
                   return tile.right
       return False
-

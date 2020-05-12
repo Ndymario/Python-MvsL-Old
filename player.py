@@ -6,7 +6,7 @@
 
 from level import *
 SIZE = WIDTH, HEIGHT = 320, 240
-wrap_around = False
+wrap_around = True
 
 class Player(object):
     def __init__(self, skin = None, height = 0, weight = 0.2, player_number = 0):
