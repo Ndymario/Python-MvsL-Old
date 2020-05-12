@@ -87,8 +87,8 @@ class Player(object):
     def check_colision(self,level):
         if level.lr_tile_collision(self.x,self.y,self.x_velocity) != False:
             return level.lr_tile_collision(self.x,self.y,self.x_velocity)
-        if level.lr_tile_collision(self.x,self.y - 24,self.x_velocity) != False:
-            return level.lr_tile_collision(self.x,self.y - 24,self.x_velocity)
+        if level.lr_tile_collision(self.x,self.y - 25,self.x_velocity) != False:
+            return level.lr_tile_collision(self.x,self.y - 25,self.x_velocity)
         return False
     
     # Print stats of the player when called

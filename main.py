@@ -145,8 +145,8 @@ while True:
     tick(60)
 
     player.calculatePosition()
-    if level.hit_under_tile(player.x,player.y - 20,player) != False:
-        player.y = level.hit_under_tile(player.x,player.y - 20,player).y + 20
+    if level.hit_under_tile(player.x,player.y - 26,player) != False:
+        player.y = level.hit_under_tile(player.x,player.y - 26,player).y + 26
         player.y_velocity = 0.0
     if level.tile_on(player.x,player.y) != False:
         player.y = level.tile_on(player.x,player.y).top
@@ -168,7 +168,8 @@ while True:
         for w in range(int(tile.width / 16)):
             for h in range(int(tile.height / 16)):
                 screen.blit(pygame.image.load(tile.tile_image), [tile.x + (w * 16), tile.y - (h * 16)])
-    moveSprite(playerSprite, player.x, player.y, True)
+        ''' temporary solution, added 10 to player.x to solve collisions, fix later '''
+    moveSprite(playerSprite, player.x + 10, player.y, True)
 
     # Limits the frame rate of sprites (60 FPS walk cycle is bad)
     if clock() > nextFrame:
