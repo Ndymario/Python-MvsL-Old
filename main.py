@@ -6,7 +6,7 @@
 ########################################################################
 
 # Enable/Disable DEBUG mode
-DEBUG = True
+DEBUG = False
 
 # Import things I might need
 from pygame_functions import *
@@ -228,18 +228,23 @@ while True:
     tick(60)
 
     player.calculatePosition()
+
     if level.hit_under_tile(player.x,player.y - 26,player) != False:
         player.y = level.hit_under_tile(player.x,player.y - 26,player).y + 26
         player.y_velocity = 0.0
+
     if level.tile_on(player.x,player.y) != False:
         player.y = level.tile_on(player.x,player.y).top
         player.y_velocity = 0.0
+
     if player.check_colision(level) != False:
         player.x = player.check_colision(level)
         player.x_velocity = 0.0
+
     if player.check_fall(level) != False:
         player.y = player.check_fall(level)
         player.y_velocity = 0.0
+
     if level.bottom_lr_tile_collision(player.x,player.y) != False:
         player.x = level.bottom_lr_tile_collision(player.x,player.y)
         player.x_velocity = 0.0
