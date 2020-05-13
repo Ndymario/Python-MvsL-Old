@@ -6,7 +6,7 @@
 ########################################################################
 
 # Enable/Disable DEBUG mode
-DEBUG = False
+DEBUG = True
 
 # Import things I might need
 from pygame_functions import *
@@ -195,7 +195,6 @@ while True:
             # Otherwise, face Mario's sprite to the left
             else:
                 changeSpriteImage(playerSprite, 1*3+frame)
-            
             VerticalVelocity()
 
         else:
@@ -256,7 +255,7 @@ while True:
         for w in range(int(tile.width / 16)):
             for h in range(int(tile.height / 16)):
                 screen.blit(pygame.image.load(tile.tile_image), [tile.x + (w * 16), tile.y - (h * 16)])
-    
+
     # Update the player's sprite location
     moveSprite(playerSprite, player.x, player.y + player.height)
 
