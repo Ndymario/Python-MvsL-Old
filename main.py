@@ -23,6 +23,7 @@ sys.path.insert(1, "./Sprites")
 ##########--END CLASSES--##########
 #---------------------------------#
 ##########--BEING FUNCTIONS--######
+
 def Friction():
     if ((player.x_velocity <= SPEED_CAP) and (player.x_velocity > 0)):
             if ((player.x_velocity <= SPEED_CAP) and (player.x_velocity > 0)):
@@ -39,6 +40,7 @@ def Friction():
                     player.x_velocity = 0.0
         else:
             player.x_velocity = 0.0
+
 ##########--END FUNCTIONS--########
 #---------------------------------#
 ##########-Begin Main Code-########
