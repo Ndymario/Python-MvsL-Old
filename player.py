@@ -1,6 +1,5 @@
 ########################################################################
-#   Author: Nolan Y.                                                   #
-#                                                                      #
+#   Author: Nolan Y. / bbomb64 / Christopher D.                        #                                                                      #
 #   Description: Player class/functions                                #
 ########################################################################
 
@@ -21,6 +20,7 @@ class Player(object):
         self.height = height
         self.weight = weight
         self.VSPEED_CAP = -8
+        self.DSPEED_CAP = 8
     
     def gravity(self, gravity,level):
         p_weight = self.weight
@@ -45,10 +45,12 @@ class Player(object):
             if self.y_velocity < self.VSPEED_CAP:
                 self.y_velocity = self.VSPEED_CAP
 
-        else:
+        else:            
             if self.check_fall(level) != False:
                 self.y_velocity = 0.0
                 self.y = self.check_fall(level)
+        if self.y_velocity > self.DSPEED_CAP:
+                self.y_velocity = self.DSPEED_CAP
     
     def death(self):
         pass
@@ -87,8 +89,9 @@ class Player(object):
     def check_colision(self,level):
         if level.lr_tile_collision(self.x,self.y,self.x_velocity) != False:
             return level.lr_tile_collision(self.x,self.y,self.x_velocity)
-        if level.lr_tile_collision(self.x,self.y - 24,self.x_velocity) != False:
-            return level.lr_tile_collision(self.x,self.y - 24,self.x_velocity)
+
+        if level.lr_tile_collision(self.x,self.y - 25,self.x_velocity) != False:
+            return level.lr_tile_collision(self.x,self.y - 25,self.x_velocity)
         return False
     
     # Print stats of the player when called
