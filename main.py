@@ -6,7 +6,7 @@
 ########################################################################
 
 # Enable/Disable DEBUG mode
-DEBUG = True
+DEBUG = False
 
 # Import things I might need
 from pygame_functions import *
@@ -53,7 +53,7 @@ level = Level("Levels/1-1.lvl")
 pygame.display.set_caption("Mario vs Luigi")
 
 # Define some constants
-BLACK = (0, 0, 0)
+BLACK = (255, 255, 255)
 
 # Setup the screen and other display stuff
 # Note: WIDTH & HEIGHT are imported from player.py!
@@ -212,8 +212,8 @@ while True:
         for w in range(int(tile.width / 16)):
             for h in range(int(tile.height / 16)):
                 screen.blit(pygame.image.load(tile.tile_image), [tile.x + (w * 16), tile.y - (h * 16)])
-        ''' temporary solution, added 10 to player.x to solve collisions, fix later '''
-    moveSprite(playerSprite, player.x + 10, player.y, True)
+        ''' temporary solution, added 10 to player.x and 3 to player.y to solve collisions, fix later '''
+    moveSprite(playerSprite, player.x + 10, player.y + 3, True)
 
     # Limits the frame rate of sprites (60 FPS walk cycle is bad)
     if clock() > nextFrame:
