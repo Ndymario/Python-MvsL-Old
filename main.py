@@ -23,7 +23,22 @@ sys.path.insert(1, "./Sprites")
 ##########--END CLASSES--##########
 #---------------------------------#
 ##########--BEING FUNCTIONS--######
-  
+def Friction():
+    if ((player.x_velocity <= SPEED_CAP) and (player.x_velocity > 0)):
+            if ((player.x_velocity <= SPEED_CAP) and (player.x_velocity > 0)):
+                player.x_velocity -= FRICTION
+                if player.x_velocity < 0:
+                    player.x_velocity = 0.0
+            else:
+                player.x_velocity = 0.0
+
+    elif ((player.x_velocity >= -SPEED_CAP) and (player.x_velocity < 0)):
+        if ((player.x_velocity >= -SPEED_CAP) and (player.x_velocity < 0)):
+                player.x_velocity += FRICTION
+                if player.x_velocity > 0:
+                    player.x_velocity = 0.0
+        else:
+            player.x_velocity = 0.0
 ##########--END FUNCTIONS--########
 #---------------------------------#
 ##########-Begin Main Code-########
@@ -113,24 +128,19 @@ while True:
                     player.x_velocity = -SPEED_CAP
             elif (player.x_velocity <= -SPEED_CAP):
                 player.x_velocity = -SPEED_CAP
+    
+    elif keys[down]:
+        # If the player is on the ground, make them duck
+        if player.check_jump(level) == True:
+            changeSpriteImage(playerSprite, 5*3 - 1)
+        # Apply friction to the player
+        Friction()
             
-    # Apply friction to the player if they are not holding a button (slow them to a hault)
+    # Apply friction to the player if they are not holding a button or ducking
+    # (slow them to a hault)
     else:
-        if ((player.x_velocity <= SPEED_CAP) and (player.x_velocity > 0)):
-            if ((player.x_velocity <= SPEED_CAP) and (player.x_velocity > 0)):
-                player.x_velocity -= FRICTION
-                if player.x_velocity < 0:
-                    player.x_velocity = 0.0
-            else:
-                player.x_velocity = 0.0
-
-        elif ((player.x_velocity >= -SPEED_CAP) and (player.x_velocity < 0)):
-            if ((player.x_velocity >= -SPEED_CAP) and (player.x_velocity < 0)):
-                    player.x_velocity += FRICTION
-                    if player.x_velocity > 0:
-                        player.x_velocity = 0.0
-            else:
-                player.x_velocity = 0.0
+        # Apply friction to the player
+        Friction()
 
     # Generate player y velocity
     # Check to see if the player can jump
