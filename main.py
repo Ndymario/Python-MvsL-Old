@@ -23,7 +23,6 @@ sys.path.insert(1, "./Sprites")
 ##########--END CLASSES--##########
 #---------------------------------#
 ##########--BEING FUNCTIONS--######
-
 def Friction():
     if ((player.x_velocity <= SPEED_CAP) and (player.x_velocity > 0)):
             if ((player.x_velocity <= SPEED_CAP) and (player.x_velocity > 0)):
@@ -231,7 +230,6 @@ while True:
     if level.hit_under_tile(player.x,player.y - 26,player) != False:
         player.y = level.hit_under_tile(player.x,player.y - 26,player).y + 26
         player.y_velocity = 0.0
-
     if level.tile_on(player.x,player.y) != False:
         player.y = level.tile_on(player.x,player.y).top
         player.y_velocity = 0.0
