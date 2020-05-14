@@ -9,8 +9,6 @@ SIZE = WIDTH, HEIGHT = 320, 240
 wrap_around = True
 
 # Define some in game constants (used for the Physics "engine")
-SPEED_CAP = 8.0
-VSPEED_CAP = -8.0
 FRICTION = .2
 ACCELERATION = 0.1
 V_ACCELERATION = 0.1
@@ -28,6 +26,7 @@ class Player(object):
         # Number is from height of the player sprite in pixles
         self.height = height
         self.weight = weight
+        self.SPEED_CAP = 8 
         self.VSPEED_CAP = -8
         self.DSPEED_CAP = 8
     
@@ -126,16 +125,16 @@ class Player(object):
         return
     
     def Friction(self):
-        if ((self.x_velocity <= SPEED_CAP) and (self.x_velocity > 0)):
-                if ((self.x_velocity <= SPEED_CAP) and (self.x_velocity > 0)):
+        if ((self.x_velocity <= self.SPEED_CAP) and (self.x_velocity > 0)):
+                if ((self.x_velocity <= self.SPEED_CAP) and (self.x_velocity > 0)):
                     self.x_velocity -= FRICTION
                     if self.x_velocity < 0:
                         self.x_velocity = 0.0
                 else:
                     self.x_velocity = 0.0
 
-        elif ((self.x_velocity >= -SPEED_CAP) and (self.x_velocity < 0)):
-            if ((self.x_velocity >= -SPEED_CAP) and (self.x_velocity < 0)):
+        elif ((self.x_velocity >= -self.SPEED_CAP) and (self.x_velocity < 0)):
+            if ((self.x_velocity >= -self.SPEED_CAP) and (self.x_velocity < 0)):
                     self.x_velocity += FRICTION
                     if self.x_velocity > 0:
                         self.x_velocity = 0.0
@@ -145,7 +144,7 @@ class Player(object):
     def HorizontalVelocity(self, last_held_direction, skidding, playerSprite):
         if (last_held_direction == "right"):
                 # Cap the player's horizontal speed to the right
-                if (self.x_velocity <= SPEED_CAP):
+                if (self.x_velocity <= self.SPEED_CAP):
                     if (self.x_velocity < 0):
                         if (skidding == False):
                             # Update the player to their skidding animation when turning around
@@ -154,14 +153,14 @@ class Player(object):
                         else:
                             skidding = False
                     self.x_velocity += ACCELERATION
-                    if self.x_velocity >= SPEED_CAP:
-                        self.x_velocity = SPEED_CAP
-                elif (self.x_velocity >= SPEED_CAP):
-                    self.x_velocity = SPEED_CAP
+                    if self.x_velocity >= self.SPEED_CAP:
+                        self.x_velocity = self.SPEED_CAP
+                elif (self.x_velocity >= self.SPEED_CAP):
+                    self.x_velocity = self.SPEED_CAP
         
         elif (last_held_direction == "left"):
                 # Cap the player's horizontal speed to the left
-                if (self.x_velocity >= -SPEED_CAP):
+                if (self.x_velocity >= -self.SPEED_CAP):
                     if (self.x_velocity > 0):
                         if (skidding == False):
                             # Update the player to their skidding animation when turning around
@@ -170,16 +169,16 @@ class Player(object):
                     else:
                         skidding = False
                     self.x_velocity -= ACCELERATION
-                    if self.x_velocity <= -SPEED_CAP:
-                        self.x_velocity = -SPEED_CAP
-                elif (self.x_velocity <= -SPEED_CAP):
-                    self.x_velocity = -SPEED_CAP
+                    if self.x_velocity <= -self.SPEED_CAP:
+                        self.x_velocity = -self.SPEED_CAP
+                elif (self.x_velocity <= -self.SPEED_CAP):
+                    self.x_velocity = -self.SPEED_CAP
 
     def VerticalVelocity(self):
-        if (self.y_velocity > VSPEED_CAP):
-            self.y_velocity = VSPEED_CAP
-        elif (self.y_velocity < VSPEED_CAP):
-            self.y_velocity = VSPEED_CAP
+        if (self.y_velocity > self.VSPEED_CAP):
+            self.y_velocity = self.VSPEED_CAP
+        elif (self.y_velocity < self.VSPEED_CAP):
+            self.y_velocity = self.VSPEED_CAP
 
 
     # Print stats of the player when called

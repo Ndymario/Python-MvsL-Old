@@ -6,7 +6,7 @@
 ########################################################################
 
 # Enable/Disable DEBUG mode
-DEBUG = False
+DEBUG = True
 
 # Import things I might need
 from pygame_functions import *
