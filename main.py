@@ -172,7 +172,7 @@ while True:
 
     # Update the player's sprite location
     moveSprite(playerSprite, player.x, player.y + player.height)
-
+    updateDisplay()
     # Limits the frame rate of sprites (60 FPS walk cycle is bad)
     if clock() > nextFrame:
         frame = (frame+1)%3
