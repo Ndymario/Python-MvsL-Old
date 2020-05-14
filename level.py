@@ -93,41 +93,51 @@ class Level():
       if not at_end:
         self.sprites.append(sprite)
 
-  def tile_on(self, x, y):
-        for tile in self.tiles:
-            if (y  >= tile.top) and y <= tile.top + 8 and x > tile.x - 20 and x < tile.x + tile.width:
-                return tile
-        return False
+  def in_tile(self,x,y):
+      for tile in self.tiles:
+          if tile.top < y and tile.y >= y and tile.left - 20 < x and x < tile.right:
+                return self.nearest_surface(x,y,tile)
+      return False
+
+  def under_tile(self, x, y):
+      for tile in self.tiles:
+          if tile.y == y and x + 20 > tile.left and x < tile.right:
+              return tile.y
+      return False
     
-  def hit_under_tile(self, x, y,player):
-        if player.y_velocity < 0:
-            for tile in self.tiles:
-                if (y > tile.y - 6) and y < tile.y and x > tile.x - 20 and x < tile.x + tile.width:
-                    return tile
-        return False
-
-  def in_tile(self, x, y):
+  def tile_on(self,x,y):
       for tile in self.tiles:
-          if (y > tile.y - 8) and y <= tile.y - 1 and x < tile.width + tile.x and x >tile.x - 20:
-              return tile
+          if (y  == tile.top) and x > tile.left - 20 and x < tile.right:
+                return tile.top
       return False
 
-  def lr_tile_collision(self, x, y, v):
-      for tile in self.tiles:
-          if (y <= tile.top + tile.height) and y > tile.top and x > tile.x - 20 and x <= tile.x - 7:
-              return tile.left - 20
-          if (y <= tile.top + tile.height) and y > tile.top and x >= tile.x + tile.width - 1 and x < tile.x + tile.width:
-              return tile.right
-          if (y < tile.top + tile.height-4) and y > tile.top and x + v > tile.x - 20 and x + v <= tile.x - 7:
-              return tile.left - 20
-          if (y < tile.top + tile.height-4) and y > tile.top and x + v >= tile.x + tile.width - 10 and x + v < tile.x + tile.width:
-              return tile.right
-      return False
+  def nearest_surface(self,x,y,tile):
+      if y == tile.y:
+          if 20 + x - tile.left > tile.right - x:
+              return False,tile.right
+          else:
+              return False,tile.left - 20
+      if y-tile.top > tile.y-y:
+          if 20 + x - tile.left > tile.right - x:
+              if tile.right - x > tile.y - y:
+                  return True,tile.y
+              else:
+                  return False,tile.right
+          else:
+              if 20+x-tile.left > tile.y-y:
+                  return True,tile.y
+              else:
+                  return False,tile.left - 20
+          return tile.y
+      else:
+          if 20 + x - tile.left > tile.right - x:
+              if tile.right - x > y-tile.top:
+                  return True,tile.top
+              else:
+                  return False,tile.right
+          else:
+              if 20 + x-tile.left > y-tile.top:
+                  return True,tile.top
+              else:
+                  return False,tile.left - 20
 
-  def bottom_lr_tile_collision(self,x,y):
-      for tile in self.tiles:
-          if (y <= tile.top + tile.height) and y > tile.top and x > tile.x - 10 and x <= tile.x - 8:
-                  return tile.left - 10
-          if (y <= tile.top + tile.height) and y > tile.top and x >= tile.x + tile.width - 10 and x <= tile.x + tile.width:
-                  return tile.right
-      return False

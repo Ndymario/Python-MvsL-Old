@@ -67,9 +67,7 @@ class Player(object):
     # Check to see if the player should have gravity applied
     def check_fall(self,level):
         if level.tile_on(self.x,self.y) != False:
-            return level.tile_on(self.x, self.y).top
-        if level.in_tile(self.x,self.y) != False:
-            return level.in_tile(self.x,self.y).top
+            return level.tile_on(self.x, self.y)
         return False
 
     def calculatePosition(self):
@@ -85,15 +83,40 @@ class Player(object):
         self.x += self.x_velocity
         self.y += self.y_velocity
 
-    # Check if player touches sides of block
-    def check_colision(self,level):
-        if level.lr_tile_collision(self.x,self.y,self.x_velocity) != False:
-            return level.lr_tile_collision(self.x,self.y,self.x_velocity)
+    # Check if player touches part of a tile
+    def check_collision(self,level):
+        if level.under_tile(self.x,self.y-20) != False:
+            self.y = level.under_tile(self.x,self.y - 20)
+            self.y_velocity = 0
+            return
 
-        if level.lr_tile_collision(self.x,self.y - 25,self.x_velocity) != False:
-            return level.lr_tile_collision(self.x,self.y - 25,self.x_velocity)
-        return False
-    
+        if level.tile_on(self.x,self.y) != False and level.in_tile(self.x,self.y) == False:
+            self.y = level.tile_on(self.x,self.y)
+            self.y_velocity = 0
+            return
+        
+        if level.in_tile(self.x,self.y) != False:
+            if level.in_tile(self.x,self.y)[0] == False:
+                self.x = level.in_tile(self.x,self.y)[1]
+                self.x_velocity = 0
+                return 
+            else:
+                self.y = level.in_tile(self.x,self.y)[1]
+                self.y_velocity = 0
+                return
+        
+        if level.in_tile(self.x,self.y-20) != False:
+            if level.in_tile(self.x,self.y-20)[0] == True:
+                self.y = level.in_tile(self.x,self.y-20)[1] + 20
+                self.y_velocity = 0
+                return 
+            else:
+                self.x = level.in_tile(self.x,self.y-20)[1]
+                self.x_velocity = 0
+                return                
+        return 
+
+
     # Print stats of the player when called
     def __str__(self):
         return "Player X Velocity: {}\nPlayer Y Velocity: {}\nPlayer X: {}\nPlayer Y: {}"\
