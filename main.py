@@ -6,7 +6,7 @@
 ########################################################################
 
 # Enable/Disable DEBUG mode
-DEBUG = True
+DEBUG = False
 
 # Import things I might need
 from pygame_functions import *
@@ -23,62 +23,6 @@ sys.path.insert(1, "./Sprites")
 ##########--END CLASSES--##########
 #---------------------------------#
 ##########--BEING FUNCTIONS--######
-def Friction():
-    if ((player.x_velocity <= SPEED_CAP) and (player.x_velocity > 0)):
-            if ((player.x_velocity <= SPEED_CAP) and (player.x_velocity > 0)):
-                player.x_velocity -= FRICTION
-                if player.x_velocity < 0:
-                    player.x_velocity = 0.0
-            else:
-                player.x_velocity = 0.0
-
-    elif ((player.x_velocity >= -SPEED_CAP) and (player.x_velocity < 0)):
-        if ((player.x_velocity >= -SPEED_CAP) and (player.x_velocity < 0)):
-                player.x_velocity += FRICTION
-                if player.x_velocity > 0:
-                    player.x_velocity = 0.0
-        else:
-            player.x_velocity = 0.0
-
-def HorizontalVelocity(last_held_direction, skidding):
-    if (last_held_direction == "right"):
-            # Cap the player's horizontal speed to the right
-            if (player.x_velocity <= SPEED_CAP):
-                if (player.x_velocity < 0):
-                    if (skidding == False):
-                        # Update the player to their skidding animation when turning around
-                        changeSpriteImage(playerSprite, 4*3)
-                        skidding = True
-                    else:
-                        skidding = False
-                player.x_velocity += ACCELERATION
-                if player.x_velocity >= SPEED_CAP:
-                    player.x_velocity = SPEED_CAP
-            elif (player.x_velocity >= SPEED_CAP):
-                player.x_velocity = SPEED_CAP
-    
-    elif (last_held_direction == "left"):
-            # Cap the player's horizontal speed to the left
-            if (player.x_velocity >= -SPEED_CAP):
-                if (player.x_velocity > 0):
-                    if (skidding == False):
-                        # Update the player to their skidding animation when turning around
-                        changeSpriteImage(playerSprite, 4*3+1)
-                        skidding = True
-                else:
-                    skidding = False
-                player.x_velocity -= ACCELERATION
-                if player.x_velocity <= -SPEED_CAP:
-                    player.x_velocity = -SPEED_CAP
-            elif (player.x_velocity <= -SPEED_CAP):
-                player.x_velocity = -SPEED_CAP
-
-def VerticalVelocity():
-    if (player.y_velocity > VSPEED_CAP):
-        player.y_velocity = VSPEED_CAP
-    elif (player.y_velocity < VSPEED_CAP):
-        player.y_velocity = VSPEED_CAP
-
 ##########--END FUNCTIONS--########
 #---------------------------------#
 ##########-Begin Main Code-########
@@ -98,28 +42,19 @@ WHITE  = (255, 255, 255)
 # Note: WIDTH & HEIGHT are imported from player.py!
 screen = screenSize(WIDTH, HEIGHT)
 
-# Define some in game constants (used for the Physics "engine")
-SPEED_CAP = 8.0
-VSPEED_CAP = -8.0
-FRICTION = .2
-ACCELERATION = 0.1
-V_ACCELERATION = 0.1
-GRAVITY = 2.5
-
 # Frame handler (used for any sprite animation)
 frame = 0
 nextFrame = clock()
-
-# Create a player
-player = Player("Sprites/Mario.png", -10)
-playerSprite = makeSprite(player.skin, 15)
 
 # Define player controls
 up = pygame.K_UP
 down = pygame.K_DOWN
 left = pygame.K_LEFT
 right = pygame.K_RIGHT
-print(player.y)
+
+# Create a player
+player = Player("Sprites/Mario.png", -10)
+playerSprite = makeSprite(player.skin, 15)
 
 # Display Sprites as they're needed
 showSprite(playerSprite)
@@ -157,7 +92,7 @@ while True:
             # Update the player's sprite when walking
             changeSpriteImage(playerSprite, 3*3+frame)
 
-        HorizontalVelocity(last_held_direction, skidding)
+        player.HorizontalVelocity(last_held_direction, skidding, playerSprite)
  
     # Set the last held direction to left, and update the player's walk animation if they're on the ground           
     elif keys[left]:
@@ -168,20 +103,20 @@ while True:
             # Update the player's sprite when walking
             changeSpriteImage(playerSprite, 0*3+frame)
 
-        HorizontalVelocity(last_held_direction, skidding)
+        player.HorizontalVelocity(last_held_direction, skidding, playerSprite)
     
     elif keys[down]:
         # If the player is on the ground, make them duck
         if player.check_jump(level) == True:
             changeSpriteImage(playerSprite, 5*3 - 1)
         # Apply friction to the player
-        Friction()
+        player.Friction()
             
     # Apply friction to the player if they are not holding a button or ducking
     # (slow them to a hault)
     else:
         # Apply friction to the player
-        Friction()
+        player.Friction()
 
     # Generate player y velocity
     # Check to see if the player can jump
@@ -193,7 +128,7 @@ while True:
             # Otherwise, face Mario's sprite to the left
             else:
                 changeSpriteImage(playerSprite, 1*3+frame)
-            VerticalVelocity()
+            player.VerticalVelocity()
 
         else:
             # If the last input was to the right, face Mario's sprite to the right

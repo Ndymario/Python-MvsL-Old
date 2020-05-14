@@ -3,9 +3,18 @@
 #   Description: Player class/functions                                #
 ########################################################################
 
+from pygame_functions import *
 from level import *
 SIZE = WIDTH, HEIGHT = 320, 240
 wrap_around = True
+
+# Define some in game constants (used for the Physics "engine")
+SPEED_CAP = 8.0
+VSPEED_CAP = -8.0
+FRICTION = .2
+ACCELERATION = 0.1
+V_ACCELERATION = 0.1
+GRAVITY = 2.5
 
 class Player(object):
     def __init__(self, skin = None, height = 0, weight = 0.2, player_number = 0):
@@ -114,7 +123,63 @@ class Player(object):
                 self.x = level.in_tile(self.x,self.y-20)[1]
                 self.x_velocity = 0
                 return                
-        return 
+        return
+    
+    def Friction(self):
+        if ((self.x_velocity <= SPEED_CAP) and (self.x_velocity > 0)):
+                if ((self.x_velocity <= SPEED_CAP) and (self.x_velocity > 0)):
+                    self.x_velocity -= FRICTION
+                    if self.x_velocity < 0:
+                        self.x_velocity = 0.0
+                else:
+                    self.x_velocity = 0.0
+
+        elif ((self.x_velocity >= -SPEED_CAP) and (self.x_velocity < 0)):
+            if ((self.x_velocity >= -SPEED_CAP) and (self.x_velocity < 0)):
+                    self.x_velocity += FRICTION
+                    if self.x_velocity > 0:
+                        self.x_velocity = 0.0
+            else:
+                self.x_velocity = 0.0
+
+    def HorizontalVelocity(self, last_held_direction, skidding, playerSprite):
+        if (last_held_direction == "right"):
+                # Cap the player's horizontal speed to the right
+                if (self.x_velocity <= SPEED_CAP):
+                    if (self.x_velocity < 0):
+                        if (skidding == False):
+                            # Update the player to their skidding animation when turning around
+                            changeSpriteImage(playerSprite, 4*3)
+                            skidding = True
+                        else:
+                            skidding = False
+                    self.x_velocity += ACCELERATION
+                    if self.x_velocity >= SPEED_CAP:
+                        self.x_velocity = SPEED_CAP
+                elif (self.x_velocity >= SPEED_CAP):
+                    self.x_velocity = SPEED_CAP
+        
+        elif (last_held_direction == "left"):
+                # Cap the player's horizontal speed to the left
+                if (self.x_velocity >= -SPEED_CAP):
+                    if (self.x_velocity > 0):
+                        if (skidding == False):
+                            # Update the player to their skidding animation when turning around
+                            changeSpriteImage(playerSprite, 4*3+1)
+                            skidding = True
+                    else:
+                        skidding = False
+                    self.x_velocity -= ACCELERATION
+                    if self.x_velocity <= -SPEED_CAP:
+                        self.x_velocity = -SPEED_CAP
+                elif (self.x_velocity <= -SPEED_CAP):
+                    self.x_velocity = -SPEED_CAP
+
+    def VerticalVelocity(self):
+        if (self.y_velocity > VSPEED_CAP):
+            self.y_velocity = VSPEED_CAP
+        elif (self.y_velocity < VSPEED_CAP):
+            self.y_velocity = VSPEED_CAP
 
 
     # Print stats of the player when called
