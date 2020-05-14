@@ -23,7 +23,6 @@ sys.path.insert(1, "./Sprites")
 ##########--END CLASSES--##########
 #---------------------------------#
 ##########--BEING FUNCTIONS--######
-
 def Friction():
     if ((player.x_velocity <= SPEED_CAP) and (player.x_velocity > 0)):
             if ((player.x_velocity <= SPEED_CAP) and (player.x_velocity > 0)):
@@ -43,7 +42,6 @@ def Friction():
 
 def HorizontalVelocity(last_held_direction, skidding):
     if (last_held_direction == "right"):
-        if player.check_colision(level) == False:
             # Cap the player's horizontal speed to the right
             if (player.x_velocity <= SPEED_CAP):
                 if (player.x_velocity < 0):
@@ -60,7 +58,6 @@ def HorizontalVelocity(last_held_direction, skidding):
                 player.x_velocity = SPEED_CAP
     
     elif (last_held_direction == "left"):
-        if player.check_colision(level) == False:
             # Cap the player's horizontal speed to the left
             if (player.x_velocity >= -SPEED_CAP):
                 if (player.x_velocity > 0):
@@ -104,8 +101,8 @@ screen = screenSize(WIDTH, HEIGHT)
 # Define some in game constants (used for the Physics "engine")
 SPEED_CAP = 8.0
 VSPEED_CAP = -8.0
-FRICTION = 1
-ACCELERATION = 0.5
+FRICTION = .2
+ACCELERATION = 0.1
 V_ACCELERATION = 0.1
 GRAVITY = 2.5
 
@@ -122,6 +119,7 @@ up = pygame.K_UP
 down = pygame.K_DOWN
 left = pygame.K_LEFT
 right = pygame.K_RIGHT
+print(player.y)
 
 # Display Sprites as they're needed
 showSprite(playerSprite)
@@ -227,30 +225,11 @@ while True:
     tick(60)
 
     player.calculatePosition()
+    updated_position = player.check_collision(level)
 
-    if level.hit_under_tile(player.x,player.y - 26,player) != False:
-        player.y = level.hit_under_tile(player.x,player.y - 26,player).y + 26
-        player.y_velocity = 0.0
-
-    if level.tile_on(player.x,player.y) != False:
-        player.y = level.tile_on(player.x,player.y).top
-        player.y_velocity = 0.0
-
-    if player.check_colision(level) != False:
-        player.x = player.check_colision(level)
-        player.x_velocity = 0.0
-
-    if player.check_fall(level) != False:
-        player.y = player.check_fall(level)
-        player.y_velocity = 0.0
-
-    if level.bottom_lr_tile_collision(player.x,player.y) != False:
-        player.x = level.bottom_lr_tile_collision(player.x,player.y)
-        player.x_velocity = 0.0
-    
     
     #Render the screen
-    screen.fill(BLACK)
+    screen.fill(WHITE)
     for tile in level.tiles:
         for w in range(int(tile.width / 16)):
             for h in range(int(tile.height / 16)):
