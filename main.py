@@ -40,7 +40,7 @@ WHITE  = (255, 255, 255)
 
 # Setup the screen and other display stuff
 # Note: WIDTH & HEIGHT are imported from player.py!
-screen = screenSize(WIDTH, HEIGHT)
+screen = screenSize(WIDTH, HEIGHT, None, None, False)
 
 # Frame handler (used for any sprite animation)
 frame = 0
