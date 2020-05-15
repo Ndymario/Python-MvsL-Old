@@ -47,20 +47,17 @@ frame = 0
 nextFrame = clock()
 
 # Create a player
-player = Player("Sprites/Mario.png", -10)
-if P2: # Experimental
-    player2 = Player("Sprites/Luigi.png", -15, 0.15, 1, pygame.K_w, pygame.K_s, pygame.K_a, pygame.K_d)
+mario = Player(makeSprite("Sprites/Mario.png",15), -10)
 
+if P2: #Experimental 
+    luigi = Player(makeSprite("Sprites/Luigi.png",15), -15, 0.2, 1, pygame.K_w, pygame.K_s, pygame.K_a, pygame.K_d,50)
+    players = mario, luigi
+else:
+    players = [mario]
+    
 # Load the Player's sprites
-playerSprite = makeSprite(player.skin, 15)
-if P2: # Experimental
-    player2Sprite = makeSprite(player2.skin, 15)
-
-# Display Sprites as they're needed
-if P2: # Experimental
-    showSprite(player2Sprite)
-
-showSprite(playerSprite)
+for player in players:
+    showSprite(player.playerSprite)
 
 while True:
     events = pygame.event.get()
@@ -70,26 +67,25 @@ while True:
     keys = pygame.key.get_pressed()
 
     # Get player inputs
-    player.RefineInput(keys, level, playerSprite, frame)
-    if P2: # Experimental
-        player2.RefineInput(keys, level, player2Sprite, frame)
-    
-    if (DEBUG):
-        print(player)
+    for player in players:
+        # Turn inputs into movement
+        player.RefineInput(keys, level, player.playerSprite, frame)        
 
+        # Debug
+        if (DEBUG):
+            print(player)
+    
+        # Calculate and update position
+        player.calculatePosition()
+        updated_position = player.check_collision(level)        
+
+        # Check for death
+        player.death()
+
+        
+        
     # Limit the framerate to 60 FPS
     tick(60)
-
-    player.calculatePosition()
-    if P2: # Experimental
-        player2.calculatePosition()
-
-    updated_position = player.check_collision(level)
-    if P2: # Experimental
-        updated_position = player2.check_collision(level)
-    
-    player.death()
-    player2.death()
 
     #Render the screen
     screen.fill(WHITE)
@@ -99,9 +95,9 @@ while True:
                 screen.blit(pygame.image.load(tile.tile_image), [tile.x + (w * 16), tile.y - (h * 16)])
 
     # Update the player's sprite location
-    moveSprite(playerSprite, player.x, player.y + player.height)
-    if P2:
-        moveSprite(player2Sprite, player2.x, player2.y + player2.height)
+    for player in players:
+        moveSprite(player.playerSprite, player.x, player.y + player.height)
+
     updateDisplay()
     # Limits the frame rate of sprites (60 FPS walk cycle is bad)
     if clock() > nextFrame:

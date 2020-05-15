@@ -9,21 +9,21 @@ SIZE = WIDTH, HEIGHT = 320, 240
 wrap_around = True
 
 # Define some in game constants (used for the Physics "engine")
-FRICTION = 0.7
+FRICTION = 0.2
 ACCELERATION = 0.1
 GRAVITY = 2.5
 
 class Player(object):
-    def __init__(self, skin = None, height = 0, weight = 0.2, player_number = 0, up = pygame.K_UP, down = pygame.K_DOWN, left = pygame.K_LEFT, right = pygame.K_RIGHT):
+    def __init__(self, playerSprite = None, height = 0, weight = 0.2, player_number = 0, up = pygame.K_UP, down = pygame.K_DOWN, left = pygame.K_LEFT, right = pygame.K_RIGHT, x = 100, y = 100):
         # Keep track of the player number
         self.player_number = player_number
 
         # Used to determine what sprites to load for the player
-        self.skin = skin
+        self.playerSprite = playerSprite
 
         # Player Positioning variables
-        self.x = 100
-        self.y = 100
+        self.x = x
+        self.y = y
         self.x_velocity = 0.00
         self.y_velocity = 0.00
 
