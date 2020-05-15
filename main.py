@@ -8,6 +8,9 @@
 # Enable/Disable DEBUG mode
 DEBUG = True
 
+# Enable/Disable Player 2
+P2 = False
+
 # Import things I might need
 from pygame_functions import *
 import sys
@@ -48,9 +51,18 @@ nextFrame = clock()
 
 # Create a player
 player = Player("Sprites/Mario.png", -10)
+
+if P2:
+    player2 = Player("Sprites/Luigi.png", -15, 0.2, 1, pygame.K_w, pygame.K_s, pygame.K_a, pygame.K_d)
+
 playerSprite = makeSprite(player.skin, 15)
 
+if P2:
+    player2Sprite = makeSprite(player2.skin, 15)
+
 # Display Sprites as they're needed
+if P2:
+    showSprite(player2Sprite)
 showSprite(playerSprite)
 
 while True:
@@ -60,7 +72,10 @@ while True:
 
     keys = pygame.key.get_pressed()
 
-    
+    # Get player inputs
+    player.RefineInput(keys, level, playerSprite, frame)
+    if P2:
+        player2.RefineInput(keys, level, player2Sprite, frame)
     
     if (DEBUG):
         print(player)
@@ -69,10 +84,12 @@ while True:
     tick(60)
 
     player.calculatePosition()
-    updated_position = player.check_collision(level)
+    if P2:
+        player2.calculatePosition()
 
-    # Get player inputs
-    player.RefineInput(keys, level, playerSprite, frame)
+    updated_position = player.check_collision(level)
+    if P2:
+        updated_position = player2.check_collision(level)
 
     #Render the screen
     screen.fill(WHITE)
@@ -83,6 +100,8 @@ while True:
 
     # Update the player's sprite location
     moveSprite(playerSprite, player.x, player.y + player.height)
+    if P2:
+        moveSprite(player2Sprite, player2.x, player2.y + player2.height)
     updateDisplay()
     # Limits the frame rate of sprites (60 FPS walk cycle is bad)
     if clock() > nextFrame:
