@@ -9,16 +9,19 @@ SIZE = WIDTH, HEIGHT = 320, 240
 wrap_around = True
 
 # Define some in game constants (used for the Physics "engine")
-FRICTION = .2
+FRICTION = 0.7
 ACCELERATION = 0.1
-V_ACCELERATION = 0.1
 GRAVITY = 2.5
 
 class Player(object):
     def __init__(self, skin = None, height = 0, weight = 0.2, player_number = 0, up = pygame.K_UP, down = pygame.K_DOWN, left = pygame.K_LEFT, right = pygame.K_RIGHT):
+        # Keep track of the player number
         self.player_number = player_number
+
         # Used to determine what sprites to load for the player
         self.skin = skin
+
+        # Player Positioning variables
         self.x = 100
         self.y = 100
         self.x_velocity = 0.00
@@ -26,8 +29,10 @@ class Player(object):
 
         # Number is from height of the player sprite in pixles
         self.height = height
+
+        # Define some physics related variables
         self.weight = weight
-        self.SPEED_CAP = 8 
+        self.SPEED_CAP = 6 
         self.VSPEED_CAP = -8
         self.DSPEED_CAP = 8
 
@@ -42,7 +47,7 @@ class Player(object):
         self.idle = False
         self.skidding = False
     
-    def gravity(self, gravity,level):
+    def gravity(self, gravity, level):
         p_weight = self.weight
         if ((self.y_velocity >= self.VSPEED_CAP) and (self.y_velocity < 0)):
             if p_weight <= gravity:
@@ -50,8 +55,8 @@ class Player(object):
                     
             else:
                 p_weight = gravity
-            self.y_velocity += (self.weight * p_weight)
 
+            self.y_velocity += (self.weight * p_weight)
             if self.y_velocity >= 0:
                 self.y_velocity = 0.0
 
@@ -72,13 +77,17 @@ class Player(object):
         if self.y_velocity > self.DSPEED_CAP:
                 self.y_velocity = self.DSPEED_CAP
     
+    # "Kill" the player when their y value >= 4000
     def death(self):
-        pass
+        if self.y >= 4000:
+            self.respawn()
 
+    # Really basic respawn function (set the players x & y pos. to 100)
     def respawn(self):
-        pass
+        self.x = 100
+        self.y = 100
 
-
+    # Check to see if the player can jump
     def check_jump(self,level):
         if level.tile_on(self.x, self.y) != False:
             return True
@@ -93,17 +102,17 @@ class Player(object):
     def calculatePosition(self):
         # Make it so the player wraps around on the left and right (if enabled)
         if (wrap_around):
-            if (((self.x >= WIDTH - 10) and (self.x <= WIDTH)) and self.x_velocity >= 0):
-                self.x = 11
-            elif ((self.x >= 0) and (self.x <= 10)) and (self.x_velocity <= 0):
-                self.x = WIDTH - 11
+            if ((self.x >= WIDTH) and self.x_velocity >= 0):
+                self.x = 1
+            elif ((self.x <= 0) and (self.x_velocity <= 0)):
+                self.x = WIDTH
         
         # Calculate the players next position using their coordinates
         # (This will probably be improved in the future)
         self.x += self.x_velocity
         self.y += self.y_velocity
 
-    # Check if player touches part of a tile
+    # Check if a player touches part of a tile
     def check_collision(self,level):
         if level.under_tile(self.x,self.y-20) != False:
             self.y = level.under_tile(self.x,self.y - 20)
@@ -136,6 +145,7 @@ class Player(object):
                 return                
         return
     
+    # Make the player have friction against the ground
     def Friction(self):
         if ((self.x_velocity <= self.SPEED_CAP) and (self.x_velocity > 0)):
                 if ((self.x_velocity <= self.SPEED_CAP) and (self.x_velocity > 0)):
@@ -153,6 +163,7 @@ class Player(object):
             else:
                 self.x_velocity = 0.0
 
+    # Calculate the player's horizontal velocity
     def HorizontalVelocity(self, last_held_direction, skidding, playerSprite):
         if (last_held_direction == "right"):
                 # Cap the player's horizontal speed to the right
@@ -186,12 +197,14 @@ class Player(object):
                 elif (self.x_velocity <= -self.SPEED_CAP):
                     self.x_velocity = -self.SPEED_CAP
 
+    # Calculate the players vertical velocity
     def VerticalVelocity(self):
         if (self.y_velocity > self.VSPEED_CAP):
             self.y_velocity = self.VSPEED_CAP
         elif (self.y_velocity < self.VSPEED_CAP):
             self.y_velocity = self.VSPEED_CAP
 
+    # Allow the user to control the player
     def RefineInput(self, keys, level, playerSprite, frame):
         # Update the player's sprite when idling
         if (self.check_jump(level) == True):
@@ -240,7 +253,6 @@ class Player(object):
             # Apply friction to the player
             self.Friction()
 
-        # Generate player y velocity
         # Check to see if the player can jump
         if keys[self.up]:
             if self.check_jump(level) == True:

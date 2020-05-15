@@ -9,7 +9,7 @@
 DEBUG = True
 
 # Enable/Disable Player 2
-P2 = False
+P2 = True
 
 # Import things I might need
 from pygame_functions import *
@@ -34,9 +34,6 @@ sys.path.insert(1, "./Sprites")
 levelchunk1 = []
 level = Level("Levels/1-1.lvl")
 
-# Make the window title
-pygame.display.set_caption("Mario vs Luigi")
-
 # Define some constants
 BLACK = (0, 0, 0)
 WHITE  = (255, 255, 255)
@@ -51,18 +48,18 @@ nextFrame = clock()
 
 # Create a player
 player = Player("Sprites/Mario.png", -10)
+if P2: # Experimental
+    player2 = Player("Sprites/Luigi.png", -15, 0.15, 1, pygame.K_w, pygame.K_s, pygame.K_a, pygame.K_d)
 
-if P2:
-    player2 = Player("Sprites/Luigi.png", -15, 0.2, 1, pygame.K_w, pygame.K_s, pygame.K_a, pygame.K_d)
-
+# Load the Player's sprites
 playerSprite = makeSprite(player.skin, 15)
-
-if P2:
+if P2: # Experimental
     player2Sprite = makeSprite(player2.skin, 15)
 
 # Display Sprites as they're needed
-if P2:
+if P2: # Experimental
     showSprite(player2Sprite)
+
 showSprite(playerSprite)
 
 while True:
@@ -74,7 +71,7 @@ while True:
 
     # Get player inputs
     player.RefineInput(keys, level, playerSprite, frame)
-    if P2:
+    if P2: # Experimental
         player2.RefineInput(keys, level, player2Sprite, frame)
     
     if (DEBUG):
@@ -84,12 +81,15 @@ while True:
     tick(60)
 
     player.calculatePosition()
-    if P2:
+    if P2: # Experimental
         player2.calculatePosition()
 
     updated_position = player.check_collision(level)
-    if P2:
+    if P2: # Experimental
         updated_position = player2.check_collision(level)
+    
+    player.death()
+    player2.death()
 
     #Render the screen
     screen.fill(WHITE)

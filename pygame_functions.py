@@ -300,7 +300,7 @@ def screenSize(sizex, sizey, xpos=None, ypos=None, fullscreen=False):
         screen = pygame.display.set_mode([sizex, sizey])
     background = Background()
     screen.fill(background.colour)
-    pygame.display.set_caption("Graphics Window")
+    pygame.display.set_caption("Mario vs Luigi")
     background.surface = screen.copy()
     pygame.display.update()
     return screen
