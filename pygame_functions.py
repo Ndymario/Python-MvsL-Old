@@ -145,8 +145,7 @@ class newSprite(pygame.sprite.Sprite):
         self.originalHeight = originalRect.height
         self.rect.center = oldcenter
         self.mask = pygame.mask.from_surface(self.image)
-        if screenRefresh:
-            updateDisplay()
+
 
 
 class newTextBox(pygame.sprite.Sprite):
@@ -301,7 +300,7 @@ def screenSize(sizex, sizey, xpos=None, ypos=None, fullscreen=False):
         screen = pygame.display.set_mode([sizex, sizey])
     background = Background()
     screen.fill(background.colour)
-    pygame.display.set_caption("Graphics Window")
+    pygame.display.set_caption("Mario vs Luigi")
     background.surface = screen.copy()
     pygame.display.update()
     return screen
@@ -309,8 +308,7 @@ def screenSize(sizex, sizey, xpos=None, ypos=None, fullscreen=False):
 
 def moveSprite(sprite, x, y, centre=False):
     sprite.move(x, y, centre)
-    if screenRefresh:
-        updateDisplay()
+
 
 
 def rotateSprite(sprite, angle):
@@ -675,11 +673,7 @@ def updateDisplay():
     textboxRects = textboxGroup.draw(screen)
     pygame.display.update()
     keys = pygame.key.get_pressed()
-    if (keys[pygame.K_ESCAPE]):
-        pygame.quit()
-        sys.exit()
-    spriteGroup.clear(screen, background.surface)
-    textboxGroup.clear(screen, background.surface)
+    
 
 
 def mousePressed():
