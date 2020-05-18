@@ -11,10 +11,10 @@ wrap_around = True
 # Define some in game constants (used for the Physics "engine")
 FRICTION = 0.2
 ACCELERATION = 0.1
-GRAVITY = 2.5
+GRAVITY = 2.8
 
 class Player(object):
-    def __init__(self, playerSprite = None, height = 0, weight = 0.2, player_number = 0, up = pygame.K_UP, down = pygame.K_DOWN, left = pygame.K_LEFT, right = pygame.K_RIGHT, x = 100, y = 100):
+    def __init__(self, playerSprite = None, height = 0, controls = [pygame.K_UP, pygame.K_DOWN, pygame.K_LEFT, pygame.K_RIGHT], player_number = 0, x = 100, y = 100):
         # Keep track of the player number
         self.player_number = player_number
 
@@ -31,16 +31,17 @@ class Player(object):
         self.height = height
 
         # Define some physics related variables
-        self.weight = weight
+        self.weight = 0.2
         self.SPEED_CAP = 6 
         self.VSPEED_CAP = -8
         self.DSPEED_CAP = 8
 
         # Define player controls
-        self.up = up
-        self.down = down
-        self.left = left
-        self.right = right
+        self.controls = controls
+        self.up = controls[0]
+        self.down = controls[1]
+        self.left = controls[2]
+        self.right = controls[3]
 
         # Define misc. Player variables
         self.last_held_direction = "right"
@@ -60,7 +61,7 @@ class Player(object):
             if self.y_velocity >= 0:
                 self.y_velocity = 0.0
 
-        elif((self.y_velocity >= 0.0) and (self.check_fall(level) ==False)):
+        elif((self.y_velocity >= 0.0) and (self.check_fall(level) == False)):
             if p_weight <= gravity:
                 p_weight += gravity
             else:
