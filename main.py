@@ -6,7 +6,7 @@
 ########################################################################
 
 # Enable/Disable DEBUG mode
-DEBUG = True
+DEBUG = False
 
 # Enable/Disable Player 2
 P2 = True
@@ -50,7 +50,6 @@ screen = screenSize(WIDTH, HEIGHT, None, None, False)
 
 amap = []
 
-
 for y in range(20):
     for x in range(50):
         amap.append(cmap.get_tile(x, y,1))
@@ -62,10 +61,10 @@ nextFrame = clock()
 
 # Create a player
 
-mario = Player(makeSprite("Sprites/Mario.png",15), -26)
+mario = Player("Sprites/Mario/", -26)
 
 if P2: #Experimental 
-    luigi = Player(makeSprite("Sprites/Luigi.png",15), -31, [pygame.K_w, pygame.K_s, pygame.K_a, pygame.K_d], 1,25,100)
+    luigi = Player("Sprites/Luigi/", -31, [pygame.K_w, pygame.K_s, pygame.K_a, pygame.K_d], 1,25,100)
 
     players = mario, luigi
 else:
@@ -73,6 +72,8 @@ else:
     
 # Load the Player's sprites
 for player in players:
+    spriteSheet = player.powerupHandler(1)
+    player.playerSprite = makeSprite(spriteSheet, 15)
     showSprite(player.playerSprite)
 
 while True:

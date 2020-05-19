@@ -15,12 +15,13 @@ ACCELERATION = 0.1
 GRAVITY = 2.8
 
 class Player(object):
-    def __init__(self, playerSprite = None, height = 0, controls = [pygame.K_UP, pygame.K_DOWN, pygame.K_LEFT, pygame.K_RIGHT], player_number = 0, x = 50, y = 100):
+    def __init__(self, playerSprites = None, height = 0, controls = [pygame.K_UP, pygame.K_DOWN, pygame.K_LEFT, pygame.K_RIGHT], player_number = 0, x = 50, y = 100):
         # Keep track of the player number
         self.player_number = player_number
 
         # Used to determine what sprites to load for the player
-        self.playerSprite = playerSprite
+        self.playerSprite = None
+        self.playerSprites = playerSprites
 
         # Player Positioning variables
         self.x = x
@@ -48,6 +49,9 @@ class Player(object):
         self.last_held_direction = "right"
         self.idle = False
         self.skidding = False
+
+        # Powerup state for the player
+        self.powerupState = 0
     
     def gravity(self, gravity, level, cmap):
         p_weight = self.weight
@@ -80,6 +84,31 @@ class Player(object):
         if self.y_velocity > self.DSPEED_CAP:
                 self.y_velocity = self.DSPEED_CAP
     
+    def powerupHandler(self, powerupID):
+        # 0 - Small
+        # 1 - Super
+        # 2 - Fire Flower
+        # 3 - Blue Shell
+        # 4 - Mini Mushroom
+        # 5 - Mega Mushroom
+        # 6 - Hammer Suit
+        # 7 - Frog Suit
+        # 8 - Raccoon Leaf
+        # 9 - Cape Feather
+        # 10 - Propeller Suit
+
+        # Change the player's powerup state to the coorect powerup ID
+        self.powerupState = powerupID
+
+        # Load the correct spritesheet depending on the powerup
+        if (powerupID == 0):
+            spriteSheet = self.playerSprites + "small.png"
+            return spriteSheet
+
+        elif (powerupID == 1):
+            spriteSheet = self.playerSprites + "super.png"
+            return spriteSheet
+    
     # "Kill" the player when their y value >= 4000
     def death(self):
         if self.y >= HEIGHT:
@@ -89,6 +118,8 @@ class Player(object):
     def respawn(self):
         self.x = 100
         self.y = 100
+        self.x_velocity = 0
+        self.y_velocity = 0
 
     # Check to see if the player can jump
     def check_jump(self,cmap):
