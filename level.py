@@ -6,6 +6,7 @@
 
 #Add the path to the tile images folder
 import sys
+from cmap import *
 sys.path.insert(1, "./Tiles")
 
 class Tile(object):
@@ -92,52 +93,3 @@ class Level():
         sprite[list(sprite)[i]] = int.from_bytes(short,  byteorder='big')
       if not at_end:
         self.sprites.append(sprite)
-
-  def in_tile(self,x,y):
-      for tile in self.tiles:
-          if tile.top < y and tile.y >= y and tile.left - 20 < x and x < tile.right:
-                return self.nearest_surface(x,y,tile)
-      return False
-
-  def under_tile(self, x, y):
-      for tile in self.tiles:
-          if tile.y == y and x + 20 > tile.left and x < tile.right:
-              return tile.y
-      return False
-    
-  def tile_on(self,x,y):
-      for tile in self.tiles:
-          if (y  == tile.top) and x > tile.left - 20 and x < tile.right:
-                return tile.top
-      return False
-
-  def nearest_surface(self,x,y,tile):
-      if y == tile.y:
-          if 20 + x - tile.left > tile.right - x:
-              return False,tile.right
-          else:
-              return False,tile.left - 20
-      if y-tile.top > tile.y-y:
-          if 20 + x - tile.left > tile.right - x:
-              if tile.right - x > tile.y - y:
-                  return True,tile.y
-              else:
-                  return False,tile.right
-          else:
-              if 20+x-tile.left > tile.y-y:
-                  return True,tile.y
-              else:
-                  return False,tile.left - 20
-          return tile.y
-      else:
-          if 20 + x - tile.left > tile.right - x:
-              if tile.right - x > y-tile.top:
-                  return True,tile.top
-              else:
-                  return False,tile.right
-          else:
-              if 20 + x-tile.left > y-tile.top:
-                  return True,tile.top
-              else:
-                  return False,tile.left - 20
-
