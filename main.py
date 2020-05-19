@@ -6,7 +6,7 @@
 ########################################################################
 
 # Enable/Disable DEBUG mode
-DEBUG = False
+DEBUG = True
 
 # Enable/Disable Player 2
 P2 = True
@@ -39,11 +39,15 @@ cmap = CMap("Cmap/1-1.cmap")
 # Define some constants
 BLACK = (0, 0, 0)
 WHITE  = (255, 255, 255)
-
+amap = []
 # Setup the screen and other display stuff
 # Note: WIDTH & HEIGHT are imported from player.py!
 screen = screenSize(WIDTH, HEIGHT, None, None, False)
-
+for y in range(20):
+    for x in range(50):
+        amap.append(cmap.get_tile(x, y,1))
+    cmap.cmalp.append(amap)
+    amap = []
 # Frame handler (used for any sprite animation)
 frame = 0
 nextFrame = clock()
@@ -101,7 +105,7 @@ while True:
 
     # Update the player's sprite location
     for player in players:
-        moveSprite(player.playerSprite, player.x, player.y + player.height)
+        moveSprite(player.playerSprite, player.x+7, player.y+8 + player.height)
 
     updateDisplay()
     # Limits the frame rate of sprites (60 FPS walk cycle is bad)
