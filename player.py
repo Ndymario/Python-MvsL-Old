@@ -49,7 +49,7 @@ class Player(object):
         self.idle = False
         self.skidding = False
     
-    def gravity(self, gravity, level,cmap):
+    def gravity(self, gravity, level, cmap):
         p_weight = self.weight
         if ((self.y_velocity >= self.VSPEED_CAP) and (self.y_velocity < 0)):
             if p_weight <= gravity:
@@ -76,6 +76,7 @@ class Player(object):
             if self.check_fall(cmap) != False:
                 self.y_velocity = 0.0
                 self.y = self.check_fall(cmap)[1]
+
         if self.y_velocity > self.DSPEED_CAP:
                 self.y_velocity = self.DSPEED_CAP
     
@@ -115,7 +116,7 @@ class Player(object):
         self.y += self.y_velocity
 
     # Check if a player touches part of a tile
-    def check_collision(self,cmap):
+    def check_collision(self, cmap):
         if self.y >= HEIGHT:
             return self.x,self.y,self.x_velocity,self.y_velocity,False
         return cmap.in_tile(self.x,self.y,self.x_velocity,self.y_velocity)
@@ -257,6 +258,7 @@ class Player(object):
             # Otherwise, face Mario's sprite to the left
             else:
                 changeSpriteImage(playerSprite, 1*3+frame)
+
             self.gravity(GRAVITY,level,cmap)
 
         else:

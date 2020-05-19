@@ -6,7 +6,10 @@
 ########################################################################
 
 # Enable/Disable DEBUG mode
-DEBUG = False
+DEBUG = True
+
+# Enable/Disable Player 2
+P2 = True
 
 # Enable/Disable Player 2
 P2 = True
@@ -34,31 +37,36 @@ sys.path.insert(1, "./Sprites")
 # Load Level Data
 levelchunk1 = []
 level = Level("Levels/1-1.lvl")
+
 cmap = CMap("Cmap/1-1.cmap")
 
 # Define some constants
 BLACK = (0, 0, 0)
 WHITE  = (255, 255, 255)
-amap = []
+
 # Setup the screen and other display stuff
 # Note: WIDTH & HEIGHT are imported from player.py!
 screen = screenSize(WIDTH, HEIGHT, None, None, False)
+
+amap = []
+
 
 for y in range(20):
     for x in range(50):
         amap.append(cmap.get_tile(x, y,1))
     cmap.cmalp.append(amap)
     amap = []
-
 # Frame handler (used for any sprite animation)
 frame = 0
 nextFrame = clock()
 
 # Create a player
+
 mario = Player(makeSprite("Sprites/Mario.png",15), -26)
 
 if P2: #Experimental 
     luigi = Player(makeSprite("Sprites/Luigi.png",15), -31, [pygame.K_w, pygame.K_s, pygame.K_a, pygame.K_d], 1,25,100)
+
     players = mario, luigi
 else:
     players = [mario]
@@ -77,6 +85,7 @@ while True:
     # Get player inputs
     for player in players:
         # Turn inputs into movement
+
         player.RefineInput(keys, cmap, player.playerSprite, frame,level)        
 
         # Debug
@@ -90,6 +99,7 @@ while True:
         player.y = updated_position[1]
         player.x_velocity = updated_position[2]
         player.y_velocity = updated_position[3]
+
         # Check for death
         player.death()
 
@@ -107,6 +117,7 @@ while True:
 
     # Update the player's sprite location
     for player in players:
+
         moveSprite(player.playerSprite, player.x+7, player.y+8 + player.height)
 
     updateDisplay()

@@ -93,6 +93,3 @@ class Level():
         sprite[list(sprite)[i]] = int.from_bytes(short,  byteorder='big')
       if not at_end:
         self.sprites.append(sprite)
-
-  
-
