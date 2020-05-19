@@ -6,10 +6,7 @@
 ########################################################################
 
 # Enable/Disable DEBUG mode
-DEBUG = False
-
-# Enable/Disable Player 2
-P2 = True
+DEBUG = True
 
 # Enable/Disable Player 2
 P2 = True
@@ -55,24 +52,25 @@ for y in range(20):
         amap.append(cmap.get_tile(x, y,1))
     cmap.cmalp.append(amap)
     amap = []
+
 # Frame handler (used for any sprite animation)
 frame = 0
 nextFrame = clock()
 
 # Create a player
 
-mario = Player("Sprites/Mario/", -26)
+mario = Player("Sprites/Mario/", -18)
 
 if P2: #Experimental 
-    luigi = Player("Sprites/Luigi/", -31, [pygame.K_w, pygame.K_s, pygame.K_a, pygame.K_d], 1,25,100)
+    luigi = Player("Sprites/Luigi/", -23, [pygame.K_w, pygame.K_s, pygame.K_a, pygame.K_d], 1, 25, 100)
 
-    players = mario, luigi
+    players = [mario, luigi]
 else:
     players = [mario]
     
 # Load the Player's sprites
 for player in players:
-    spriteSheet = player.powerupHandler(1)
+    spriteSheet = player.powerupHandler(player.powerupState)
     player.playerSprite = makeSprite(spriteSheet, 15)
     showSprite(player.playerSprite)
 
@@ -87,11 +85,7 @@ while True:
     for player in players:
         # Turn inputs into movement
 
-        player.RefineInput(keys, cmap, player.playerSprite, frame,level)        
-
-        # Debug
-        if (DEBUG):
-            print(player)
+        player.RefineInput(keys, cmap, player.playerSprite, player.last_held_direction, frame, level)        
     
         # Calculate and update position
         player.calculatePosition()
@@ -104,7 +98,15 @@ while True:
         # Check for death
         player.death()
 
-        
+    # Debug
+        if (DEBUG):
+            if keys[pygame.K_0]:
+                mario.hurt()
+
+            if keys[pygame.K_1]:
+                mario.powerupState = 2
+                mario.hurt()
+
         
     # Limit the framerate to 60 FPS
     tick(60)
@@ -119,7 +121,7 @@ while True:
     # Update the player's sprite location
     for player in players:
 
-        moveSprite(player.playerSprite, player.x+7, player.y+8 + player.height)
+        moveSprite(player.playerSprite, player.x, player.y + player.height)
 
     updateDisplay()
     # Limits the frame rate of sprites (60 FPS walk cycle is bad)
