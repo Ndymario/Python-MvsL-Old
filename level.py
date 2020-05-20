@@ -49,7 +49,7 @@ class Level():
     self.bg_id = int.from_bytes(self.file.read(2), byteorder='big')
 
   def read_tiles(self):
-    self.file.read(4) # do nothing with magic
+    self.file.read(8) # do nothing with magic
     
     # read all tiles in chunk
     at_end = False

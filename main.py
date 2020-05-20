@@ -33,9 +33,11 @@ sys.path.insert(1, "./Sprites")
 
 # Load Level Data
 levelchunk1 = []
-level = Level("Levels/1-1.lvl")
 
+# This recreates the collision map automatically
 cmap = CMap("Cmap/1-1.cmap")
+cmap.create_cmap("Levels/1-1.lvl")
+level = Level("Levels/1-1.lvl")
 
 # Define some constants
 BLACK = (0, 0, 0)
@@ -45,25 +47,15 @@ WHITE  = (255, 255, 255)
 # Note: WIDTH & HEIGHT are imported from player.py!
 screen = screenSize(WIDTH, HEIGHT, None, None, False)
 
-amap = []
-
-for y in range(20):
-    for x in range(50):
-        amap.append(cmap.get_tile(x, y,1))
-    cmap.cmalp.append(amap)
-    amap = []
-
 # Frame handler (used for any sprite animation)
 frame = 0
 nextFrame = clock()
 
 # Create a player
-
 mario = Player("Sprites/Mario/")
 
 if P2: #Experimental 
-    luigi = Player("Sprites/Luigi/", -18, [pygame.K_w, pygame.K_s, pygame.K_a, pygame.K_d], 1, 25, 100)
-
+    luigi = Player("Sprites/Luigi/", -13, 20, [pygame.K_w, pygame.K_s, pygame.K_a, pygame.K_d], 1, 25, 100)
     players = [mario, luigi]
 else:
     players = [mario]
@@ -78,13 +70,11 @@ while True:
     events = pygame.event.get()
     for event in events:
         if event.type == pygame.QUIT: sys.exit()
-
     keys = pygame.key.get_pressed()
 
     # Get player inputs
     for player in players:
         # Turn inputs into movement
-
         player.RefineInput(keys, cmap, player.playerSprite, player.last_held_direction, frame, level)        
     
         # Calculate and update position
@@ -106,7 +96,6 @@ while True:
             if keys[pygame.K_1]:
                 mario.powerupState = 2
                 mario.hurt()
-
         
     # Limit the framerate to 60 FPS
     tick(60)
@@ -120,8 +109,7 @@ while True:
 
     # Update the player's sprite location
     for player in players:
-
-        moveSprite(player.playerSprite, player.x, player.y + player.height)
+        moveSprite(player.playerSprite, player.x+player.draw_width, player.y + player.draw_height)
 
     updateDisplay()
     # Limits the frame rate of sprites (60 FPS walk cycle is bad)

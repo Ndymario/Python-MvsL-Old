@@ -15,7 +15,7 @@ ACCELERATION = 0.1
 GRAVITY = 2.8
 
 class Player(object):
-    def __init__(self, playerSprites = None, height = -13, controls = [pygame.K_UP, pygame.K_DOWN, pygame.K_LEFT, pygame.K_RIGHT], player_number = 0, x = 50, y = 100):
+    def __init__(self, playerSprites = None, draw_height = -13, height = 20, controls = [pygame.K_UP, pygame.K_DOWN, pygame.K_LEFT, pygame.K_RIGHT], player_number = 0, x = 50, y = 100, width = 16, draw_width = 7):
         # Keep track of the player number
         self.player_number = player_number
 
@@ -28,9 +28,12 @@ class Player(object):
         self.y = y
         self.x_velocity = 0.00
         self.y_velocity = 0.00
+        self.width = width
+        self.draw_width = draw_width
 
         # Number is from height of the player sprite in pixles
         self.height = height
+        self.draw_height = draw_height
 
         # Define some physics related variables
         self.weight = 0.2
@@ -201,13 +204,15 @@ class Player(object):
     # If the player gets hurt, make them shrink one powerup, otherwise kill the player
     def hurt(self):
         if (self.powerupState > 1):
-            self.height = -18
+            self.draw_height = -18
+            self.height = 20
             self.powerupState = 1
             self.spriteChanger(self.powerupHandler(1), 15)
 
         elif (self.powerupState == 1):
             self.powerupState = 0
-            self.height  = -13
+            self.draw_height  = -13
+            self.height = 28
             self.spriteChanger(self.powerupHandler(0), 18)
 
         elif (self.powerupState == 0):
@@ -227,14 +232,14 @@ class Player(object):
 
     # Check to see if the player can jump
     def check_jump(self,cmap):
-        if cmap.on_tile(self.x,self.y) != False:
+        if cmap.on_tile(self.x,self.y,self.width,self.height) != False:
             return True
         return False
 
     # Check to see if the player should have gravity applied
     def check_fall(self,cmap):
-        if cmap.on_tile(self.x,self.y) != False:
-            return cmap.on_tile(self.x, self.y)
+        if cmap.on_tile(self.x,self.y,self.width,self.height) != False:
+            return cmap.on_tile(self.x, self.y,self.width,self.height)
         return False
 
     def calculatePosition(self):
@@ -254,7 +259,7 @@ class Player(object):
     def check_collision(self, cmap):
         if self.y >= HEIGHT:
             return self.x,self.y,self.x_velocity,self.y_velocity,False
-        return cmap.in_tile(self.x,self.y,self.x_velocity,self.y_velocity)
+        return cmap.in_tile(self.x,self.y,self.x_velocity,self.y_velocity,self.width,self.height)
             
     # Make the player have friction against the ground
     def Friction(self):

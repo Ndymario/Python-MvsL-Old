@@ -5,17 +5,42 @@
 
 # Thanks to SkilLP, we now have a collision map, much more
 # efficient when compared to how collision was done before
+
 class CMap():
-    def __init__(self, file = "1-1.cmap", width = 50, height = 20):
+    def __init__(self, file = "Level/1-1.lvl"):
         self.file = file
-        self.width = width
-        self.height = height
+        self.width = 0
+        self.height = 0
         self.cmalp = []
 
-    # It just works
-    def get_tile(self, x, y, scale=16):
-        buffer = open(self.file, "rb").read()
-        return int(buffer[round(int(x) / scale) + round(int(y) / scale) * self.width])
+    def create_cmap(self,lvl):
+        CMap_data = []
+        LVL_file = open(lvl, "rb").read()
+        self.width = int.from_bytes(LVL_file[4:6], "big")
+        self.height = int.from_bytes(LVL_file[6:8], "big")
+
+        for i in range(self.width):
+            for j in range(self.height):
+                CMap_data.append(0)
+
+        index = LVL_file.find(b'TILE') + 4
+
+        while LVL_file[index:index + 2] != b'\xff\xff':
+            index += 2
+            t_x = int.from_bytes(LVL_file[index: index + 2], byteorder='big')
+            index += 2
+            t_y = int.from_bytes(LVL_file[index: index + 2], byteorder='big')
+            index += 2
+            t_width = int.from_bytes(LVL_file[index: index + 2], byteorder='big')
+            index += 2
+            t_height = int.from_bytes(LVL_file[index: index + 2], byteorder='big')
+            index += 2
+            for i in range(t_height):
+                for j in range(t_width):
+                    CMap_data[t_x + j + (t_y - i) * self.width] = 1
+        for i in range(self.height):
+            temp_map = CMap_data[0 + self.width*i:self.width+ self.width*i]
+            self.cmalp.append(temp_map)
 
     def check_box(self,x,y,b,h):
         collisions = 0
@@ -27,44 +52,42 @@ class CMap():
             
     # Detects if a player is in a tile and puts the player
     # on the nearest open surface
-    def in_tile(self,x,y,xv,yv):
-          if self.check_box(x,y,20,20) == 1:
-              return self.nearest_surface(x,y,xv,yv)
+    def in_tile(self,x,y,xv,yv,pw,ph):
+          if self.check_box(x,y,pw,ph) == 1:
+              return self.nearest_surface(x,y,xv,yv,pw,ph)
           return [x,y,xv,yv,False]
 
     # Finds the closest surface to player
-    def nearest_surface(self,x,y,xv,yv):
+    def nearest_surface(self,x,y,xv,yv,pw,ph):
           for i in range(16):
-              if self.check_box(x,y+i,20,20) != 1:
+              if self.check_box(x,y+i,pw,ph) != 1:
                   return [x,y+i,xv,0,True]
 
-              if self.check_box(x,y-i,20,20) != 1:
+              if self.check_box(x,y-i,pw,ph) != 1:
                   return [x,y-i,xv,0,True]
                 
-              if self.check_box(x-i,y,20,20) != 1:
+              if self.check_box(x-i,y,pw,ph) != 1:
                   return [x-i,y,0,yv,True]
                 
-              if self.check_box(x+i,y,20,20) != 1:
+              if self.check_box(x+i,y,pw,ph) != 1:
                   return [x+i,y,0,yv,True]
 
-              if self.check_box(x+i,y+i,20,20) != 1:
+              if self.check_box(x+i,y+i,pw,ph) != 1:
                   return [x+i,y+i,0,0,True]
                 
-              if self.check_box(x-i,y+i,20,20) != 1:
+              if self.check_box(x-i,y+i,pw,ph) != 1:
                   return [x-i,y+i,0,0,True]
                 
-              if self.check_box(x+i,y-i,20,20) != 1:
+              if self.check_box(x+i,y-i,pw,ph) != 1:
                   return [x+i,y-i,0,0,True]
                 
-              if self.check_box(x-i,y-i,20,20) != 1:
+              if self.check_box(x-i,y-i,pw,ph) != 1:
                   return [x-i,y-i,0,0,True]
               
           return [x,y,xv,yv,False]
 
     # Looks at collision map and checks if player is on a tile
-    def on_tile(self,x,y):
-        if self.get_tile(x,y) == 0 and self.get_tile(x,y+1) == 1:
-            return True,y
-        if self.get_tile(x+20,y) == 0 and self.get_tile(x+20,y+1) == 1:
+    def on_tile(self,x,y,pw,ph):
+        if self.check_box(x,y,pw,ph) == 0 and self.check_box(x,y+1,pw,ph) == 1:
             return True,y
         return False
