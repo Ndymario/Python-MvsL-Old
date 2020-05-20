@@ -55,7 +55,8 @@ nextFrame = clock()
 mario = Player("Sprites/Mario/")
 
 if P2: #Experimental 
-    luigi = Player("Sprites/Luigi/", -13, 20, [pygame.K_w, pygame.K_s, pygame.K_a, pygame.K_d], 1, 25, 100)
+    luigi = Player("Sprites/Luigi/", [pygame.K_w, pygame.K_s, pygame.K_a, pygame.K_d]\
+                   , 1, 25, 100, 16, 20)
     players = [mario, luigi]
 else:
     players = [mario]
@@ -109,7 +110,7 @@ while True:
 
     # Update the player's sprite location
     for player in players:
-        moveSprite(player.playerSprite, player.x+player.draw_width, player.y + player.draw_height)
+        moveSprite(player.playerSprite, player.x + player.draw_width, player.y + player.draw_height)
 
     updateDisplay()
     # Limits the frame rate of sprites (60 FPS walk cycle is bad)

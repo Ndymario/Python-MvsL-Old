@@ -6,7 +6,7 @@
 from pygame_functions import *
 from level import *
 from cmap import *
-SIZE = WIDTH, HEIGHT = 320, 240
+SIZE = WIDTH, HEIGHT = 256, 192
 wrap_around = True
 
 # Define some in game constants (used for the Physics "engine")
@@ -15,7 +15,8 @@ ACCELERATION = 0.1
 GRAVITY = 2.8
 
 class Player(object):
-    def __init__(self, playerSprites = None, draw_height = -13, height = 20, controls = [pygame.K_UP, pygame.K_DOWN, pygame.K_LEFT, pygame.K_RIGHT], player_number = 0, x = 50, y = 100, width = 16, draw_width = 7):
+    def __init__(self, playerSprites = None, controls = [pygame.K_UP, pygame.K_DOWN, pygame.K_LEFT, pygame.K_RIGHT]\
+                 , player_number = 0, x = 50, y = 100, width = 16, height = 20, draw_width = 7, draw_height = -13):
         # Keep track of the player number
         self.player_number = player_number
 
@@ -28,11 +29,13 @@ class Player(object):
         self.y = y
         self.x_velocity = 0.00
         self.y_velocity = 0.00
-        self.width = width
-        self.draw_width = draw_width
 
-        # Number is from height of the player sprite in pixles
+        # Number is from height/width of the player sprite in pixles
+        self.width = width
         self.height = height
+
+        # Number is how far from (x,y) coordinates to draw sprite because dumb
+        self.draw_width = draw_width
         self.draw_height = draw_height
 
         # Define some physics related variables
@@ -193,11 +196,15 @@ class Player(object):
         # Load the correct spritesheet depending on the powerup
         if (powerupID == 0):
             self.powerupState = 0
+            self.draw_height  = -13
+            self.height = 20
             spriteSheet = self.playerSprites + "small.png"
             return spriteSheet
 
         elif (powerupID == 1):
             self.powerupState = 1
+            self.height = 26
+            self.draw_height = -18
             spriteSheet = self.playerSprites + "super.png"
             return spriteSheet
     
@@ -212,7 +219,7 @@ class Player(object):
         elif (self.powerupState == 1):
             self.powerupState = 0
             self.draw_height  = -13
-            self.height = 28
+            self.height = 26
             self.spriteChanger(self.powerupHandler(0), 18)
 
         elif (self.powerupState == 0):
