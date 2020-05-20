@@ -59,10 +59,10 @@ nextFrame = clock()
 
 # Create a player
 
-mario = Player("Sprites/Mario/", -18)
+mario = Player("Sprites/Mario/")
 
 if P2: #Experimental 
-    luigi = Player("Sprites/Luigi/", -23, [pygame.K_w, pygame.K_s, pygame.K_a, pygame.K_d], 1, 25, 100)
+    luigi = Player("Sprites/Luigi/", -18, [pygame.K_w, pygame.K_s, pygame.K_a, pygame.K_d], 1, 25, 100)
 
     players = [mario, luigi]
 else:
@@ -71,7 +71,7 @@ else:
 # Load the Player's sprites
 for player in players:
     spriteSheet = player.powerupHandler(player.powerupState)
-    player.playerSprite = makeSprite(spriteSheet, 15)
+    player.playerSprite = makeSprite(spriteSheet, 18)
     showSprite(player.playerSprite)
 
 while True:
@@ -126,5 +126,5 @@ while True:
     updateDisplay()
     # Limits the frame rate of sprites (60 FPS walk cycle is bad)
     if clock() > nextFrame:
-        frame = (frame+1)%3
+        frame = (frame+1)%2
         nextFrame += 60
