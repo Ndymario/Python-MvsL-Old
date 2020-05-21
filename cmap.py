@@ -60,11 +60,11 @@ class CMap():
     # Finds the closest surface to player
     def nearest_surface(self,x,y,xv,yv,pw,ph):
           for i in range(16):
-              if self.check_box(x,y+i,pw,ph) != 1:
-                  return [x,y+i,xv,0,True]
-
               if self.check_box(x,y-i,pw,ph) != 1:
                   return [x,y-i,xv,0,True]
+
+              if self.check_box(x,y+i,pw,ph) != 1:
+                  return [x,y+i,xv,0,True]
                 
               if self.check_box(x-i,y,pw,ph) != 1:
                   return [x-i,y,0,yv,True]
