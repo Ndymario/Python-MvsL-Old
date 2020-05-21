@@ -67,22 +67,30 @@ class CMap():
                   return [x,y+i,xv,0,True]
                 
               if self.check_box(x-i,y,pw,ph) != 1:
-                  return [x-i,y,0,yv,True]
+                  if xv >= 0:
+                      return [x-i,y,0,yv,True]
+                  else:
+                      return [x-i,y,xv,yv,True]
                 
               if self.check_box(x+i,y,pw,ph) != 1:
-                  return [x+i,y,0,yv,True]
+                  if xv <= 0:
+                      return [x+i,y,0,yv,True]
+                  else:
+                      return [x+i,y,xv,yv,True]
 
-              if self.check_box(x+i,y+i,pw,ph) != 1:
-                  return [x+i,y+i,0,0,True]
-                
-              if self.check_box(x-i,y+i,pw,ph) != 1:
-                  return [x-i,y+i,0,0,True]
-                
               if self.check_box(x+i,y-i,pw,ph) != 1:
                   return [x+i,y-i,0,0,True]
                 
               if self.check_box(x-i,y-i,pw,ph) != 1:
                   return [x-i,y-i,0,0,True]
+                
+              if self.check_box(x+i,y+i,pw,ph) != 1:
+                  return [x+i,y+i,xv,yv,True]
+                
+              if self.check_box(x-i,y+i,pw,ph) != 1:
+                  return [x-i,y+i,xv,yv,True]
+                
+              
               
           return [x,y,xv,yv,False]
 
