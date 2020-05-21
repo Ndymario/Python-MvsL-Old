@@ -49,6 +49,7 @@ screen = screenSize(WIDTH, HEIGHT, None, None, False)
 
 # Frame handler (used for any sprite animation)
 frame = 0
+superFrame = 0
 nextFrame = clock()
 
 # Create a player
@@ -56,7 +57,7 @@ mario = Player("Sprites/Mario/")
 
 if P2: #Experimental 
     luigi = Player("Sprites/Luigi/", [pygame.K_w, pygame.K_s, pygame.K_a, pygame.K_d]\
-                   , 1, 25, 100, 16, 20)
+                   , 1, 20, 100, 16, 20)
     players = [mario, luigi]
 else:
     players = [mario]
@@ -76,7 +77,7 @@ while True:
     # Get player inputs
     for player in players:
         # Turn inputs into movement
-        player.RefineInput(keys, cmap, player.playerSprite, player.last_held_direction, frame, level)        
+        player.RefineInput(keys, cmap, player.playerSprite, player.last_held_direction, frame, superFrame, level)        
     
         # Calculate and update position
         player.calculatePosition()
@@ -116,4 +117,5 @@ while True:
     # Limits the frame rate of sprites (60 FPS walk cycle is bad)
     if clock() > nextFrame:
         frame = (frame+1)%2
+        superFrame = (frame+1)%3
         nextFrame += 60

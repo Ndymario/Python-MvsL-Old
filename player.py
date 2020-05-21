@@ -97,7 +97,7 @@ class Player(object):
 
     # Used to determine what sprite to use for each animation
     # (Not all spritesheets will be layed out the same!)
-    def animationController(self, action, last_held_direction, frame = 0):
+    def animationController(self, action, last_held_direction, frame = 0, superFrame = 0):
         # Sprites for powerup state 0
         if (self.powerupState == 0):
             if (action == "idle"):
@@ -196,8 +196,12 @@ class Player(object):
         # Load the correct spritesheet depending on the powerup
         if (powerupID == 0):
             self.powerupState = 0
-            self.draw_height  = -13
-            self.height = 20
+            if (self.player_number == 0):
+                self.draw_height  = -13
+                self.height = 20
+            elif (self.player_number == 1):
+                self.draw_height  = -15
+                self.height = 20
             spriteSheet = self.playerSprites + "small.png"
             return spriteSheet
 
@@ -328,11 +332,11 @@ class Player(object):
             self.y_velocity = self.VSPEED_CAP
 
     # Allow the user to control the player
-    def RefineInput(self, keys, cmap, playerSprite, last_held_direction, frame, level):
+    def RefineInput(self, keys, cmap, playerSprite, last_held_direction, frame, superFrame, level):
         # Update the player's sprite when idling
         if (self.check_jump(cmap) == True):
             if (self.idle == False):
-                self.animationController("idle", last_held_direction, frame)
+                self.animationController("idle", last_held_direction, frame, superFrame)
 
         # Set the last held direction to right, and update the player's walk animation if they're on the ground
         if keys[self.right]:
@@ -341,7 +345,7 @@ class Player(object):
             # Check to see if the player is on the ground before applying the sprite change
             if (self.check_jump(cmap) == True):
                 # Update the player's sprite when walking
-                self.animationController("walk", last_held_direction, frame)
+                self.animationController("walk", last_held_direction, frame, superFrame)
 
             self.HorizontalVelocity(self.last_held_direction, self.skidding, playerSprite)
     
@@ -352,14 +356,14 @@ class Player(object):
             # Check to see if the player is on the ground before applying the sprite change
             if (self.check_jump(cmap) == True):
                 # Update the player's sprite when walking
-                self.animationController("walk", last_held_direction, frame)
+                self.animationController("walk", last_held_direction, frame, superFrame)
 
             self.HorizontalVelocity(self.last_held_direction, self.skidding, playerSprite)
         
         elif keys[self.down]:
             # If the player is on the ground, make them duck
             if self.check_jump(cmap) == True:
-                self.animationController("duck", last_held_direction, frame)
+                self.animationController("duck", last_held_direction, frame, superFrame)
             # Apply friction to the player
             self.Friction()
                 
@@ -373,20 +377,20 @@ class Player(object):
         if keys[self.up]:
             if self.check_jump(cmap) == True:
                 # Update the player's sprite, then apply vertical velocity
-                self.animationController("jump", last_held_direction, frame)
+                self.animationController("jump", last_held_direction, frame, superFrame)
                 self.VerticalVelocity()
 
             else:
                 # Update the player's sprite if the peak of the jump has been passed, then apply gravity
                 if (self.y_velocity > 0):
-                    self.animationController("fall", last_held_direction, frame)
+                    self.animationController("fall", last_held_direction, frame, superFrame)
                 self.gravity(GRAVITY,level,cmap)
 
         # Apply gravity to the player
         elif (self.check_jump(cmap) == False):
             # Update the player's sprite if the peak of the jump has been passed, then apply gravity
             if (self.y_velocity > 0):
-                self.animationController("fall", last_held_direction, frame)
+                self.animationController("fall", last_held_direction, frame, superFrame)
             self.gravity(GRAVITY,level,cmap)
 
         else:
