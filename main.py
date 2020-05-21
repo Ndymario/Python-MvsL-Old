@@ -64,9 +64,8 @@ else:
     
 # Load the Player's sprites
 for player in players:
-    spriteSheet = player.powerupHandler(player.powerupState)
-    player.playerSprite = makeSprite(spriteSheet, 18)
-    showSprite(player.playerSprite)
+    # The powerup handler already creates the player sprite, so use this to initalize the players
+    player.powerupHandler(0)
 
 while True:
     events = pygame.event.get()
@@ -93,11 +92,12 @@ while True:
     # Debug
         if (DEBUG):
             if keys[pygame.K_0]:
-                mario.hurt()
+                mario.powerupHandler(0)
+                luigi.powerupHandler(0)
 
             if keys[pygame.K_1]:
-                mario.powerupState = 2
-                mario.hurt()
+                mario.powerupHandler(1)
+                luigi.powerupHandler(1)
         
     # Limit the framerate to 60 FPS
     tick(60)
@@ -117,5 +117,5 @@ while True:
     # Limits the frame rate of sprites (60 FPS walk cycle is bad)
     if clock() > nextFrame:
         frame = (frame+1)%2
-        superFrame = (frame+1)%3
+        superFrame = (superFrame+1)%3
         nextFrame += 60
