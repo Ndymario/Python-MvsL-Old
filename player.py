@@ -364,29 +364,47 @@ class Player(object):
 
             # Check to see if the player is on the ground before applying the sprite change
             if (self.check_jump(cmap) == True):
-                # Update the player's sprite when walking
-                if (self.x_velocity <= 2):
-                    self.animationController("walk", last_held_direction, frame, superFrame)
-                # Update the player's sprite when running
+                # Check to see if ducking
+                if keys[self.down]:
+                    self.animationController("duck", last_held_direction, frame, superFrame)
+                    self.Friction()
                 else:
-                    self.animationController("run", last_held_direction, frame, superFrame)
+                    # Update the player's sprite when walking
+                    if (self.x_velocity <= 2):
+                        self.animationController("walk", last_held_direction, frame, superFrame)
+                    # Update the player's sprite when running
+                    else:
+                        self.animationController("run", last_held_direction, frame, superFrame)
+                    self.HorizontalVelocity(self.last_held_direction, self.skidding, playerSprite)
+            else:
+                self.HorizontalVelocity(self.last_held_direction, self.skidding, playerSprite)
+            # Change Sprite to ducking sprite if down is held
+            if keys[self.down]:
+                self.animationController("duck", last_held_direction, frame, superFrame)
 
-            self.HorizontalVelocity(self.last_held_direction, self.skidding, playerSprite)
-    
         # Set the last held direction to left, and update the player's walk animation if they're on the ground           
         elif keys[self.left]:
             self.last_held_direction = "left"
-
             # Check to see if the player is on the ground before applying the sprite change
             if (self.check_jump(cmap) == True):
-                # Update the player's sprite when walking
-                if (self.x_velocity >= -2):
-                    self.animationController("walk", last_held_direction, frame, superFrame)
+                # Check to see if ducking
+                if keys[self.down]:
+                    self.animationController("duck", last_held_direction, frame, superFrame)
+                    self.Friction()
                 else:
-                    self.animationController("run", last_held_direction, frame, superFrame)
+                    # Update the player's sprite when walking
+                    if (self.x_velocity >= -2):
+                        self.animationController("walk", last_held_direction, frame, superFrame)
+                    # Update the player's sprite when running
+                    else:
+                        self.animationController("run", last_held_direction, frame, superFrame)
+                    self.HorizontalVelocity(self.last_held_direction, self.skidding, playerSprite)
+            else:
+                self.HorizontalVelocity(self.last_held_direction, self.skidding, playerSprite)                
+            # Change Sprite to ducking sprite if down is held
+            if keys[self.down]:
+                self.animationController("duck", last_held_direction, frame, superFrame)
 
-            self.HorizontalVelocity(self.last_held_direction, self.skidding, playerSprite)
-        
         elif keys[self.down]:
             # If the player is on the ground, make them duck
             if self.check_jump(cmap) == True:
@@ -406,12 +424,17 @@ class Player(object):
                 # Update the player's sprite, then apply vertical velocity
                 self.animationController("jump", last_held_direction, frame, superFrame)
                 self.VerticalVelocity()
+                if keys[self.down]:
+                    self.animationController("duck", last_held_direction, frame, superFrame)
 
             else:
                 # Update the player's sprite if the peak of the jump has been passed, then apply gravity
                 if (self.y_velocity > 0):
                     self.animationController("fall", last_held_direction, frame, superFrame)
                 self.gravity(GRAVITY,level,cmap)
+                if keys[self.down]:
+                    self.animationController("duck", last_held_direction, frame, superFrame)
+
 
         # Apply gravity to the player
         elif (self.check_jump(cmap) == False):
@@ -419,8 +442,12 @@ class Player(object):
             if (self.y_velocity > 0):
                 self.animationController("fall", last_held_direction, frame, superFrame)
             self.gravity(GRAVITY,level,cmap)
+            if keys[self.down]:
+                self.animationController("duck", last_held_direction, frame, superFrame)
 
         else:
+            if keys[self.down]:
+                self.animationController("down", last_held_direction, frame, superFrame)
             self.gravity(GRAVITY,level,cmap)
 
     # Print stats of the player when called
