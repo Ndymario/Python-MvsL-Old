@@ -225,7 +225,7 @@ class Player(object):
                 self.draw_height  = -23
                 self.height = 27
             elif (self.player_number == 1):
-                self.draw_height  = -15
+                self.draw_height  = -23
                 self.height = 20
 
             spriteSheet = self.playerSprites + "super.png"
