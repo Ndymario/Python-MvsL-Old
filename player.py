@@ -325,7 +325,12 @@ class Player(object):
                             skidding = True
                     else:
                         skidding = False
-                    self.x_velocity += ACCELERATION
+
+                    if (skidding == True):
+                        self.x_velocity += ACCELERATION  * 2
+                        
+                    else:
+                        self.x_velocity += ACCELERATION
                     if self.x_velocity >= self.SPEED_CAP:
                         self.x_velocity = self.SPEED_CAP
                 elif (self.x_velocity >= self.SPEED_CAP):
@@ -341,7 +346,13 @@ class Player(object):
                             skidding = True
                     else:
                         skidding = False
-                    self.x_velocity -= ACCELERATION
+                    
+                    if (skidding == True):
+                        self.x_velocity -= ACCELERATION  * 2
+                        
+                    else:
+                        self.x_velocity -= ACCELERATION
+
                     if self.x_velocity <= -self.SPEED_CAP:
                         self.x_velocity = -self.SPEED_CAP
                 elif (self.x_velocity <= -self.SPEED_CAP):
