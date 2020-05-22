@@ -14,6 +14,9 @@ FRICTION = 0.2
 ACCELERATION = 0.05
 GRAVITY = 2.8
 
+# Create player sound effects
+jump = makeSound("Sounds/jump.wav")
+
 class Player(object):
     def __init__(self, playerSprites = None, controls = [pygame.K_UP, pygame.K_DOWN, pygame.K_LEFT, pygame.K_RIGHT]\
                  , player_number = 0, x = 50, y = 100, width = 10, height = 20, draw_width = 4, draw_height = -13):
@@ -424,6 +427,7 @@ class Player(object):
                 # Update the player's sprite, then apply vertical velocity
                 self.animationController("jump", last_held_direction, frame, superFrame)
                 self.VerticalVelocity()
+                playSound(jump)
                 if keys[self.down]:
                     self.animationController("duck", last_held_direction, frame, superFrame)
 
