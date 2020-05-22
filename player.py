@@ -62,6 +62,7 @@ class Player(object):
 
         # Powerup state for the player
         self.powerupState = 0
+        self.released_up = True
     
     def gravity(self, gravity, level, cmap):
         p_weight = self.weight
@@ -434,11 +435,12 @@ class Player(object):
 
         # Check to see if the player can jump
         if keys[self.up]:
-            if self.check_jump(cmap) == True:
+            if self.check_jump(cmap) == True and self.released_up == True:
                 # Update the player's sprite, then apply vertical velocity
                 self.animationController("jump", last_held_direction, frame, superFrame)
                 self.VerticalVelocity()
                 playSound(jump)
+                self.released_up = False
                 if keys[self.down]:
                     self.animationController("duck", last_held_direction, frame, superFrame)
 
@@ -449,6 +451,7 @@ class Player(object):
                 self.gravity(GRAVITY,level,cmap)
                 if keys[self.down]:
                     self.animationController("duck", last_held_direction, frame, superFrame)
+            
 
 
         # Apply gravity to the player
@@ -457,6 +460,7 @@ class Player(object):
             if (self.y_velocity > 0):
                 self.animationController("fall", last_held_direction, frame, superFrame)
             self.gravity(GRAVITY,level,cmap)
+            self.released_up = True
             if keys[self.down]:
                 self.animationController("duck", last_held_direction, frame, superFrame)
 
@@ -464,6 +468,7 @@ class Player(object):
             if keys[self.down]:
                 self.animationController("down", last_held_direction, frame, superFrame)
             self.gravity(GRAVITY,level,cmap)
+            self.released_up = True
 
     # Print stats of the player when called
     def __str__(self):
