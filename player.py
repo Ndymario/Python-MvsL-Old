@@ -11,14 +11,13 @@ wrap_around = True
 
 # Define some in game constants (used for the Physics "engine")
 FRICTION = 0.2
-ACCELERATION = 0.05
 GRAVITY = 2.8
 
 # Create player sound effects
 jump = makeSound("Sounds/jump.wav")
 
 class Player(object):
-    def __init__(self, playerSprites = None, controls = [pygame.K_UP, pygame.K_DOWN, pygame.K_LEFT, pygame.K_RIGHT]\
+    def __init__(self, playerSprites = None, controls = [pygame.K_UP, pygame.K_DOWN, pygame.K_LEFT, pygame.K_RIGHT, pygame.K_RCTRL]\
                  , player_number = 0, x = 50, y = 100, width = 10, height = 20, draw_width = 4, draw_height = -13):
         # Keep track of the player number
         self.player_number = player_number
@@ -43,9 +42,10 @@ class Player(object):
 
         # Define some physics related variables
         self.weight = 0.2
-        self.SPEED_CAP = 4 
+        self.SPEED_CAP = 2 
         self.VSPEED_CAP = -7.5
         self.DSPEED_CAP = 7.5
+        self.ACCELERATION = 0.05
 
         # Define player controls
         self.controls = controls
@@ -53,6 +53,7 @@ class Player(object):
         self.down = controls[1]
         self.left = controls[2]
         self.right = controls[3]
+        self.sprint = controls[4]
 
         # Define misc. Player variables
         self.last_held_direction = "right"
@@ -63,6 +64,7 @@ class Player(object):
         # Powerup state for the player
         self.powerupState = 0
         self.released_up = True
+        self.sprinting = False
     
     def gravity(self, gravity, level, cmap):
         p_weight = self.weight
@@ -328,10 +330,10 @@ class Player(object):
                         skidding = False
 
                     if (skidding == True):
-                        self.x_velocity += ACCELERATION  * 2
+                        self.x_velocity += self.ACCELERATION  * 2
                         
                     else:
-                        self.x_velocity += ACCELERATION
+                        self.x_velocity += self.ACCELERATION
                     if self.x_velocity >= self.SPEED_CAP:
                         self.x_velocity = self.SPEED_CAP
                 elif (self.x_velocity >= self.SPEED_CAP):
@@ -349,10 +351,10 @@ class Player(object):
                         skidding = False
                     
                     if (skidding == True):
-                        self.x_velocity -= ACCELERATION  * 2
+                        self.x_velocity -= self.ACCELERATION  * 2
                         
                     else:
-                        self.x_velocity -= ACCELERATION
+                        self.x_velocity -= self.ACCELERATION
 
                     if self.x_velocity <= -self.SPEED_CAP:
                         self.x_velocity = -self.SPEED_CAP
@@ -374,6 +376,13 @@ class Player(object):
                 self.animationController("idle", last_held_direction, frame, superFrame)
 
         # Set the last held direction to right, and update the player's walk animation if they're on the ground
+        if keys[self.sprint]:
+            self.SPEED_CAP = 4
+            self.ACCELERATION = 0.1
+        else:
+            self.SPEED_CAP = 2
+            self.ACCELERATION = .05
+            
         if keys[self.right]:
             self.last_held_direction = "right"
 
