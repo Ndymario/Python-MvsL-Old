@@ -44,7 +44,7 @@ class CMap():
 
     def check_box(self,x,y,b,h):
         collisions = 0
-        for o in range(round(int(y-h)/16),round(int(y)/16)+1):
+        for o in range(round(int(y-h))//16,round(int(y))//16+1):
             temp_map = self.cmalp[o]
             if 1 in temp_map[round(x/16):round((x+b)/16)+1]:
                 collisions = 1
@@ -61,10 +61,16 @@ class CMap():
     def nearest_surface(self,x,y,xv,yv,pw,ph):
           for i in range(16):
               if self.check_box(x,y-i,pw,ph) != 1:
-                  return [x,y-i,xv,0,True]
+                  if yv >= 0:
+                      return [x,y-i,xv,0,True]
+                  else:
+                      return [x,y-i,xv,yv,True]
 
               if self.check_box(x,y+i,pw,ph) != 1:
-                  return [x,y+i,xv,0,True]
+                  if yv <= 0:
+                      return [x,y+i,xv,0,True]
+                  else:
+                      return [x,y+i,xv,yv,True]
                 
               if self.check_box(x-i,y,pw,ph) != 1:
                   if xv >= 0:
@@ -90,8 +96,6 @@ class CMap():
               if self.check_box(x-i,y+i,pw,ph) != 1:
                   return [x-i,y+i,xv,yv,True]
                 
-              
-              
           return [x,y,xv,yv,False]
 
     # Looks at collision map and checks if player is on a tile

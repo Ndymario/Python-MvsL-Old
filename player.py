@@ -215,11 +215,11 @@ class Player(object):
             self.powerupState = 0
 
             if (self.player_number == 0):
-                self.draw_height  = -13
-                self.height = 20
+                self.draw_height  = -21
+                self.height = 15
             elif (self.player_number == 1):
-                self.draw_height  = -15
-                self.height = 20
+                self.draw_height  = -23
+                self.height = 15
             
             spriteSheet = self.playerSprites + "small.png"
             self.spriteChanger(spriteSheet, 18)
@@ -229,10 +229,10 @@ class Player(object):
             self.powerupState = 1
 
             if (self.player_number == 0):
-                self.draw_height  = -23
+                self.draw_height  = -30
                 self.height = 27
             elif (self.player_number == 1):
-                self.draw_height  = -23
+                self.draw_height  = -30
                 self.height = 20
 
             spriteSheet = self.playerSprites + "super.png"
@@ -377,12 +377,15 @@ class Player(object):
                 self.animationController("idle", last_held_direction, frame, superFrame)
 
         # Set the last held direction to right, and update the player's walk animation if they're on the ground
+        if keys[pygame.K_z]:
+            print(self.y)
+            
         if keys[self.sprint]:
             self.SPEED_CAP = 4
-            self.ACCELERATION = 0.1
+            self.ACCELERATION = 0.075
         else:
             self.SPEED_CAP = 2
-            self.ACCELERATION = .05
+            self.ACCELERATION = .07
         
         if keys[self.right]:
             self.last_held_direction = "right"
@@ -479,6 +482,7 @@ class Player(object):
                 self.animationController("down", last_held_direction, frame, superFrame)
             self.gravity(GRAVITY,level,cmap)
             self.released_up = True
+        self.y = round(self.y)
 
     # Print stats of the player when called
     def __str__(self):
