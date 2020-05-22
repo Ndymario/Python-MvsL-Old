@@ -42,7 +42,8 @@ class Player(object):
 
         # Define some physics related variables
         self.weight = 0.2
-        self.SPEED_CAP = 2 
+        self.SPEED_CAP = 2
+        self.MAX_SPEED_CAP = 8
         self.VSPEED_CAP = -7.5
         self.DSPEED_CAP = 7.5
         self.ACCELERATION = 0.05
@@ -300,16 +301,16 @@ class Player(object):
             
     # Make the player have friction against the ground
     def Friction(self):
-        if ((self.x_velocity <= self.SPEED_CAP) and (self.x_velocity > 0)):
-                if ((self.x_velocity <= self.SPEED_CAP) and (self.x_velocity > 0)):
+        if ((self.x_velocity <= self.MAX_SPEED_CAP) and (self.x_velocity > 0)):
+                if ((self.x_velocity <= self.MAX_SPEED_CAP) and (self.x_velocity > 0)):
                     self.x_velocity -= FRICTION
                     if self.x_velocity < 0:
                         self.x_velocity = 0.0
                 else:
                     self.x_velocity = 0.0
 
-        elif ((self.x_velocity >= -self.SPEED_CAP) and (self.x_velocity < 0)):
-            if ((self.x_velocity >= -self.SPEED_CAP) and (self.x_velocity < 0)):
+        elif ((self.x_velocity >= -self.MAX_SPEED_CAP) and (self.x_velocity < 0)):
+            if ((self.x_velocity >= -self.MAX_SPEED_CAP) and (self.x_velocity < 0)):
                     self.x_velocity += FRICTION
                     if self.x_velocity > 0:
                         self.x_velocity = 0.0
@@ -357,9 +358,9 @@ class Player(object):
                         self.x_velocity -= self.ACCELERATION
 
                     if self.x_velocity <= -self.SPEED_CAP:
-                        self.x_velocity = -self.SPEED_CAP
+                        self.Friction()
                 elif (self.x_velocity <= -self.SPEED_CAP):
-                    self.x_velocity = -self.SPEED_CAP
+                    self.Friction()
 
     # Calculate the players vertical velocity
     def VerticalVelocity(self):
@@ -382,7 +383,7 @@ class Player(object):
         else:
             self.SPEED_CAP = 2
             self.ACCELERATION = .05
-            
+        
         if keys[self.right]:
             self.last_held_direction = "right"
 
