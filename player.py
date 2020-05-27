@@ -17,7 +17,7 @@ GRAVITY = 2.8
 jump = makeSound("Sounds/jump.wav")
 
 class Player(object):
-    def __init__(self, playerSprites = None, controls = [pygame.K_UP, pygame.K_DOWN, pygame.K_LEFT, pygame.K_RIGHT, pygame.K_RSHIFT]\
+    def __init__(self, playerSprites = None, controls = [pygame.K_UP, pygame.K_DOWN, pygame.K_LEFT, pygame.K_RIGHT, pygame.K_SPACE, pygame.K_RSHIFT]\
                  , player_number = 0, x = 50, y = 100, width = 10, height = 20, draw_width = 4, draw_height = -13):
         # Keep track of the player number
         self.player_number = player_number
@@ -54,7 +54,8 @@ class Player(object):
         self.down = controls[1]
         self.left = controls[2]
         self.right = controls[3]
-        self.sprint = controls[4]
+        self.jump = controls[4]
+        self.sprint = controls[5]
 
         # Define misc. Player variables
         self.last_held_direction = "right"
@@ -145,6 +146,12 @@ class Player(object):
                 elif (last_held_direction == "left"):
                     changeSpriteImage(self.playerSprite, 16)
 
+            elif (action == "looking_up"):
+                if (last_held_direction == "right"):
+                    changeSpriteImage(self.playerSprite, 19)
+                elif (last_held_direction == "left"):
+                    changeSpriteImage(self.playerSprite, 18)
+
         elif (self.powerupState  == 1):
             if (action == "idle"):
                 if (last_held_direction == "right"):
@@ -188,6 +195,12 @@ class Player(object):
                 elif (last_held_direction == "left"):
                     changeSpriteImage(self.playerSprite, 20)
 
+            elif (action == "looking_up"):
+                if (last_held_direction == "right"):
+                    changeSpriteImage(self.playerSprite, 22)
+                elif (last_held_direction == "left"):
+                    changeSpriteImage(self.playerSprite, 23)
+
     def spriteChanger(self, newSprite, frames):
         if (self.playerSprite != None):
             hideSprite(self.playerSprite)
@@ -206,6 +219,7 @@ class Player(object):
         # 8 - Raccoon Leaf
         # 9 - Cape Feather
         # 10 - Propeller Suit
+        # 11 - Mari0 (Portal Gun + Mario)
 
         # Change the player's powerup state to the coorect powerup ID
         self.powerupState = powerupID
@@ -222,7 +236,7 @@ class Player(object):
                 self.height = 15
             
             spriteSheet = self.playerSprites + "small.png"
-            self.spriteChanger(spriteSheet, 18)
+            self.spriteChanger(spriteSheet, 20)
             return spriteSheet
 
         elif (powerupID == 1):
@@ -236,7 +250,7 @@ class Player(object):
                 self.height = 20
 
             spriteSheet = self.playerSprites + "super.png"
-            self.spriteChanger(spriteSheet, 22)
+            self.spriteChanger(spriteSheet, 24)
             return spriteSheet
     
     # If the player gets hurt, make them shrink one powerup, otherwise kill the player
@@ -377,8 +391,11 @@ class Player(object):
                 self.animationController("idle", last_held_direction, frame, superFrame)
 
         # Set the last held direction to right, and update the player's walk animation if they're on the ground
+
+        #---DEBUG---#
         if keys[pygame.K_z]:
             print(self.y)
+        #-----------#
             
         if keys[self.sprint]:
             self.SPEED_CAP = 4
@@ -386,6 +403,10 @@ class Player(object):
         else:
             self.SPEED_CAP = 2
             self.ACCELERATION = .07
+        
+        if keys[self.up]:
+            if (self.check_jump(cmap) == True):
+                self.animationController("looking_up", last_held_direction, frame, superFrame)
         
         if keys[self.right]:
             self.last_held_direction = "right"
@@ -447,7 +468,7 @@ class Player(object):
             self.Friction()
 
         # Check to see if the player can jump
-        if keys[self.up]:
+        if keys[self.jump]:
             if self.check_jump(cmap) == True and self.released_up == True:
                 # Update the player's sprite, then apply vertical velocity
                 self.animationController("jump", last_held_direction, frame, superFrame)

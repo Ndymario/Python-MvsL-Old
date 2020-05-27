@@ -56,7 +56,7 @@ nextFrame = clock()
 mario = Player("Sprites/Mario/")
 
 if P2: #Experimental 
-    luigi = Player("Sprites/Luigi/", [pygame.K_w, pygame.K_s, pygame.K_a, pygame.K_d, pygame.K_LSHIFT]\
+    luigi = Player("Sprites/Luigi/", [pygame.K_w, pygame.K_s, pygame.K_a, pygame.K_d, pygame.K_q, pygame.K_LSHIFT]\
                    , 1, 15, 100, 10, 20)
     players = [mario, luigi]
 else:
