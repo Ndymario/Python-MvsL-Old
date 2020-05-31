@@ -252,6 +252,20 @@ class Player(object):
             spriteSheet = self.playerSprites + "super.png"
             self.spriteChanger(spriteSheet, 24)
             return spriteSheet
+
+        elif (powerupID == 2):
+            self.powerupState = 2
+
+            if (self.player_number == 0):
+                self.draw_height  = -30
+                self.height = 27
+            elif (self.player_number == 1):
+                self.draw_height  = -30
+                self.height = 20
+
+            spriteSheet = self.playerSprites + "fire.png"
+            self.spriteChanger(spriteSheet, 26)
+            return spriteSheet
     
     # If the player gets hurt, make them shrink one powerup, otherwise kill the player
     def hurt(self):

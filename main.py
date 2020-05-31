@@ -22,13 +22,19 @@ from cmap import *
 sys.path.insert(1, "./Sprites")
 
 #---------------------------------#
+
 ##########--BEGIN CLASSES--##########
   
 ##########--END CLASSES--##########
+
 #---------------------------------#
+
 ##########--BEING FUNCTIONS--######
+
 ##########--END FUNCTIONS--########
+
 #---------------------------------#
+
 ##########-Begin Main Code-########
 
 # Load Level Data
@@ -119,3 +125,5 @@ while True:
         frame = (frame+1)%2
         superFrame = (superFrame+1)%3
         nextFrame += 60
+
+###########-End Main Code-#########
