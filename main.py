@@ -104,6 +104,9 @@ while True:
             if keys[pygame.K_1]:
                 mario.powerupHandler(1)
                 luigi.powerupHandler(1)
+            
+            if keys[pygame.K_2]:
+                mario.powerupHandler(2)
         
     # Limit the framerate to 60 FPS
     tick(60)

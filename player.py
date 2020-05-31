@@ -200,6 +200,61 @@ class Player(object):
                     changeSpriteImage(self.playerSprite, 22)
                 elif (last_held_direction == "left"):
                     changeSpriteImage(self.playerSprite, 23)
+        
+        elif (self.powerupState  == 2):
+            if (action == "idle"):
+                if (last_held_direction == "right"):
+                    changeSpriteImage(self.playerSprite, 17)
+                elif (last_held_direction == "left"):
+                    changeSpriteImage(self.playerSprite, 0)
+            
+            elif (action == "jump"):
+                if (last_held_direction == "right"):
+                    changeSpriteImage(self.playerSprite, 11)
+                elif (last_held_direction == "left"):
+                    changeSpriteImage(self.playerSprite, 6)
+            
+            elif (action == "fall"):
+                if (last_held_direction == "right"):
+                    changeSpriteImage(self.playerSprite, 10)
+                elif (last_held_direction == "left"):
+                    changeSpriteImage(self.playerSprite, 7)
+
+            elif (action == "walk"):
+                if (last_held_direction == "right"):
+                    changeSpriteImage(self.playerSprite, 17 - superFrame)
+                elif (last_held_direction == "left"):
+                    changeSpriteImage(self.playerSprite, 0 + superFrame)
+            
+            elif (action == "run"):
+                if (last_held_direction == "right"):
+                    changeSpriteImage(self.playerSprite, 14 - superFrame)
+                elif (last_held_direction == "left"):
+                    changeSpriteImage(self.playerSprite, 3 + superFrame)
+            
+            elif (action == "skidding"):
+                if (last_held_direction == "right"):
+                    changeSpriteImage(self.playerSprite, 18)
+                elif (last_held_direction == "left"):
+                    changeSpriteImage(self.playerSprite, 19)
+            
+            elif (action == "duck"):
+                if (last_held_direction == "right"):
+                    changeSpriteImage(self.playerSprite, 21)
+                elif (last_held_direction == "left"):
+                    changeSpriteImage(self.playerSprite, 20)
+
+            elif (action == "looking_up"):
+                if (last_held_direction == "right"):
+                    changeSpriteImage(self.playerSprite, 23)
+                elif (last_held_direction == "left"):
+                    changeSpriteImage(self.playerSprite, 22)
+            
+            elif (action == "fire"):
+                if (last_held_direction == "right"):
+                    changeSpriteImage(self.playerSprite, 25)
+                elif (last_held_direction == "left"):
+                    changeSpriteImage(self.playerSprite, 24)
 
     def spriteChanger(self, newSprite, frames):
         if (self.playerSprite != None):
@@ -410,13 +465,6 @@ class Player(object):
         if keys[pygame.K_z]:
             print(self.y)
         #-----------#
-            
-        if keys[self.sprint]:
-            self.SPEED_CAP = 4
-            self.ACCELERATION = 0.075
-        else:
-            self.SPEED_CAP = 2
-            self.ACCELERATION = .07
         
         if keys[self.up]:
             if (self.check_jump(cmap) == True):
@@ -499,8 +547,6 @@ class Player(object):
                 self.gravity(GRAVITY,level,cmap)
                 if keys[self.down]:
                     self.animationController("duck", last_held_direction, frame, superFrame)
-            
-
 
         # Apply gravity to the player
         elif (self.check_jump(cmap) == False):
@@ -518,6 +564,17 @@ class Player(object):
             self.gravity(GRAVITY,level,cmap)
             self.released_up = True
         self.y = round(self.y)
+
+        if keys[self.sprint]:
+            # If the player is powerups 2 (Fire), shoot a fireball
+            if (self.powerupState == 2):
+                self.animationController("fire", last_held_direction, frame, superFrame)
+
+            self.SPEED_CAP = 4
+            self.ACCELERATION = 0.075
+        else:
+            self.SPEED_CAP = 2
+            self.ACCELERATION = .07
 
     # Print stats of the player when called
     def __str__(self):
