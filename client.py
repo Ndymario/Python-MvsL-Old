@@ -40,18 +40,18 @@ def text_objects(text, font):
 def game_intro():
     screen = screenSize(800, 600, None, None, False)
 
-    keys = pygame.key.get_pressed()
-
     intro = True
 
     while intro:
+        keys = pygame.key.get_pressed()
+
         for event in pygame.event.get():
             print(event)
             if event.type == pygame.QUIT:
                 pygame.quit()
                 quit()
 
-        if keys[pygame.K_0]:
+        if keys[pygame.K_SPACE]:
             intro = False
                 
         screen.fill(WHITE)
@@ -61,6 +61,9 @@ def game_intro():
         screen.blit(TextSurf, TextRect)
         pygame.display.update()
         tick(15)
+    
+    # Run the game if the title screen is cleared
+    gameLoop()
 
 def gameLoop():
 
@@ -122,16 +125,30 @@ def gameLoop():
 
         # Debug
             if (DEBUG):
+                # Make the Bros. Small
                 if keys[pygame.K_0]:
                     mario.powerupHandler(0)
                     luigi.powerupHandler(0)
 
+                # Make both Bros. Super
                 if keys[pygame.K_1]:
                     mario.powerupHandler(1)
                     luigi.powerupHandler(1)
                 
+                # Make Mario Fire Mario
                 if keys[pygame.K_2]:
                     mario.powerupHandler(2)
+
+                # Return to the title screen
+                if keys[pygame.K_9]:
+                    # Remove all player sprites 
+                    for player in players:
+                        hideSprite(player.playerSprite)
+                    # Remove all players from the player list
+                    players.clear()
+
+                    # Load the title screen
+                    game_intro()
             
         # Limit the framerate to 60 FPS
         tick(60)
@@ -173,8 +190,8 @@ BLACK = (0, 0, 0)
 WHITE  = (255, 255, 255)
 
 
-# Run the game "loops"
-#game_intro()
-gameLoop()
+# Initialize the game to the title screen
+
+game_intro()
 
 ###########-End Main Code-#########
