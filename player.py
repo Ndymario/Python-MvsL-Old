@@ -7,7 +7,14 @@ from pygame_functions import *
 from level import *
 from cmap import *
 SIZE = WIDTH, HEIGHT = 256, 192
-wrap_around = True
+wrap_around = False
+
+# Define some in game constants (used for the Physics "engine")
+FRICTION = 0.2
+GRAVITY = 2.8
+
+# Create player sound effects
+jump = makeSound("Sounds/jump.wav")
 
 # Define some in game constants (used for the Physics "engine")
 FRICTION = 0.2
@@ -580,3 +587,5 @@ class Player(object):
     def __str__(self):
         return "Player X Velocity: {}\nPlayer Y Velocity: {}\nPlayer X: {}\nPlayer Y: {}"\
             .format(self.x_velocity, self.y_velocity, self.x, self.y)
+
+
