@@ -25,6 +25,30 @@ sys.path.insert(1, "./Sprites")
 
 ##########--BEGIN CLASSES--##########
 
+class Camera(object):
+    def __init__(self):
+        self.camera = game.players[0].x,game.players[0].y
+        self.moving_frames = 0
+        self.keys = ""
+
+    def move_view(self,player):
+        if self.moving_frames > 28:
+            self.moving_frames = 28
+        if self.moving_frames < -40:
+            self.moving_frames = -40
+        if self.moving_frames == 0:
+            self.camera = player.x - 112
+        else:
+            if self.keys[player.left] or self.keys[player.right] or player.last_held_direction == "right" or player.last_held_direction == "left":
+                self.camera = player.x - 112 + (2 * self.moving_frames)
+                
+        if self.camera > player.x - 84:
+            self.camera = player.x - 84
+        elif self.camera < player.x - 140:
+            self.camera = player.x - 140
+
+
+
 class Game(object):
     def __init__(self):
         self.players = []
@@ -91,6 +115,11 @@ class Game(object):
             self.players = [mario, luigi]
         else:
             self.players = [mario]
+
+        old_x = self.players[0].x
+        old_dirrection = ""
+
+        View = Camera()
             
         # Load the Player's sprites
         for player in self.players:
@@ -138,20 +167,28 @@ class Game(object):
                     # Return to the title screen
                     if keys[pygame.K_9]:
                         self.clearGame()
-                
+
+            View.keys = keys
+            if round(self.players[0].x) > old_x:
+                View.moving_frames += .5
+            elif round(self.players[0].x) < old_x:
+                View.moving_frames -= .5
+
+            old_x = round(self.players[0].x)
+            old_dirrection = keys
             # Limit the framerate to 60 FPS
             tick(60)
-
+            View.move_view(self.players[0])
             #Render the screen
             screen.fill(WHITE)
             for tile in level.tiles:
-                for w in range(int(tile.width / 16)):
+                for w in range(int((tile.width) / 16)):
                     for h in range(int(tile.height / 16)):
-                        screen.blit(pygame.image.load(tile.tile_image), [tile.x + (w * 16), tile.y - (h * 16)])
+                        screen.blit(pygame.image.load(tile.tile_image), [tile.x + (w * 16) - View.camera, tile.y - (h * 16)])
 
             # Update the player's sprite location
             for player in self.players:
-                moveSprite(player.playerSprite, player.x + player.draw_width, player.y + player.draw_height)
+                moveSprite(player.playerSprite, round(player.x) + player.draw_width - View.camera, player.y + player.draw_height)
 
             updateDisplay()
             # Limits the frame rate of sprites (60 FPS walk cycle is bad)
