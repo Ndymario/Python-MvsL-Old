@@ -6,6 +6,7 @@
 
 #Add the path to the tile images folder
 import sys
+from cmap import *
 sys.path.insert(1, "./Tiles")
 
 class Tile(object):
@@ -48,7 +49,7 @@ class Level():
     self.bg_id = int.from_bytes(self.file.read(2), byteorder='big')
 
   def read_tiles(self):
-    self.file.read(4) # do nothing with magic
+    self.file.read(8) # do nothing with magic
     
     # read all tiles in chunk
     at_end = False
@@ -92,42 +93,3 @@ class Level():
         sprite[list(sprite)[i]] = int.from_bytes(short,  byteorder='big')
       if not at_end:
         self.sprites.append(sprite)
-
-  def tile_on(self, x, y):
-        for tile in self.tiles:
-            if (y  >= tile.top) and y <= tile.top + 8 and x > tile.x - 20 and x < tile.x + tile.width:
-                return tile
-        return False
-    
-  def hit_under_tile(self, x, y,player):
-        if player.y_velocity < 0:
-            for tile in self.tiles:
-                if (y > tile.y - 6) and y < tile.y and x > tile.x - 20 and x < tile.x + tile.width:
-                    return tile
-        return False
-
-  def in_tile(self, x, y):
-      for tile in self.tiles:
-          if (y > tile.y - 8) and y <= tile.y - 1 and x < tile.width + tile.x and x >tile.x - 20:
-              return tile
-      return False
-
-  def lr_tile_collision(self, x, y, v):
-      for tile in self.tiles:
-          if (y <= tile.top + tile.height) and y > tile.top and x > tile.x - 20 and x <= tile.x - 7:
-              return tile.left - 20
-          if (y <= tile.top + tile.height) and y > tile.top and x >= tile.x + tile.width - 1 and x < tile.x + tile.width:
-              return tile.right
-          if (y < tile.top + tile.height-4) and y > tile.top and x + v > tile.x - 20 and x + v <= tile.x - 7:
-              return tile.left - 20
-          if (y < tile.top + tile.height-4) and y > tile.top and x + v >= tile.x + tile.width - 10 and x + v < tile.x + tile.width:
-              return tile.right
-      return False
-
-  def bottom_lr_tile_collision(self,x,y):
-      for tile in self.tiles:
-          if (y <= tile.top + tile.height) and y > tile.top and x > tile.x - 10 and x <= tile.x - 8:
-                  return tile.left - 10
-          if (y <= tile.top + tile.height) and y > tile.top and x >= tile.x + tile.width - 10 and x <= tile.x + tile.width:
-                  return tile.right
-      return False
