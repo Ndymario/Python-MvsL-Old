@@ -25,6 +25,38 @@ sys.path.insert(1, "./Sprites")
 
 ##########--BEGIN CLASSES--##########
 
+
+# Probably doesn't need to be a class, and if it does, should probably be in a different file, but oh well
+class Camera(object):
+    def __init__(self):
+        # Sets the camera position to player 0, originally planned to use a tuple for x and y but abandoned that
+        self.camera = game.players[0].x
+        # Moving frames are used to control View position
+        self.moving_frames = 0
+
+        # Need to add y movement
+
+    # Moves the View box (camera) around a player
+    def move_view(self,player):
+        # Defines when to stop adding onto the moving frames
+        if self.moving_frames > 14:
+            self.moving_frames = 14
+        if self.moving_frames < -14:
+            self.moving_frames = -14
+
+        if self.moving_frames == 0:
+            # Sets the camera to the middle of the screen
+            self.camera = player.x - 112
+        else:
+            # Moves the camera with the player
+            self.camera = player.x - 112 + (2 * self.moving_frames)
+
+        # Defines the boundaries of how far the camera can go from the player, with the center being - 112
+        if self.camera > player.x - 84:
+            self.camera = player.x - 84
+        elif self.camera < player.x - 140:
+            self.camera = player.x - 140
+
 class Game(object):
     def __init__(self):
         self.players = []
@@ -50,6 +82,7 @@ class Game(object):
             if keys[pygame.K_SPACE]:
                 intro = False
                     
+            # Draws the title screen
             screen.fill(WHITE)
             largeText = pygame.font.Font('freesansbold.ttf', 100)
             TextSurf, TextRect = self.text_objects("Mario vs Luigi", largeText)
@@ -91,6 +124,11 @@ class Game(object):
             self.players = [mario, luigi]
         else:
             self.players = [mario]
+
+        old_x = self.players[0].x
+        old_dirrection = ""
+
+        View = Camera()
             
         # Load the Player's sprites
         for player in self.players:
@@ -138,20 +176,36 @@ class Game(object):
                     # Return to the title screen
                     if keys[pygame.K_9]:
                         self.clearGame()
-                
+
+            # Detect if player moved
+            if round(self.players[0].x) > old_x:
+                # If player moved to the right, try to move the View a bit
+                View.moving_frames += .5
+            elif round(self.players[0].x) < old_x:
+                # If player moved to the left, try to move the View a bit
+                View.moving_frames -= .5
+
+            # Used to detect a change in x between each frame to control View
+            old_x = round(self.players[0].x)
+
+            # Move the View box
+            View.move_view(self.players[0])
+
             # Limit the framerate to 60 FPS
             tick(60)
 
             #Render the screen
             screen.fill(WHITE)
             for tile in level.tiles:
-                for w in range(int(tile.width / 16)):
+                for w in range(int((tile.width) / 16)):
                     for h in range(int(tile.height / 16)):
-                        screen.blit(pygame.image.load(tile.tile_image), [tile.x + (w * 16), tile.y - (h * 16)])
+                        # (Image to load, [(left coord of tile * width) - View, (bottom coord of tile - height)])
+                        screen.blit(pygame.image.load(tile.tile_image), [tile.x + (w * 16) - View.camera, tile.y - (h * 16)])
 
             # Update the player's sprite location
             for player in self.players:
-                moveSprite(player.playerSprite, player.x + player.draw_width, player.y + player.draw_height)
+                # (Player Sprite, (player x + width offset - View), (player y + height offset))
+                moveSprite(player.playerSprite, round(player.x) + player.draw_width - View.camera, player.y + player.draw_height)
 
             updateDisplay()
             # Limits the frame rate of sprites (60 FPS walk cycle is bad)
