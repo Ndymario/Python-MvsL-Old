@@ -46,7 +46,7 @@ class CMap():
         collisions = 0
         for o in range(round(int(y-h))//16,round(int(y))//16+1):
             temp_map = self.cmalp[o]
-            if 1 in temp_map[round(x/16):round((x+b)/16)+1]:
+            if 1 in temp_map[round(x//16):round((x+b)//16)+1]:
                 collisions = 1
         return collisions
             

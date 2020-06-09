@@ -30,7 +30,7 @@ sys.path.insert(1, "./Sprites")
 class Camera(object):
     def __init__(self):
         # Sets the camera position to player 0, originally planned to use a tuple for x and y but abandoned that
-        self.camera = game.players[0].x
+        self.camera = game.players[0].position[0]
         # Moving frames are used to control View position
         self.moving_frames = 0
 
@@ -46,16 +46,18 @@ class Camera(object):
 
         if self.moving_frames == 0:
             # Sets the camera to the middle of the screen
-            self.camera = player.x - 112
+            tempX, tempY = player.position
+            self.camera = tempX - 112
         else:
             # Moves the camera with the player
-            self.camera = player.x - 112 + (2 * self.moving_frames)
+            tempX, tempY = player.position
+            self.camera = tempY - 112 + (2 * self.moving_frames)
 
         # Defines the boundaries of how far the camera can go from the player, with the center being - 112
-        if self.camera > player.x - 84:
-            self.camera = player.x - 84
-        elif self.camera < player.x - 140:
-            self.camera = player.x - 140
+        if self.camera > player.position[0] - 84:
+            self.camera = player.position[0] - 84
+        elif self.camera < player.position[0] - 140:
+            self.camera = player.position[0] - 140
 
 class Game(object):
     def __init__(self):
@@ -74,7 +76,6 @@ class Game(object):
             keys = pygame.key.get_pressed()
 
             for event in pygame.event.get():
-                print(event)
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     quit()
@@ -125,7 +126,7 @@ class Game(object):
         else:
             self.players = [mario]
 
-        old_x = self.players[0].x
+        old_x = self.players[0].position[0]
         old_dirrection = ""
 
         View = Camera()
@@ -147,12 +148,11 @@ class Game(object):
                 player.RefineInput(keys, cmap, player.playerSprite, player.last_held_direction, frame, superFrame, level)        
             
                 # Calculate and update position
-                player.calculatePosition()
-                updated_position = player.check_collision(cmap)        
-                player.x = updated_position[0]
-                player.y = updated_position[1]
-                player.x_velocity = updated_position[2]
-                player.y_velocity = updated_position[3]
+
+                player.calculatePosition(20, cmap)
+                updated_position = player.check_collision(cmap)
+                player.position = (updated_position[0], updated_position[1])
+                player.velocity = (updated_position[2], updated_position[3])
 
                 # Check for death
                 player.death()
@@ -205,7 +205,7 @@ class Game(object):
             # Update the player's sprite location
             for player in self.players:
                 # (Player Sprite, (player x + width offset - View), (player y + height offset))
-                moveSprite(player.playerSprite, round(player.x) + player.draw_width - View.camera, player.y + player.draw_height)
+                moveSprite(player.playerSprite, round(player.position[0]) + player.draw_width - View.camera, player.position[1] + player.draw_height)
 
             updateDisplay()
             # Limits the frame rate of sprites (60 FPS walk cycle is bad)
