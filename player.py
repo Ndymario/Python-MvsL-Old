@@ -576,6 +576,12 @@ class Player(object):
             self.SPEED_CAP = 2
             self.ACCELERATION = .07
 
+        if keys[self.down]:
+            self.height = 15
+        else:
+            if self.powerupState > 0:
+                self.height = 27
+
     # Print stats of the player when called
     def __str__(self):
         return "Player X Velocity: {}\nPlayer Y Velocity: {}\nPlayer X: {}\nPlayer Y: {}"\

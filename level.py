@@ -69,8 +69,46 @@ class Level():
           at_end = True
           break
         tile[list(tile)[i]] = int.from_bytes(short,  byteorder='big')
+      # Allows for many tile types, if you want to add more, follow the formula
+      if tile["id"] == 1:
+          tile_image = "Tiles/Grass_0.png"
+      elif tile["id"] == 2:
+          tile_image = "Tiles/Grass_1.png"
+      elif tile["id"] == 3:
+          tile_image = "Tiles/Grass_2.png"
+      elif tile["id"] == 4:
+          tile_image = "Tiles/Grass_3.png"
+      elif tile["id"] == 5:
+          tile_image = "Tiles/Grass_4.png"
+      elif tile["id"] == 6:
+          tile_image = "Tiles/Grass_5.png"
+      elif tile["id"] == 7:
+          tile_image = "Tiles/Grass_6.png"
+      elif tile["id"] == 8:
+          tile_image = "Tiles/Grass_7.png"
+      elif tile["id"] == 9:
+          tile_image = "Tiles/Grass_8.png"
+      elif tile["id"] == 10:
+          tile_image = "Tiles/Grass_9.png"
+      elif tile["id"] == 11:
+          tile_image = "Tiles/Grass_10.png"
+      elif tile["id"] == 12:
+          tile_image = "Tiles/Grass_11.png"
+      elif tile["id"] == 13:
+          tile_image = "Tiles/Grass_12.png"
+      elif tile["id"] == 14:
+          tile_image = "Tiles/Pipe_1.png"
+      elif tile["id"] == 15:
+          tile_image = "Tiles/Pipe_2.png"
+      elif tile["id"] == 16:
+          tile_image = "Tiles/Pipe_3.png"
+      elif tile["id"] == 17:
+          tile_image = "Tiles/Pipe_4.png"
+      elif tile["id"] == 18:
+          tile_image = "Tiles/Stone.png"
+          
       if not at_end:
-        self.tiles.append(Tile("Tiles/Grass_Top.png",1, tile["x"] * 16, tile["y"] * 16, tile["width"] * 16, tile["height"] * 16))
+        self.tiles.append(Tile(tile_image,1, tile["x"] * 16, tile["y"] * 16, tile["width"] * 16, tile["height"] * 16))
 
   def read_sprites(self):
     self.file.read(4) # do nothing with magic

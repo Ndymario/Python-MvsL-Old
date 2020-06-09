@@ -200,7 +200,7 @@ class Game(object):
             for tile in level.tiles:
                 for w in range(int((tile.width) / 16)):
                     for h in range(int(tile.height / 16)):
-                        # (Image to load, [(left coord of tile * width) - View, (bottom coord of tile - height)])
+                        # (Image to load, [(left coord of tile + width) - View, (bottom coord of tile - height)])
                         screen.blit(pygame.image.load(tile.tile_image), [tile.x + (w * 16) - View.camera, tile.y - (h * 16)])
 
             # Update the player's sprite location
