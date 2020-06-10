@@ -51,7 +51,7 @@ class Camera(object):
         else:
             # Moves the camera with the player
             tempX, tempY = player.position
-            self.camera = tempY - 112 + (2 * self.moving_frames)
+            self.camera = tempX - 112 + (2 * self.moving_frames)
 
         # Defines the boundaries of how far the camera can go from the player, with the center being - 112
         if self.camera > player.position[0] - 84:
@@ -151,6 +151,7 @@ class Game(object):
 
                 player.calculatePosition(20, cmap)
                 updated_position = player.check_collision(cmap)
+                print(updated_position)
                 player.position = (updated_position[0], updated_position[1])
                 player.velocity = (updated_position[2], updated_position[3])
 
@@ -178,15 +179,15 @@ class Game(object):
                         self.clearGame()
 
             # Detect if player moved
-            if round(self.players[0].x) > old_x:
+            if round(self.players[0].position[0]) > old_x:
                 # If player moved to the right, try to move the View a bit
                 View.moving_frames += .5
-            elif round(self.players[0].x) < old_x:
+            elif round(self.players[0].position[0]) < old_x:
                 # If player moved to the left, try to move the View a bit
                 View.moving_frames -= .5
 
             # Used to detect a change in x between each frame to control View
-            old_x = round(self.players[0].x)
+            old_x = round(self.players[0].position[0])
 
             # Move the View box
             View.move_view(self.players[0])

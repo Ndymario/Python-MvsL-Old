@@ -19,14 +19,14 @@ jump = makeSound("Sounds/jump.wav")
 
 # Define some in game constants (used for the Physics "engine")
 FRICTION = 0.2
-GRAVITY = 2.8
+GRAVITY = 1.9
 
 # Create player sound effects
 jump = makeSound("Sounds/jump.wav")
 
 class Player(object):
     def __init__(self, playerSprites = None, controls = [pygame.K_UP, pygame.K_DOWN, pygame.K_LEFT, pygame.K_RIGHT, pygame.K_SPACE, pygame.K_RSHIFT]\
-                 , player_number = 0, x = 50, y = 100, width = 10, height = 20, draw_width = 4, draw_height = -13):
+                 , player_number = 0, x = 50, y = 100, width = 10, height = 20, draw_width = -4, draw_height = -13):
         # Keep track of the player number
         self.player_number = player_number
 
@@ -35,7 +35,8 @@ class Player(object):
         self.playerSprites = playerSprites
 
         # Player Positioning variables
-        self.position = np.array((0, 0), int)
+        self.temp_position = [10,0]
+        self.position = np.array((10, 0), int)
         self.velocity = np.array((0, 0), int)
         self.gravity = np.array((0, GRAVITY),int)
 
@@ -51,8 +52,8 @@ class Player(object):
         self.weight = 0.2
         self.SPEED_CAP = 2
         self.MAX_SPEED_CAP = 8
-        self.VSPEED_CAP = -7.5
-        self.DSPEED_CAP = 7.5
+        self.VSPEED_CAP = 7.5
+        self.DSPEED_CAP = -7.5
         self.ACCELERATION = 0.05
 
         # Define player controls
@@ -104,7 +105,7 @@ class Player(object):
         
         # Calculate x & y velocity using fancy Vector math
         tempPX, tempPY = self.position
-        tempVX, tempVY = self.position
+        tempVX, tempVY = self.velocity
         x = self.approach(tempPX, tempVX, dt * 50)
         y = self.approach(tempPY, tempVY, dt * 50)
         self.velocity = (x, y)
@@ -367,7 +368,7 @@ class Player(object):
             self.powerupState = 0
 
             if (self.player_number == 0):
-                self.draw_height  = -21
+                self.draw_height  = -22
                 self.height = 15
             elif (self.player_number == 1):
                 self.draw_height  = -23
@@ -448,10 +449,10 @@ class Player(object):
 
     # Check if a player touches part of a tile
     def check_collision(self, cmap):
-        if self.position[1] >= HEIGHT:
-            return self.position, self.velocity, False
         pX, pY = self.position
         vX, vY = self.velocity
+        if self.position[1] >= HEIGHT:
+            return pX, pY, vX, vY, False
         return cmap.in_tile(pX, pY, vX, vY, self.width, self.height)
 
     # Allow the user to control the player
@@ -481,7 +482,7 @@ class Player(object):
                 if keys[self.down]:
                     self.animationController("duck", last_held_direction, frame, superFrame)
                     x, y = self.velocity
-                    self.velocity(0, y)
+                    self.velocity = (0, y)
 
                 else:
                     # Update the player's velocity
@@ -553,7 +554,7 @@ class Player(object):
                 self.animationController("jump", last_held_direction, frame, superFrame)
 
                 x, y = self.velocity
-                self.velocity = (x, self.VSPEED_CAP)
+                self.velocity = (x, self.DSPEED_CAP)
 
                 playSound(jump)
                 self.released_up = False

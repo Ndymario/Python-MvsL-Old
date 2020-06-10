@@ -45,9 +45,12 @@ class CMap():
     def check_box(self,x,y,b,h):
         collisions = 0
         for o in range(round(int(y-h))//16,round(int(y))//16+1):
-            temp_map = self.cmalp[o]
-            if 1 in temp_map[round(x//16):round((x+b)//16)+1]:
-                collisions = 1
+            try:
+                temp_map = self.cmalp[o]
+                if 1 in temp_map[round(x//16):round((x+b)//16)+1]:
+                    collisions = 1
+            except:
+                return [1,1]
         return collisions
             
     # Detects if a player is in a tile and puts the player
