@@ -8,7 +8,7 @@ from level import *
 from cmap import *
 import numpy as np
 SIZE = WIDTH, HEIGHT = 256, 192
-wrap_around = True
+wrap_around = False
 
 # Define some in game constants (used for the Physics "engine")
 FRICTION = 0.2
@@ -78,6 +78,8 @@ class Player(object):
         self.sprinting = False
 
     def approach(self, current, goal, dt):
+        # Why are we subtracting the position from the velocity and comparing that to dt? And why does that result in
+        # the new velocity?
         difference = goal - current
 
         if (self.skidding):
@@ -86,6 +88,8 @@ class Player(object):
             elif (difference < -dt):
                 return current - dt * 2
         else:
+            # Unless friction automatically sets the velocity to 0, this will cause the velocity to go way above the
+            # cap.
             if (difference > dt):
                 return current + dt
             elif (difference < -dt):
@@ -93,7 +97,7 @@ class Player(object):
         return goal
 
     def calculatePosition(self, dt, cmap):
-        tempX, tempY = self.velocity
+        tempX, tempY = self.position
         # Make it so the player wraps around on the left and right (if enabled)
         if (wrap_around):
             x, y = self.position
@@ -105,11 +109,13 @@ class Player(object):
         # Calculate x & y velocity using fancy Vector math
         tempPX, tempPY = self.position
         tempVX, tempVY = self.velocity
-        x = self.approach(tempPX, tempVX, dt * 50)
-        y = self.approach(tempPY, tempVY, dt * 50)
+        # I don't know why dt exists, it doesn't seem to be implemented correctly. I have to set the value dt is being
+        # multiplied by to a value above or equal to the width of the stage divided by 10 to prevent dumbness.
+        x = self.approach(tempPX, tempVX, dt * 1000)
+        y = self.approach(tempPY, tempVY, dt * 1000)
         self.velocity = (x, y)
 
-        # Update the player's postition and velocity
+        # Update the player's position and velocity
         pX, pY = self.position
         vX, vY = self.velocity
         gX, gY = self.gravity
@@ -143,37 +149,8 @@ class Player(object):
                 vY = self.VSPEED_CAP
             elif vY <= (-self.VSPEED_CAP):
                 vY = -self.VSPEED_CAP
-
         self.position = (pX, pY)
         self.velocity = (vX, vY)
-
-    # Calculate the player's horizontal velocity
-    def HorizontalVelocity(self, last_held_direction, skidding, playerSprite):
-            if (last_held_direction == "right"):
-                    # Determine if the player should be skidding
-                    x, y = self.velocity
-                    if (x <= self.SPEED_CAP):
-                        if (x < -0.5):
-                            if (skidding == False):
-                                # Update the player to their skidding animation when turning around
-                                self.animationController("skidding", last_held_direction)
-                                skidding = True
-                        else:
-                            skidding = False
-                    self.velocity = (2, y)
-            
-            elif (last_held_direction == "left"):
-                    # Determine if the player should be skidding
-                    x, y = self.velocity
-                    if (x >= -self.SPEED_CAP):
-                        if (x > 0.5):
-                            if (skidding == False):
-                                # Update the player to their skidding animation when turning around
-                                self.animationController("skidding", last_held_direction)
-                                skidding = True
-                        else:
-                            skidding = False
-                    self.velocity = (-2, y)
 
     # Calculate the players vertical velocity
     def VerticalVelocity(self):
@@ -356,7 +333,7 @@ class Player(object):
         # 10 - Propeller Suit
         # 11 - Mari0 (Portal Gun + Mario)
 
-        # Change the player's powerup state to the coorect powerup ID
+        # Change the player's powerup state to the correct powerup ID
         self.powerupState = powerupID
 
         # Load the correct spritesheet depending on the powerup
@@ -586,7 +563,6 @@ class Player(object):
 
     # Make the player have friction against the ground
     def Friction(self,x):
-        print (x,self.MAX_SPEED_CAP)
         if ((x <= self.MAX_SPEED_CAP) and (x > 0)):
             x -= FRICTION
             if x < 0:
