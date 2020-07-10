@@ -12,14 +12,7 @@ wrap_around = True
 
 # Define some in game constants (used for the Physics "engine")
 FRICTION = 0.2
-GRAVITY = 2.8
-
-# Create player sound effects
-jump = makeSound("Sounds/jump.wav")
-
-# Define some in game constants (used for the Physics "engine")
-FRICTION = 0.2
-GRAVITY = 1.9
+GRAVITY = 0.149
 
 # Create player sound effects
 jump = makeSound("Sounds/jump.wav")
@@ -55,6 +48,7 @@ class Player(object):
         self.VSPEED_CAP = 7.5
         self.DSPEED_CAP = -7.5
         self.ACCELERATION = 0.05
+        self.FRICTION = 0.2
 
         # Define player controls
         self.controls = controls
@@ -77,24 +71,31 @@ class Player(object):
         self.released_up = True
         self.sprinting = False
 
-    def approach(self, current, goal, dt):
-        difference = goal - current
+    # y = 4.17ft - 0.149 * t ^ 2
 
-        if (self.skidding):
-            if (difference > dt):
-                return current + dt * 2
-            elif (difference < -dt):
-                return current - dt * 2
+    def yVelocityCalculator(self, y, cmap):
+        if (self.check_jump(cmap) == False):
+            y = y - self.gravity
         else:
-            if (difference > dt):
-                return current + dt
-            elif (difference < -dt):
-                return current - dt
+            y = 0
 
-        return goal
+        return y
+    def xVelocityCalculator(self, x):
+        if (x > 1):
+            x = x - self.FRICTION
+        else:
+            x = 0
+
+        if (x < -1):
+            x = x + self.FRICTION
+        else:
+            x = 0
+
+        return x
 
     def calculatePosition(self, dt, cmap):
         tempX, tempY = self.velocity
+
         # Make it so the player wraps around on the left and right (if enabled)
         if (wrap_around):
             x, y = self.position
@@ -106,13 +107,14 @@ class Player(object):
         # Calculate x & y velocity using fancy Vector math
         tempPX, tempPY = self.position
         tempVX, tempVY = self.velocity
-        x = self.approach(tempPX, tempVX, dt * 50)
-        y = self.approach(tempPY, tempVY, dt * 50)
+        x = self.xVelocityCalculator(tempVX)
+        y = self.yVelocityCalculator(tempVY, cmap)
         self.velocity = (x, y)
 
         # Update the player's postition and velocity
         pX, pY = self.position
         vX, vY = self.velocity
+        print(vY)
         gX, gY = self.gravity
 
         # Cap the player's speed
@@ -554,7 +556,7 @@ class Player(object):
                 self.animationController("jump", last_held_direction, frame, superFrame)
 
                 x, y = self.velocity
-                self.velocity = (x, self.DSPEED_CAP)
+                self.velocity = (x, 4.02)
 
                 playSound(jump)
                 self.released_up = False
