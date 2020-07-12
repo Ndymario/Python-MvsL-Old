@@ -107,6 +107,8 @@ class Level():
             tile_image = "Tiles/Pipe_4.png"
         elif tile["id"] == 18:
             tile_image = "Tiles/Stone.png"
+        elif tile["id"] == 19:
+            tile_image = "Tiles/barrier.png"
 
       if not at_end:
         self.tiles.append(Tile(tile_image,1, tile["x"] * 16, tile["y"] * 16, tile["width"] * 16, tile["height"] * 16))

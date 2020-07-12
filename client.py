@@ -41,8 +41,8 @@ class Camera(object):
         # Defines when to stop adding onto the moving frames
         if self.moving_frames > 14:
             self.moving_frames = 14
-        if self.moving_frames < -14:
-            self.moving_frames = -14
+        if self.moving_frames < -26:
+            self.moving_frames = -26
 
         if self.moving_frames == 0:
             # Sets the camera to the middle of the screen
@@ -56,8 +56,8 @@ class Camera(object):
         # Defines the boundaries of how far the camera can go from the player, with the center being - 112
         if self.camera > player.position[0] - 84:
             self.camera = player.position[0] - 84
-        elif self.camera < player.position[0] - 140:
-            self.camera = player.position[0] - 140
+        elif self.camera < player.position[0] - 246:
+            self.camera = player.position[0] - 246
 
 class Game(object):
     def __init__(self):
@@ -110,6 +110,7 @@ class Game(object):
         cmap = CMap("Cmap/1-1.cmap")
         cmap.create_cmap("Levels/1-1.lvl")
         level = Level("Levels/1-1.lvl")
+        print(cmap)
 
         # Frame handler (used for any sprite animation)
         frame = 0
@@ -179,10 +180,13 @@ class Game(object):
             # Detect if player moved
             if round(self.players[0].position[0]) > old_x:
                 # If player moved to the right, try to move the View a bit
-                View.moving_frames += .5
+                if cmap.check_camera_box(self.players[0].position[0],self.players[0].position[1],256,192) != 1:
+                    View.moving_frames += .5
             elif round(self.players[0].position[0]) < old_x:
                 # If player moved to the left, try to move the View a bit
-                View.moving_frames -= .5
+                if cmap.check_camera_box(self.players[0].position[0], self.players[0].position[1], 256,
+                                               192) != 1:
+                    View.moving_frames -= .5
 
             # Used to detect a change in x between each frame to control View
             old_x = round(self.players[0].position[0])
@@ -199,7 +203,7 @@ class Game(object):
                 for w in range(int((tile.width) / 16)):
                     for h in range(int(tile.height / 16)):
                         # (Image to load, [(left coord of tile * width) - View, (bottom coord of tile - height)])
-                        screen.blit(pygame.image.load(tile.tile_image), [tile.x + (w * 16) - View.camera, tile.y - (h * 16)])
+                        screen.blit(pygame.image.load(tile.tile_image), [tile.x + (w * 16) - View.camera, tile.y + (h * 16)])
 
             # Update the player's sprite location
             for player in self.players:

@@ -26,6 +26,7 @@ class CMap():
         index = LVL_file.find(b'TILE') + 4
 
         while LVL_file[index:index + 2] != b'\xff\xff':
+            t_t = int.from_bytes(LVL_file[index: index + 2], byteorder='big')
             index += 2
             t_x = int.from_bytes(LVL_file[index: index + 2], byteorder='big')
             index += 2
@@ -37,7 +38,10 @@ class CMap():
             index += 2
             for i in range(t_height):
                 for j in range(t_width):
-                    CMap_data[t_x + j + (t_y - i) * self.width] = 1
+                    if t_t == 13:
+                        CMap_data[t_x + j + (t_y + i) * self.width] = 13
+                    else:
+                        CMap_data[t_x + j + (t_y + i) * self.width] = 1
         for i in range(self.height):
             temp_map = CMap_data[0 + self.width*i:self.width+ self.width*i]
             self.cmalp.append(temp_map)
@@ -49,7 +53,15 @@ class CMap():
             if 1 in temp_map[int(round(x//16)):int(round((x+b)//16)+1)]:
                 collisions = 1
         return collisions
-            
+
+    def check_camera_box(self,x,y,b,h):
+        collisions = 0
+        for o in range(round(int(y-h))//16,round(int(y))//16+1):
+            temp_map = self.cmalp[o]
+            if 13 in temp_map[int(round(x//16)):int(round((x+b)//16)+1)]:
+                collisions = 1
+        return collisions
+
     # Detects if a player is in a tile and puts the player
     # on the nearest open surface
     def in_tile(self,x,y,xv,yv,pw,ph):
