@@ -101,16 +101,15 @@ class Game(object):
         # Note: WIDTH & HEIGHT are imported from player.py!
         screen = screenSize(WIDTH, HEIGHT, None, None, False)
 
+        # Wow
         inGame = True
 
-        # Load Level Data
-        levelchunk1 = []
 
-        # This recreates the collision map automatically
+        # This creates the collision map and the camera collision map from the level file automatically
         cmap = CMap("Cmap/1-1.cmap")
         cmap.create_cmap("Levels/1-1.lvl")
+        cmap.create_camera_map("Levels/1-1.lvl")
         level = Level("Levels/1-1.lvl")
-        print(cmap)
 
         # Frame handler (used for any sprite animation)
         frame = 0
@@ -127,9 +126,10 @@ class Game(object):
         else:
             self.players = [mario]
 
-        old_x = self.players[0].position[0]
-
+        # Start up the view and get the some camera related variables ready for later
         View = Camera()
+        camera = [View.camera,192,False]
+        old_x = self.players[0].position[0]
             
         # Load the Player's sprites
         for player in self.players:
@@ -180,19 +180,31 @@ class Game(object):
             # Detect if player moved
             if round(self.players[0].position[0]) > old_x:
                 # If player moved to the right, try to move the View a bit
-                if cmap.check_camera_box(self.players[0].position[0],self.players[0].position[1],256,192) != 1:
                     View.moving_frames += .5
             elif round(self.players[0].position[0]) < old_x:
                 # If player moved to the left, try to move the View a bit
-                if cmap.check_camera_box(self.players[0].position[0], self.players[0].position[1], 256,
-                                               192) != 1:
                     View.moving_frames -= .5
+
 
             # Used to detect a change in x between each frame to control View
             old_x = round(self.players[0].position[0])
-
-            # Move the View box
+            # Store the old camera view position to use in camera movement
+            old_view = View.camera
+            # Update the View to check if it is ok later
             View.move_view(self.players[0])
+            # Prevents the camera from going too far left, which breaks everything I have done
+            if View.camera <= 16:
+                # "34" is a placeholder variable until I add Camera movement on the "Y" axis
+                camera = [16, 34, True]
+
+            elif cmap.check_camera_box(round(old_view), self.players[0].position[1], 256,
+                                     192) != 1:
+                # Set to False to prevent any unnecessary camera safe position checks, which causes massive lag
+                camera[2] = False
+            # If the camera hasnt been set to a safe position, set it to a safe position
+            if camera[2] == False:
+                camera = cmap.nearest_good_x_camera_pos(round(old_view), self.players[0].position[1], 256,192)
+
 
             # Limit the framerate to 60 FPS
             tick(60)
@@ -203,12 +215,12 @@ class Game(object):
                 for w in range(int((tile.width) / 16)):
                     for h in range(int(tile.height / 16)):
                         # (Image to load, [(left coord of tile * width) - View, (bottom coord of tile - height)])
-                        screen.blit(pygame.image.load(tile.tile_image), [tile.x + (w * 16) - View.camera, tile.y + (h * 16)])
+                        screen.blit(pygame.image.load(tile.tile_image), [tile.x + (w * 16) - camera[0], tile.y + (h * 16)])
 
             # Update the player's sprite location
             for player in self.players:
                 # (Player Sprite, (player x + width offset - View), (player y + height offset))
-                moveSprite(player.playerSprite, round(player.position[0]) + player.draw_width - View.camera, player.position[1] + player.draw_height)
+                moveSprite(player.playerSprite, round(player.position[0]) + player.draw_width - camera[0], player.position[1] + player.draw_height)
 
             updateDisplay()
             # Limits the frame rate of sprites (60 FPS walk cycle is bad)
