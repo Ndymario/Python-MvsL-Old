@@ -17,6 +17,13 @@ GRAVITY = 0.149
 # Create player sound effects
 jump = makeSound("Sounds/jump.wav")
 
+# Define some in game constants (used for the Physics "engine")
+FRICTION = 0.2
+GRAVITY = 1.9
+
+# Create player sound effects
+jump = makeSound("Sounds/jump.wav")
+
 class Player(object):
     def __init__(self, playerSprites = None, controls = [pygame.K_UP, pygame.K_DOWN, pygame.K_LEFT, pygame.K_RIGHT, pygame.K_SPACE, pygame.K_RSHIFT]\
                  , player_number = 0, x = 50, y = 100, width = 10, height = 20, draw_width = -4, draw_height = -13):
@@ -71,31 +78,27 @@ class Player(object):
         self.released_up = True
         self.sprinting = False
 
-    # y = 4.17ft - 0.149 * t ^ 2
+    def approach(self, current, goal, dt):
+        # Why are we subtracting the position from the velocity and comparing that to dt? And why does that result in
+        # the new velocity?
+        difference = goal - current
 
-    def yVelocityCalculator(self, y, cmap):
-        if (self.check_jump(cmap) == False):
-            y = y - self.gravity
+        if (self.skidding):
+            if (difference > dt):
+                return current + dt * 2
+            elif (difference < -dt):
+                return current - dt * 2
         else:
-            y = 0
-
-        return y
-    def xVelocityCalculator(self, x):
-        if (x > 1):
-            x = x - self.FRICTION
-        else:
-            x = 0
-
-        if (x < -1):
-            x = x + self.FRICTION
-        else:
-            x = 0
-
-        return x
+            # Unless friction automatically sets the velocity to 0, this will cause the velocity to go way above the
+            # cap.
+            if (difference > dt):
+                return current + dt
+            elif (difference < -dt):
+                return current - dt
+        return goal
 
     def calculatePosition(self, dt, cmap):
-        tempX, tempY = self.velocity
-
+        tempX, tempY = self.position
         # Make it so the player wraps around on the left and right (if enabled)
         if (wrap_around):
             x, y = self.position
@@ -107,14 +110,15 @@ class Player(object):
         # Calculate x & y velocity using fancy Vector math
         tempPX, tempPY = self.position
         tempVX, tempVY = self.velocity
-        x = self.xVelocityCalculator(tempVX)
-        y = self.yVelocityCalculator(tempVY, cmap)
+        # I don't know why dt exists, it doesn't seem to be implemented correctly. I have to set the value dt is being
+        # multiplied by to a value above or equal to the width of the stage divided by 10 to prevent dumbness.
+        x = self.approach(tempPX, tempVX, dt * 1000)
+        y = self.approach(tempPY, tempVY, dt * 1000)
         self.velocity = (x, y)
 
-        # Update the player's postition and velocity
+        # Update the player's position and velocity
         pX, pY = self.position
         vX, vY = self.velocity
-        print(vY)
         gX, gY = self.gravity
 
         # Cap the player's speed
@@ -146,40 +150,8 @@ class Player(object):
                 vY = self.VSPEED_CAP
             elif vY <= (-self.VSPEED_CAP):
                 vY = -self.VSPEED_CAP
-
         self.position = (pX, pY)
         self.velocity = (vX, vY)
-
-        print("Position: {}".format(self.position))
-        print("Velocity: {}".format(self.velocity))
-
-    # Calculate the player's horizontal velocity
-    def HorizontalVelocity(self, last_held_direction, skidding, playerSprite):
-            if (last_held_direction == "right"):
-                    # Determine if the player should be skidding
-                    x, y = self.velocity
-                    if (x <= self.SPEED_CAP):
-                        if (x < -0.5):
-                            if (skidding == False):
-                                # Update the player to their skidding animation when turning around
-                                self.animationController("skidding", last_held_direction)
-                                skidding = True
-                        else:
-                            skidding = False
-                    self.velocity = (2, y)
-            
-            elif (last_held_direction == "left"):
-                    # Determine if the player should be skidding
-                    x, y = self.velocity
-                    if (x >= -self.SPEED_CAP):
-                        if (x > 0.5):
-                            if (skidding == False):
-                                # Update the player to their skidding animation when turning around
-                                self.animationController("skidding", last_held_direction)
-                                skidding = True
-                        else:
-                            skidding = False
-                    self.velocity = (-2, y)
 
     # Calculate the players vertical velocity
     def VerticalVelocity(self):
@@ -362,7 +334,7 @@ class Player(object):
         # 10 - Propeller Suit
         # 11 - Mari0 (Portal Gun + Mario)
 
-        # Change the player's powerup state to the coorect powerup ID
+        # Change the player's powerup state to the correct powerup ID
         self.powerupState = powerupID
 
         # Load the correct spritesheet depending on the powerup
@@ -373,7 +345,7 @@ class Player(object):
                 self.draw_height  = -22
                 self.height = 15
             elif (self.player_number == 1):
-                self.draw_height  = -23
+                self.draw_height  = -22
                 self.height = 15
             
             spriteSheet = self.playerSprites + "small.png"
@@ -451,14 +423,18 @@ class Player(object):
 
     # Check if a player touches part of a tile
     def check_collision(self, cmap):
+        # Define temporary variables to make things look neat
         pX, pY = self.position
         vX, vY = self.velocity
-        if self.position[1] >= HEIGHT:
+        if pY >= HEIGHT:
             return pX, pY, vX, vY, False
         return cmap.in_tile(pX, pY, vX, vY, self.width, self.height)
 
     # Allow the user to control the player
     def RefineInput(self, keys, cmap, playerSprite, last_held_direction, frame, superFrame, level):
+        # Moved all "x, y = self.velocity" to here because we only need it once
+        x, y = self.velocity
+
         # Update the player's sprite when idling
         if (self.check_jump(cmap) == True):
             if (self.idle == False):
@@ -470,11 +446,11 @@ class Player(object):
         if keys[pygame.K_z]:
             print(self.y)
         #-----------#
-        
+
         if keys[self.up]:
             if (self.check_jump(cmap) == True):
                 self.animationController("looking_up", last_held_direction, frame, superFrame)
-        
+
         if keys[self.right]:
             self.last_held_direction = "right"
 
@@ -483,24 +459,20 @@ class Player(object):
                 # Check to see if ducking
                 if keys[self.down]:
                     self.animationController("duck", last_held_direction, frame, superFrame)
-                    x, y = self.velocity
-                    self.velocity = (0, y)
+                    # Add friction to the player
+                    self.velocity = (self.Friction(x),y)
 
                 else:
                     # Update the player's velocity
-                    x, y = self.velocity
                     if (x <= 2):
                         self.animationController("walk", last_held_direction, frame, superFrame)
                     # Update the player's sprite when running
                     else:
                         self.animationController("run", last_held_direction, frame, superFrame)
-                    
-                    x, y = self.velocity
-                    self.velocity = (self.SPEED_CAP, y)
+                    self.velocity = (x+self.ACCELERATION, y)
             else:
-                x, y = self.velocity
-                self.velocity = (self.SPEED_CAP, y)
-            
+                self.velocity = (x+self.ACCELERATION, y)
+
             # Change Sprite to ducking sprite if down is held
             if keys[self.down]:
                 self.animationController("duck", last_held_direction, frame, superFrame)
@@ -514,23 +486,21 @@ class Player(object):
                 # Check to see if ducking
                 if keys[self.down]:
                     self.animationController("duck", last_held_direction, frame, superFrame)
-                    x, y = self.velocity
-                    self.velocity = (0, y)
+                    # Add friction to the player
+                    self.velocity = (self.Friction(x),y)
 
                 else:
                     # Update the player's sprite when walking
-                    x, y = self.velocity
                     if (x >= -2):
                         self.animationController("walk", last_held_direction, frame, superFrame)
                     # Update the player's sprite when running
                     else:
                         self.animationController("run", last_held_direction, frame, superFrame)
-                    
-                    x, y = self.velocity
-                    self.velocity = (-self.SPEED_CAP, y)
+                    # Add acceleration to the velocity
+                    self.velocity = (x-self.ACCELERATION, y)
             else:
-                x, y = self.velocity
-                self.velocity = (-self.SPEED_CAP, y)         
+                # Add acceleration to the velocity
+                self.velocity = (x-self.ACCELERATION, y)
             # Change Sprite to ducking sprite if down is held
             if keys[self.down]:
                 self.animationController("duck", last_held_direction, frame, superFrame)
@@ -540,14 +510,11 @@ class Player(object):
             if self.check_jump(cmap) == True:
                 self.animationController("duck", last_held_direction, frame, superFrame)
             # Apply friction to the player
-            x, y = self.velocity
-            self.velocity = (0, y)
-                
+            self.velocity = (self.Friction(x),y)
         # Apply friction to the player if they are not holding a button or ducking
         # (slow them to a hault)
         else:
-            x, y = self.velocity
-            self.velocity = (0, y)
+            self.velocity = (self.Friction(x),y)
 
         # Check to see if the player can jump
         if keys[self.jump]:
@@ -555,8 +522,7 @@ class Player(object):
                 # Update the player's sprite, then apply vertical velocity
                 self.animationController("jump", last_held_direction, frame, superFrame)
 
-                x, y = self.velocity
-                self.velocity = (x, 4.02)
+                self.velocity = (x, self.DSPEED_CAP)
 
                 playSound(jump)
                 self.released_up = False
@@ -565,7 +531,6 @@ class Player(object):
 
             else:
                 # Update the player's sprite if the peak of the jump has been passed, then apply gravity
-                x, y = self.velocity
                 if (y > 0):
                     self.animationController("fall", last_held_direction, frame, superFrame)
                 if keys[self.down]:
@@ -574,7 +539,6 @@ class Player(object):
         # Apply gravity to the player
         elif (self.check_jump(cmap) == False):
             # Update the player's sprite if the peak of the jump has been passed, then apply gravity
-            x, y = self.velocity
             if (y > 0):
                 self.animationController("fall", last_held_direction, frame, superFrame)
             self.released_up = True
@@ -592,11 +556,23 @@ class Player(object):
                 self.animationController("fire", last_held_direction, frame, superFrame)
 
             self.SPEED_CAP = 4
-            self.ACCELERATION = 0.075
+            self.ACCELERATION = 0.17
 
         else:
             self.SPEED_CAP = 2
-            self.ACCELERATION = .07
+            self.ACCELERATION = .17
+
+    # Make the player have friction against the ground
+    def Friction(self,x):
+        if ((x <= self.MAX_SPEED_CAP) and (x > 0)):
+            x -= FRICTION
+            if x < 0:
+                x = 0.0
+        elif ((x >= -self.MAX_SPEED_CAP) and (x < 0)):
+            x += FRICTION
+            if x > 0:
+                x = 0.0
+        return x
 
     # Print stats of the player when called
     def __str__(self):
