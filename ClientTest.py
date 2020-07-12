@@ -8,13 +8,15 @@ s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 # get local machine name
 host = socket.gethostname()                           
 
-port = 9999
+port = 9998
 
 # connection to hostname on the port.
-s.connect((host, port))                               
+s.connect((host, port))
 
-# Receive no more than 1024 bytes
-msg = s.recv(1024)                                     
+while True:
 
-s.close()
-print (msg.decode('ascii'))
+    # Receive no more than 1024 bytes
+    msg = s.recv(1024)                                     
+
+    #s.close()
+    print (msg.decode('ascii'))

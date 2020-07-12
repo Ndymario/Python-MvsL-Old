@@ -1,0 +1,4 @@
+import numpy as np 
+
+velocity = np.array((0, 0), int)
+

@@ -25,6 +25,40 @@ sys.path.insert(1, "./Sprites")
 
 ##########--BEGIN CLASSES--##########
 
+
+# Probably doesn't need to be a class, and if it does, should probably be in a different file, but oh well
+class Camera(object):
+    def __init__(self):
+        # Sets the camera position to player 0, originally planned to use a tuple for x and y but abandoned that
+        self.camera = game.players[0].position[0]
+        # Moving frames are used to control View position
+        self.moving_frames = 0
+
+        # Need to add y movement
+
+    # Moves the View box (camera) around a player
+    def move_view(self,player):
+        # Defines when to stop adding onto the moving frames
+        if self.moving_frames > 14:
+            self.moving_frames = 14
+        if self.moving_frames < -26:
+            self.moving_frames = -26
+
+        if self.moving_frames == 0:
+            # Sets the camera to the middle of the screen
+            tempX, tempY = player.position
+            self.camera = tempX - 112
+        else:
+            # Moves the camera with the player
+            tempX, tempY = player.position
+            self.camera = tempX - 112 + (2 * self.moving_frames)
+
+        # Defines the boundaries of how far the camera can go from the player, with the center being - 112
+        if self.camera > player.position[0] - 84:
+            self.camera = player.position[0] - 84
+        elif self.camera < player.position[0] - 246:
+            self.camera = player.position[0] - 246
+
 class Game(object):
     def __init__(self):
         self.players = []
@@ -42,7 +76,6 @@ class Game(object):
             keys = pygame.key.get_pressed()
 
             for event in pygame.event.get():
-                print(event)
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     quit()
@@ -50,6 +83,7 @@ class Game(object):
             if keys[pygame.K_SPACE]:
                 intro = False
                     
+            # Draws the title screen
             screen.fill(WHITE)
             largeText = pygame.font.Font('freesansbold.ttf', 100)
             TextSurf, TextRect = self.text_objects("Mario vs Luigi", largeText)
@@ -76,6 +110,7 @@ class Game(object):
         cmap = CMap("Cmap/1-1.cmap")
         cmap.create_cmap("Levels/1-1.lvl")
         level = Level("Levels/1-1.lvl")
+        print(cmap)
 
         # Frame handler (used for any sprite animation)
         frame = 0
@@ -87,10 +122,14 @@ class Game(object):
 
         if P2: #Experimental 
             luigi = Player("Sprites/Luigi/", [pygame.K_w, pygame.K_s, pygame.K_a, pygame.K_d, pygame.K_q, pygame.K_LSHIFT]\
-                        , 1, 15, 100, 10, 20)
+                        , 1, 10, 20)
             self.players = [mario, luigi]
         else:
             self.players = [mario]
+
+        old_x = self.players[0].position[0]
+
+        View = Camera()
             
         # Load the Player's sprites
         for player in self.players:
@@ -109,12 +148,11 @@ class Game(object):
                 player.RefineInput(keys, cmap, player.playerSprite, player.last_held_direction, frame, superFrame, level)        
             
                 # Calculate and update position
-                player.calculatePosition()
-                updated_position = player.check_collision(cmap)        
-                player.x = updated_position[0]
-                player.y = updated_position[1]
-                player.x_velocity = updated_position[2]
-                player.y_velocity = updated_position[3]
+
+                player.calculatePosition(10, cmap)
+                updated_position = player.check_collision(cmap)
+                player.position = (updated_position[0], updated_position[1])
+                player.velocity = (updated_position[2], updated_position[3])
 
                 # Check for death
                 player.death()
@@ -138,20 +176,39 @@ class Game(object):
                     # Return to the title screen
                     if keys[pygame.K_9]:
                         self.clearGame()
-                
+
+            # Detect if player moved
+            if round(self.players[0].position[0]) > old_x:
+                # If player moved to the right, try to move the View a bit
+                if cmap.check_camera_box(self.players[0].position[0],self.players[0].position[1],256,192) != 1:
+                    View.moving_frames += .5
+            elif round(self.players[0].position[0]) < old_x:
+                # If player moved to the left, try to move the View a bit
+                if cmap.check_camera_box(self.players[0].position[0], self.players[0].position[1], 256,
+                                               192) != 1:
+                    View.moving_frames -= .5
+
+            # Used to detect a change in x between each frame to control View
+            old_x = round(self.players[0].position[0])
+
+            # Move the View box
+            View.move_view(self.players[0])
+
             # Limit the framerate to 60 FPS
             tick(60)
 
             #Render the screen
             screen.fill(WHITE)
             for tile in level.tiles:
-                for w in range(int(tile.width / 16)):
+                for w in range(int((tile.width) / 16)):
                     for h in range(int(tile.height / 16)):
-                        screen.blit(pygame.image.load(tile.tile_image), [tile.x + (w * 16), tile.y - (h * 16)])
+                        # (Image to load, [(left coord of tile * width) - View, (bottom coord of tile - height)])
+                        screen.blit(pygame.image.load(tile.tile_image), [tile.x + (w * 16) - View.camera, tile.y + (h * 16)])
 
             # Update the player's sprite location
             for player in self.players:
-                moveSprite(player.playerSprite, player.x + player.draw_width, player.y + player.draw_height)
+                # (Player Sprite, (player x + width offset - View), (player y + height offset))
+                moveSprite(player.playerSprite, round(player.position[0]) + player.draw_width - View.camera, player.position[1] + player.draw_height)
 
             updateDisplay()
             # Limits the frame rate of sprites (60 FPS walk cycle is bad)
