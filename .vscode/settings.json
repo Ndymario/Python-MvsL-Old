@@ -1,0 +1,14 @@
+{
+	"files.associations": {
+		"raylib.h": "c",
+		"title.h": "c",
+		"player.h": "c",
+		"string_view": "c",
+		"raymath.h": "c",
+		"glfw3.h": "c",
+		"collider.h": "c",
+		"iostream": "cpp",
+		"ostream": "cpp"
+	},
+	"C_Cpp.errorSquiggles": "Disabled"
+}
