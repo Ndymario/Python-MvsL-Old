@@ -3,11 +3,13 @@
 #   Description: Player class/functions                                #
 ########################################################################
 
-from pygame_functions import *
 from level import *
 from cmap import *
-import numpy as np
-SIZE = WIDTH, HEIGHT = 256, 192
+from raylibpy import *
+
+WIDTH = 256
+HEIGHT = 192
+
 wrap_around = True
 
 # Define some in game constants (used for the Physics "engine")
@@ -15,17 +17,10 @@ FRICTION = 0.2
 GRAVITY = 0.149
 
 # Create player sound effects
-jump = makeSound("Sounds/jump.wav")
-
-# Define some in game constants (used for the Physics "engine")
-FRICTION = 0.2
-GRAVITY = 1.9
-
-# Create player sound effects
-jump = makeSound("Sounds/jump.wav")
+#jump = makeSound("Sounds/jump.wav")
 
 class Player(object):
-    def __init__(self, playerSprites = None, controls = [pygame.K_UP, pygame.K_DOWN, pygame.K_LEFT, pygame.K_RIGHT, pygame.K_SPACE, pygame.K_RSHIFT]\
+    def __init__(self, playerSprites = None, controls = [KEY_UP, KEY_DOWN, KEY_LEFT, KEY_RIGHT, KEY_SPACE, KEY_RIGHT_SHIFT]\
                  , player_number = 0, x = 50, y = 100, width = 10, height = 20, draw_width = -4, draw_height = -13):
         # Keep track of the player number
         self.player_number = player_number
@@ -36,9 +31,9 @@ class Player(object):
 
         # Player Positioning variables
         self.temp_position = [10,0]
-        self.position = np.array((10, 0), int)
-        self.velocity = np.array((0, 0), int)
-        self.gravity = np.array((0, GRAVITY),int)
+        self.position = Vector2(10, 0)
+        self.velocity = Vector2(0, 0)
+        self.gravity = Vector2(0, GRAVITY)
 
         # Number is from height/width of the player sprite in pixles
         self.width = width
@@ -431,9 +426,10 @@ class Player(object):
         return cmap.in_tile(pX, pY, vX, vY, self.width, self.height)
 
     # Allow the user to control the player
-    def RefineInput(self, keys, cmap, playerSprite, last_held_direction, frame, superFrame, level):
+    def RefineInput(self, cmap, playerSprite, last_held_direction, frame, superFrame, level):
         # Moved all "x, y = self.velocity" to here because we only need it once
-        x, y = self.velocity
+        x = self.velocity[0]
+        y = self.velocity[1]
 
         # Update the player's sprite when idling
         if (self.check_jump(cmap) == True):
@@ -443,21 +439,21 @@ class Player(object):
         # Set the last held direction to right, and update the player's walk animation if they're on the ground
 
         #---DEBUG---#
-        if keys[pygame.K_z]:
-            print(self.y)
+        if is_key_down(KEY_Z):
+            print(y)
         #-----------#
 
-        if keys[self.up]:
+        if is_key_down(self.up):
             if (self.check_jump(cmap) == True):
                 self.animationController("looking_up", last_held_direction, frame, superFrame)
 
-        if keys[self.right]:
+        if is_key_down(self.right):
             self.last_held_direction = "right"
 
             # Check to see if the player is on the ground before walking
             if (self.check_jump(cmap) == True):
                 # Check to see if ducking
-                if keys[self.down]:
+                if is_key_down(self.down):
                     self.animationController("duck", last_held_direction, frame, superFrame)
                     # Add friction to the player
                     self.velocity = (self.Friction(x),y)
@@ -474,17 +470,17 @@ class Player(object):
                 self.velocity = (x+self.ACCELERATION, y)
 
             # Change Sprite to ducking sprite if down is held
-            if keys[self.down]:
+            if is_key_down(self.down):
                 self.animationController("duck", last_held_direction, frame, superFrame)
 
         # Set the last held direction to left, and update the player's walk animation if they're on the ground           
-        elif keys[self.left]:
+        elif is_key_down(self.left):
             self.last_held_direction = "left"
 
             # Check to see if the player is on the ground before applying the sprite change
             if (self.check_jump(cmap) == True):
                 # Check to see if ducking
-                if keys[self.down]:
+                if is_key_down(self.down):
                     self.animationController("duck", last_held_direction, frame, superFrame)
                     # Add friction to the player
                     self.velocity = (self.Friction(x),y)
@@ -502,10 +498,10 @@ class Player(object):
                 # Add acceleration to the velocity
                 self.velocity = (x-self.ACCELERATION, y)
             # Change Sprite to ducking sprite if down is held
-            if keys[self.down]:
+            if is_key_down(self.down):
                 self.animationController("duck", last_held_direction, frame, superFrame)
 
-        elif keys[self.down]:
+        elif is_key_down(self.down):
             # If the player is on the ground, make them duck
             if self.check_jump(cmap) == True:
                 self.animationController("duck", last_held_direction, frame, superFrame)
@@ -517,23 +513,23 @@ class Player(object):
             self.velocity = (self.Friction(x),y)
 
         # Check to see if the player can jump
-        if keys[self.jump]:
+        if is_key_down(self.jump):
             if self.check_jump(cmap) == True and self.released_up == True:
                 # Update the player's sprite, then apply vertical velocity
                 self.animationController("jump", last_held_direction, frame, superFrame)
 
                 self.velocity = (x, self.DSPEED_CAP)
 
-                playSound(jump)
+                #playSound(jump)
                 self.released_up = False
-                if keys[self.down]:
+                if is_key_down(self.down):
                     self.animationController("duck", last_held_direction, frame, superFrame)
 
             else:
                 # Update the player's sprite if the peak of the jump has been passed, then apply gravity
                 if (y > 0):
                     self.animationController("fall", last_held_direction, frame, superFrame)
-                if keys[self.down]:
+                if is_key_down(self.down):
                     self.animationController("duck", last_held_direction, frame, superFrame)
 
         # Apply gravity to the player
@@ -542,15 +538,15 @@ class Player(object):
             if (y > 0):
                 self.animationController("fall", last_held_direction, frame, superFrame)
             self.released_up = True
-            if keys[self.down]:
+            if is_key_down(self.down):
                 self.animationController("duck", last_held_direction, frame, superFrame)
 
         else:
-            if keys[self.down]:
+            if is_key_down(self.down):
                 self.animationController("down", last_held_direction, frame, superFrame)
             self.released_up = True
 
-        if keys[self.sprint]:
+        if is_key_down(self.sprint):
             # If the player is powerups 2 (Fire), shoot a fireball
             if (self.powerupState == 2):
                 self.animationController("fire", last_held_direction, frame, superFrame)
@@ -577,6 +573,6 @@ class Player(object):
     # Print stats of the player when called
     def __str__(self):
         return "Player X Velocity: {}\nPlayer Y Velocity: {}\nPlayer X: {}\nPlayer Y: {}"\
-            .format(self.x_velocity, self.y_velocity, self.x, self.y)
+            .format(self.velocity[0], self.velocity[1], self.position[0], self.position[1])
 
 
