@@ -16,6 +16,7 @@ from cmap import *
 
 # Allows us to use another folder than the folder this file is located
 sys.path.insert(1, "./Sprites")
+sys.path.insert(1, "./Levels")
 
 ##########--End System Level Stuff--##########
 
@@ -60,10 +61,11 @@ class Game(object):
         inGame = True
 
         # This creates the collision map and the camera collision map from the level file automatically
+        #TODO: Fix relative path for 1-1.lvl file (to run, you'll need the entire file path)
         cmap = CMap("Cmap/1-1.cmap")
-        cmap.create_cmap("Levels/1-1.lvl")
-        cmap.create_camera_map("Levels/1-1.lvl")
-        level = Level("Levels/1-1.lvl")
+        cmap.create_cmap("/Users/ndymario/Desktop/Programming/Python/MvsL/Python-MvsL/Levels/1-1.lvl")
+        cmap.create_camera_map("/Users/ndymario/Desktop/Programming/Python/MvsL/Python-MvsL/Levels/1-1.lvl")
+        level = Level("/Users/ndymario/Desktop/Programming/Python/MvsL/Python-MvsL/Levels/1-1.lvl")
 
         # Frame handler (used for any sprite animation)
         frame = 0
@@ -105,9 +107,6 @@ class Game(object):
                 player.position = (updated_position[0], updated_position[1])
                 player.velocity = (updated_position[2], updated_position[3])
 
-                #Update the camera
-                camera.position = Vector2()
-
                 # Check for death
                 player.death()
 
@@ -130,6 +129,9 @@ class Game(object):
                     # Return to the title screen
                     if is_key_down(KEY_NINE):
                         self.clearGame()
+
+            #Update the camera
+            camera.position = Vector2(mario.position[0], mario.position[1])
 
             # Limit the framerate to 60 FPS
             set_target_fps(60)
@@ -200,6 +202,6 @@ WHITE  = (255, 255, 255)
 
 game = Game()
 
-game.game_intro()
+game.gameLoop()
 
 ###########-End Main Code-#########

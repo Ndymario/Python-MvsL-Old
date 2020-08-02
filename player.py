@@ -30,7 +30,7 @@ class Player(object):
         self.playerSprites = playerSprites
 
         # Player Positioning variables
-        self.temp_position = [10,0]
+        self.temp_position = Vector2(10,0)
         self.position = Vector2(10, 0)
         self.velocity = Vector2(0, 0)
         self.gravity = Vector2(0, GRAVITY)
@@ -309,11 +309,10 @@ class Player(object):
                 elif (last_held_direction == "left"):
                     changeSpriteImage(self.playerSprite, 24)
 
-    def spriteChanger(self, newSprite, frames):
+    def spriteChanger(self, newSprite):
         if (self.playerSprite != None):
-            hideSprite(self.playerSprite)
-        self.playerSprite = makeSprite(newSprite, frames)
-        showSprite(self.playerSprite)
+            unload_image(self.playerSprite)
+        self.playerSprite = load_image(newSprite)
     
     def powerupHandler(self, powerupID):
         # 0 - Small
@@ -344,7 +343,7 @@ class Player(object):
                 self.height = 15
             
             spriteSheet = self.playerSprites + "small.png"
-            self.spriteChanger(spriteSheet, 20)
+            self.spriteChanger(spriteSheet)
             return spriteSheet
 
         elif (powerupID == 1):
@@ -358,7 +357,7 @@ class Player(object):
                 self.height = 20
 
             spriteSheet = self.playerSprites + "super.png"
-            self.spriteChanger(spriteSheet, 24)
+            self.spriteChanger(spriteSheet)
             return spriteSheet
 
         elif (powerupID == 2):
@@ -372,7 +371,7 @@ class Player(object):
                 self.height = 20
 
             spriteSheet = self.playerSprites + "fire.png"
-            self.spriteChanger(spriteSheet, 26)
+            self.spriteChanger(spriteSheet)
             return spriteSheet
     
     # If the player gets hurt, make them shrink one powerup, otherwise kill the player

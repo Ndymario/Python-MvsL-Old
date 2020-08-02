@@ -5,6 +5,9 @@
 
 # Thanks to SkilLP, we now have a collision map, much more
 # efficient when compared to how collision was done before
+import sys
+
+sys.path.insert(1, "./Levels")
 
 class CMap():
     def __init__(self, file = "Level/1-1.lvl"):
