@@ -159,7 +159,7 @@ class Player(object):
         if (self.powerupState == 0):
             if (action == "idle"):
                 if (last_held_direction == "right"):
-                    changeSpriteImage(self.playerSprite, 13)
+                    changeSpriteImage(self.playerSprite)
                 elif (last_held_direction == "left"):
                     changeSpriteImage(self.playerSprite, 0)
 
