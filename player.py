@@ -159,155 +159,205 @@ class Player(object):
         if (self.powerupState == 0):
             if (action == "idle"):
                 if (last_held_direction == "right"):
-                    changeSpriteImage(self.playerSprite)
+                    #changeSpriteImage(self.playerSprite)
+                    pass
                 elif (last_held_direction == "left"):
-                    changeSpriteImage(self.playerSprite, 0)
+                    #changeSpriteImage(self.playerSprite, 0)
+                    pass
 
             elif (action == "jump"):
                 if (last_held_direction == "right"):
-                    changeSpriteImage(self.playerSprite, 9)
+                    #changeSpriteImage(self.playerSprite, 9)
+                    pass
                 elif (last_held_direction == "left"):
-                    changeSpriteImage(self.playerSprite, 4)
+                    #changeSpriteImage(self.playerSprite, 4)
+                    pass
             
             elif (action == "fall"):
                 if (last_held_direction == "right"):
-                    changeSpriteImage(self.playerSprite, 8)
+                    #changeSpriteImage(self.playerSprite, 8)
+                    pass
                 elif (last_held_direction == "left"):
-                    changeSpriteImage(self.playerSprite, 5)
+                    #changeSpriteImage(self.playerSprite, 5)
+                    pass
 
             elif (action == "walk"):
                 if (last_held_direction == "right"):
-                    changeSpriteImage(self.playerSprite, 13 - frame)
+                    #changeSpriteImage(self.playerSprite, 13 - frame)
+                    pass
                 elif (last_held_direction == "left"):
-                    changeSpriteImage(self.playerSprite, 0 + frame)
+                    #changeSpriteImage(self.playerSprite, 0 + frame)
+                    pass
 
             elif (action == "run"):
                 if (last_held_direction == "right"):
-                    changeSpriteImage(self.playerSprite, 11 - frame)
+                    #changeSpriteImage(self.playerSprite, 11 - frame)
+                    pass
                 elif (last_held_direction == "left"):
-                    changeSpriteImage(self.playerSprite, 2 + frame)
+                    #changeSpriteImage(self.playerSprite, 2 + frame)
+                    pass
 
             elif (action == "skidding"):
                 if (last_held_direction == "right"):
-                    changeSpriteImage(self.playerSprite, 14)
+                    #changeSpriteImage(self.playerSprite, 14)
+                    pass
                 elif (last_held_direction == "left"):
-                    changeSpriteImage(self.playerSprite, 15)
+                    #changeSpriteImage(self.playerSprite, 15)
+                    pass
             
             elif (action == "duck"):
                 if (last_held_direction == "right"):
-                    changeSpriteImage(self.playerSprite, 17)
+                    #changeSpriteImage(self.playerSprite, 17)
+                    pass
                 elif (last_held_direction == "left"):
-                    changeSpriteImage(self.playerSprite, 16)
+                    #changeSpriteImage(self.playerSprite, 16)
+                    pass
 
             elif (action == "looking_up"):
                 if (last_held_direction == "right"):
-                    changeSpriteImage(self.playerSprite, 19)
+                    #changeSpriteImage(self.playerSprite, 19)
+                    pass
                 elif (last_held_direction == "left"):
-                    changeSpriteImage(self.playerSprite, 18)
+                    #changeSpriteImage(self.playerSprite, 18)
+                    pass
 
         elif (self.powerupState  == 1):
             if (action == "idle"):
                 if (last_held_direction == "right"):
-                    changeSpriteImage(self.playerSprite, 17)
+                    #changeSpriteImage(self.playerSprite, 17)
+                    pass
                 elif (last_held_direction == "left"):
-                    changeSpriteImage(self.playerSprite, 0)
+                    #changeSpriteImage(self.playerSprite, 0)
+                    pass
             
             elif (action == "jump"):
                 if (last_held_direction == "right"):
-                    changeSpriteImage(self.playerSprite, 11)
+                    #changeSpriteImage(self.playerSprite, 11)
+                    pass
                 elif (last_held_direction == "left"):
-                    changeSpriteImage(self.playerSprite, 6)
+                    #changeSpriteImage(self.playerSprite, 6)
+                    pass
             
             elif (action == "fall"):
                 if (last_held_direction == "right"):
-                    changeSpriteImage(self.playerSprite, 10)
+                    #changeSpriteImage(self.playerSprite, 10)
+                    pass
                 elif (last_held_direction == "left"):
-                    changeSpriteImage(self.playerSprite, 7)
+                    #changeSpriteImage(self.playerSprite, 7)
+                    pass
 
             elif (action == "walk"):
                 if (last_held_direction == "right"):
-                    changeSpriteImage(self.playerSprite, 17 - superFrame)
+                    #changeSpriteImage(self.playerSprite, 17 - superFrame)
+                    pass
                 elif (last_held_direction == "left"):
-                    changeSpriteImage(self.playerSprite, 0 + superFrame)
+                    #changeSpriteImage(self.playerSprite, 0 + superFrame)
+                    pass
             
             elif (action == "run"):
                 if (last_held_direction == "right"):
-                    changeSpriteImage(self.playerSprite, 14 - superFrame)
+                    #changeSpriteImage(self.playerSprite, 14 - superFrame)
+                    pass
                 elif (last_held_direction == "left"):
-                    changeSpriteImage(self.playerSprite, 3 + superFrame)
+                    #changeSpriteImage(self.playerSprite, 3 + superFrame)
+                    pass
             
             elif (action == "skidding"):
                 if (last_held_direction == "right"):
-                    changeSpriteImage(self.playerSprite, 18)
+                    #changeSpriteImage(self.playerSprite, 18)
+                    pass
                 elif (last_held_direction == "left"):
-                    changeSpriteImage(self.playerSprite, 19)
+                    #changeSpriteImage(self.playerSprite, 19)
+                    pass
             
             elif (action == "duck"):
                 if (last_held_direction == "right"):
-                    changeSpriteImage(self.playerSprite, 21)
+                    #changeSpriteImage(self.playerSprite, 21)
+                    pass
                 elif (last_held_direction == "left"):
-                    changeSpriteImage(self.playerSprite, 20)
+                    #changeSpriteImage(self.playerSprite, 20)
+                    pass
 
             elif (action == "looking_up"):
                 if (last_held_direction == "right"):
-                    changeSpriteImage(self.playerSprite, 22)
+                    #changeSpriteImage(self.playerSprite, 22)
+                    pass
                 elif (last_held_direction == "left"):
-                    changeSpriteImage(self.playerSprite, 23)
+                    #changeSpriteImage(self.playerSprite, 23)
+                    pass
         
         elif (self.powerupState  == 2):
             if (action == "idle"):
                 if (last_held_direction == "right"):
-                    changeSpriteImage(self.playerSprite, 17)
+                    #changeSpriteImage(self.playerSprite, 17)
+                    pass
                 elif (last_held_direction == "left"):
-                    changeSpriteImage(self.playerSprite, 0)
+                    #changeSpriteImage(self.playerSprite, 0)
+                    pass
             
             elif (action == "jump"):
                 if (last_held_direction == "right"):
-                    changeSpriteImage(self.playerSprite, 11)
+                    #changeSpriteImage(self.playerSprite, 11)
+                    pass
                 elif (last_held_direction == "left"):
-                    changeSpriteImage(self.playerSprite, 6)
+                    #changeSpriteImage(self.playerSprite, 6)
+                    pass
             
             elif (action == "fall"):
                 if (last_held_direction == "right"):
-                    changeSpriteImage(self.playerSprite, 10)
+                    #changeSpriteImage(self.playerSprite, 10)
+                    pass
                 elif (last_held_direction == "left"):
-                    changeSpriteImage(self.playerSprite, 7)
+                    #changeSpriteImage(self.playerSprite, 7)
+                    pass
 
             elif (action == "walk"):
                 if (last_held_direction == "right"):
-                    changeSpriteImage(self.playerSprite, 17 - superFrame)
+                    #changeSpriteImage(self.playerSprite, 17 - superFrame)
+                    pass
                 elif (last_held_direction == "left"):
-                    changeSpriteImage(self.playerSprite, 0 + superFrame)
+                    #changeSpriteImage(self.playerSprite, 0 + superFrame)
+                    pass
             
             elif (action == "run"):
                 if (last_held_direction == "right"):
-                    changeSpriteImage(self.playerSprite, 14 - superFrame)
+                    #changeSpriteImage(self.playerSprite, 14 - superFrame)
+                    pass
                 elif (last_held_direction == "left"):
-                    changeSpriteImage(self.playerSprite, 3 + superFrame)
+                    #changeSpriteImage(self.playerSprite, 3 + superFrame)
+                    pass
             
             elif (action == "skidding"):
                 if (last_held_direction == "right"):
-                    changeSpriteImage(self.playerSprite, 18)
+                    #changeSpriteImage(self.playerSprite, 18)
+                    pass
                 elif (last_held_direction == "left"):
-                    changeSpriteImage(self.playerSprite, 19)
+                    #changeSpriteImage(self.playerSprite, 19)
+                    pass
             
             elif (action == "duck"):
                 if (last_held_direction == "right"):
-                    changeSpriteImage(self.playerSprite, 21)
+                    #changeSpriteImage(self.playerSprite, 21)
+                    pass
                 elif (last_held_direction == "left"):
-                    changeSpriteImage(self.playerSprite, 20)
+                    #changeSpriteImage(self.playerSprite, 20)
+                    pass
 
             elif (action == "looking_up"):
                 if (last_held_direction == "right"):
-                    changeSpriteImage(self.playerSprite, 23)
+                    #changeSpriteImage(self.playerSprite, 23)
+                    pass
                 elif (last_held_direction == "left"):
-                    changeSpriteImage(self.playerSprite, 22)
+                    #changeSpriteImage(self.playerSprite, 22)
+                    pass
             
             elif (action == "fire"):
                 if (last_held_direction == "right"):
-                    changeSpriteImage(self.playerSprite, 25)
+                    #changeSpriteImage(self.playerSprite, 25)
+                    pass
                 elif (last_held_direction == "left"):
-                    changeSpriteImage(self.playerSprite, 24)
+                    #changeSpriteImage(self.playerSprite, 24)
+                    pass
 
     def spriteChanger(self, newSprite):
         if (self.playerSprite != None):
