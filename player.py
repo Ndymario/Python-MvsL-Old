@@ -28,6 +28,7 @@ class Player(object):
         # Used to determine what sprites to load for the player
         self.playerSprite = None
         self.playerSprites = playerSprites
+        self.spriteSheet = None
 
         # Player Positioning variables
         self.temp_position = Vector2(10,0)
@@ -158,62 +159,55 @@ class Player(object):
     # Used to determine what sprite to use for each animation
     # (Not all spritesheets will be layed out the same!)
     def animationController(self, action, last_held_direction, frame = 0, superFrame = 0):
-        # Sprites for powerup state 0
+        # Animations for powerup state 0
         if (self.powerupState == 0):
             if (action == "idle"):
                 if (last_held_direction == "right"):
-                    self.frame_rec.x = 0
+                    self.spriteSheetHandler(0, 0, True)
                 elif (last_held_direction == "left"):
-                    self.frame_rec.x = 0
+                    self.spriteSheetHandler(0)
 
             elif (action == "jump"):
                 if (last_held_direction == "right"):
-                    self.frame_rec.x += 4 * (self.playerSprite.width/10)
-
+                    self.spriteSheetHandler(4, 0, True)
                 elif (last_held_direction == "left"):
-                    self.frame_rec.x += 4 * (self.playerSprite.width/10)
+                    self.spriteSheetHandler(4)
             
             elif (action == "fall"):
                 if (last_held_direction == "right"):
-                    self.frame_rec.x += 5 * (self.playerSprite.width/10)
-
+                    self.spriteSheetHandler(5, 0, True)
                 elif (last_held_direction == "left"):
-                    self.frame_rec.x += 5 * (self.playerSprite.width/10)
+                    self.spriteSheetHandler(5)
 
             elif (action == "walk"):
                 if (last_held_direction == "right"):
-                    self.frame_rec.x += (0 + superFrame) * (self.playerSprite.width/10)
-
+                    self.spriteSheetHandler(0 + frame, 0, True)
                 elif (last_held_direction == "left"):
-                    self.frame_rec.x += (0 + superFrame) * (self.playerSprite.width/10)
+                    self.spriteSheetHandler(0 + frame)
 
             elif (action == "run"):
                 if (last_held_direction == "right"):
-                    self.frame_rec.x += (2 + superFrame) * (self.playerSprite.width/10)
-
+                    self.spriteSheetHandler(2 + frame, 0, True)
                 elif (last_held_direction == "left"):
-                    self.frame_rec.x += (2 + superFrame) * (self.playerSprite.width/10)
+                    self.spriteSheetHandler(2 + frame)
 
             elif (action == "skidding"):
                 if (last_held_direction == "right"):
-                    self.frame_rec.x += 7 * (self.playerSprite.width/10)
-
+                    self.spriteSheetHandler(7, 0, True)
                 elif (last_held_direction == "left"):
-                    self.frame_rec.x += 7 * (self.playerSprite.width/10)
+                    self.spriteSheetHandler(7)
             
             elif (action == "duck"):
                 if (last_held_direction == "right"):
-                    self.frame_rec.x += 8 * (self.playerSprite.width/10)
-
+                    self.spriteSheetHandler(8, 0, True)
                 elif (last_held_direction == "left"):
-                    self.frame_rec.x += 8 * (self.playerSprite.width/10)
+                    self.spriteSheetHandler(8)
 
             elif (action == "looking_up"):
                 if (last_held_direction == "right"):
-                    self.frame_rec.x += 9 * (self.playerSprite.width/10)
-                    
+                    self.spriteSheetHandler(9, 0, True)
                 elif (last_held_direction == "left"):
-                    self.frame_rec.x += 9 * (self.playerSprite.width/10)
+                    self.spriteSheetHandler(9)
 
         elif (self.powerupState  == 1):
             if (action == "idle"):
@@ -352,6 +346,23 @@ class Player(object):
                 elif (last_held_direction == "left"):
                     #changeSpriteImage(self.playerSprite, 24)
                     pass
+        
+    def spriteSheetHandler(self, x_offset = 0, y_offset = 0, flipX = False, flipY = False):
+        playerSprite = load_image(self.spriteSheet)
+
+        if flipX == True:
+            image_flip_horizontal(playerSprite)
+            x_offset = (9 - x_offset)
+        
+        if flipY == True:
+            image_flip_vertical(playerSprite)
+
+        xPos = x_offset * self.playerSprite.width/10
+        yPos = y_offset * self.playerSprite.height/10
+
+        self.playerSprite = load_texture_from_image(playerSprite)
+
+        self.frame_rec = Rectangle(xPos, yPos, self.playerSprite.width/10, self.playerSprite.height)
 
     def spriteChanger(self, newSprite):
         if (self.playerSprite != None):
@@ -388,6 +399,7 @@ class Player(object):
             
             spriteSheet = self.playerSprites + "small.png"
             self.spriteChanger(spriteSheet)
+            self.spriteSheet = spriteSheet
             return spriteSheet
 
         elif (powerupID == 1):
