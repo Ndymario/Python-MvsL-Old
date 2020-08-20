@@ -88,7 +88,7 @@ class Game(object):
         camera.offset = Vector2(0, 0)
         camera.target = Vector2(mario.position[0] + 20, mario.position[1] + 20)
         camera.rotation = 0.0
-        camera.zoom = 1.0
+        camera.zoom = 5.0
 
         # Load the Player's sprites
         for player in self.players:
@@ -97,10 +97,9 @@ class Game(object):
 
         level_has_loaded = False
 
+        textures = []
+
         while inGame:
-            # Prepare textures to draw
-            for player in self.players:
-                load_texture(player.playerSprites)
 
             # Create bounding box for the player sprites
             for player in self.players:
@@ -151,20 +150,11 @@ class Game(object):
 
             clear_background(RAYWHITE)
 
-            textures = []
-
-            if level_has_loaded == False:
-                for tile in level.tiles:
-                    for w in range(int((tile.width) / 16)):
-                        for h in range(int(tile.height / 16)):
-                            # (Image to load, [(left coord of tile * width) - View, (bottom coord of tile - height)])
-                            draw_texture(load_texture(tile.tile_image), tile.x + (w * 16), tile.y + (h * 16), RAYWHITE)
-                                
-                            textures.append(tile.tile_image)
-
-            else:
-                for texture in textures:
-                    draw_texture(texture, tile.x + (w * 16), tile.y + (h * 16), RAYWHITE)
+            for tile in level.tiles:
+                for w in range(int((tile.width) / 16)):
+                    for h in range(int(tile.height / 16)):
+                        # (Image to load, [(left coord of tile * width) - View, (bottom coord of tile - height)])
+                        draw_texture(tile.tile_image, tile.x + (w * 16), tile.y + (h * 16), RAYWHITE)
 
 
             # Update the player's sprite location
@@ -181,6 +171,8 @@ class Game(object):
                 draw_texture_rec(player.playerSprite, player.frame_rec, tempPosition, RAYWHITE)
 
             end_drawing()
+
+            level_has_loaded = True
 
             # Limits the frame rate of sprites (60 FPS walk cycle is bad)
             if get_time() > nextFrame:
