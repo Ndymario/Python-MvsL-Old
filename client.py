@@ -96,6 +96,9 @@ class Game(object):
             player.powerupHandler(0)
 
         while inGame:
+            # Prepare textures to draw
+            for player in self.players:
+                load_texture(player.playerSprites)
 
             # Get player inputs
             for player in self.players:
@@ -149,9 +152,10 @@ class Game(object):
                         #draw_texture(tile.tile_image, tile.x + (w * 16) - camera[0], tile.y + (h * 16), None)
 
             # Update the player's sprite location
-            #for player in self.players:
-                # (Player Sprite, (player x + width offset - View), (player y + height offset))
-                #moveSprite(player.playerSprite, round(player.position[0]) + player.draw_width - camera[0], player.position[1] + player.draw_height)
+            for player in self.players:
+                #(Player Sprite, (player x + width offset - View), (player y + height offset))
+                playerX, playerY = player.position
+                draw_texture(player.playerSprites, playerX, playerY, WHITE)
 
             end_drawing()
 
