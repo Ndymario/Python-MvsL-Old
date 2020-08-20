@@ -30,7 +30,7 @@ class Game(object):
     def __init__(self):
         self.players = []
 
-    def game_intro(self):
+    def gameIntro(self):
         screen_width = 800
         screen_height = 450
 
@@ -38,18 +38,19 @@ class Game(object):
 
         intro = True
 
-        begin_drawing()
-        clear_background(RAYWHITE)
-        draw_text('Press "A" to start!', 200, 200, 20, LIGHTGRAY)
-        end_drawing()
-
         while intro:
+            begin_drawing()
+            clear_background(RAYWHITE)
+            draw_text('Press "A" to start!', 200, 200, 20, LIGHTGRAY)
+            end_drawing()
+
             if is_key_down(KEY_A):
                 intro = False
-        
-        # Run the game if the title screen is cleared
-        close_window()
-        self.gameLoop()
+            
+            # Run the game if the title screen is cleared
+            if intro == False:
+                close_window()
+                self.gameLoop()
 
     def gameLoop(self):
 
@@ -168,7 +169,7 @@ class Game(object):
         self.players.clear()
 
         # Load the title screen
-        self.game_intro()
+        self.gameIntro()
 
 ##########--END CLASSES--##########
 
@@ -202,6 +203,6 @@ WHITE  = (255, 255, 255)
 
 game = Game()
 
-game.gameLoop()
+game.gameIntro()
 
 ###########-End Main Code-#########
