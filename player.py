@@ -212,67 +212,51 @@ class Player(object):
         elif (self.powerupState  == 1):
             if (action == "idle"):
                 if (last_held_direction == "right"):
-                    #changeSpriteImage(self.playerSprite, 17)
-                    pass
+                    self.spriteSheetHandler(0, 0, True)
                 elif (last_held_direction == "left"):
-                    #changeSpriteImage(self.playerSprite, 0)
-                    pass
-            
+                    self.spriteSheetHandler(0)
+
             elif (action == "jump"):
                 if (last_held_direction == "right"):
-                    #changeSpriteImage(self.playerSprite, 11)
-                    pass
+                    self.spriteSheetHandler(6, 0, True)
                 elif (last_held_direction == "left"):
-                    #changeSpriteImage(self.playerSprite, 6)
-                    pass
+                    self.spriteSheetHandler(6)
             
             elif (action == "fall"):
                 if (last_held_direction == "right"):
-                    #changeSpriteImage(self.playerSprite, 10)
-                    pass
+                    self.spriteSheetHandler(7, 0, True)
                 elif (last_held_direction == "left"):
-                    #changeSpriteImage(self.playerSprite, 7)
-                    pass
+                    self.spriteSheetHandler(7)
 
             elif (action == "walk"):
                 if (last_held_direction == "right"):
-                    #changeSpriteImage(self.playerSprite, 17 - superFrame)
-                    pass
+                    self.spriteSheetHandler(0 + frame, 0, True)
                 elif (last_held_direction == "left"):
-                    #changeSpriteImage(self.playerSprite, 0 + superFrame)
-                    pass
-            
+                    self.spriteSheetHandler(0 + frame)
+
             elif (action == "run"):
                 if (last_held_direction == "right"):
-                    #changeSpriteImage(self.playerSprite, 14 - superFrame)
-                    pass
+                    self.spriteSheetHandler(3 + frame, 0, True)
                 elif (last_held_direction == "left"):
-                    #changeSpriteImage(self.playerSprite, 3 + superFrame)
-                    pass
-            
+                    self.spriteSheetHandler(3 + frame)
+
             elif (action == "skidding"):
                 if (last_held_direction == "right"):
-                    #changeSpriteImage(self.playerSprite, 18)
-                    pass
+                    self.spriteSheetHandler(9, 0, True)
                 elif (last_held_direction == "left"):
-                    #changeSpriteImage(self.playerSprite, 19)
-                    pass
+                    self.spriteSheetHandler(9)
             
             elif (action == "duck"):
                 if (last_held_direction == "right"):
-                    #changeSpriteImage(self.playerSprite, 21)
-                    pass
+                    self.spriteSheetHandler(10, 0, True)
                 elif (last_held_direction == "left"):
-                    #changeSpriteImage(self.playerSprite, 20)
-                    pass
+                    self.spriteSheetHandler(10)
 
             elif (action == "looking_up"):
                 if (last_held_direction == "right"):
-                    #changeSpriteImage(self.playerSprite, 22)
-                    pass
+                    self.spriteSheetHandler(11, 0, True)
                 elif (last_held_direction == "left"):
-                    #changeSpriteImage(self.playerSprite, 23)
-                    pass
+                    self.spriteSheetHandler(11)
         
         elif (self.powerupState  == 2):
             if (action == "idle"):
@@ -348,21 +332,111 @@ class Player(object):
                     pass
         
     def spriteSheetHandler(self, x_offset = 0, y_offset = 0, flipX = False, flipY = False):
+        # Load the spite sheet as an image so we can transform it
         playerSprite = load_image(self.spriteSheet)
 
+        # If we want to flip the sprite on the X axis (aka horizontally),
+        # flip the image, and account for the frames being different
+        # (right to left instead of left to right)
         if flipX == True:
             image_flip_horizontal(playerSprite)
-            x_offset = (9 - x_offset)
+            if self.powerupState == 0:
+                x_offset = (9 - x_offset)
+            elif self.powerupState == 1:
+                x_offset = (11 - x_offset)
+            elif self.powerupState == 2:
+                x_offset = (12 - x_offset)
+            elif self.powerupState == 3:
+                x_offset = (12 - x_offset)
+            elif self.powerupState == 4:
+                x_offset = (12 - x_offset)
+            elif self.powerupState == 5:
+                x_offset = (12 - x_offset)
+            elif self.powerupState == 6:
+                x_offset = (12 - x_offset)
+            elif self.powerupState == 7:
+                x_offset = (12 - x_offset)
+            elif self.powerupState == 8:
+                x_offset = (12 - x_offset)
+            elif self.powerupState == 9:
+                x_offset = (12 - x_offset)
+            elif self.powerupState == 10:
+                x_offset = (12 - x_offset)
+            elif self.powerupState == 11:
+                x_offset = (12 - x_offset)
         
+        # If we want to flip the sprite on the Y axis (aka vertically),
+        # flip the image
         if flipY == True:
             image_flip_vertical(playerSprite)
 
-        xPos = x_offset * self.playerSprite.width/10
-        yPos = y_offset * self.playerSprite.height/10
+        # Calculate where the rectangle for the sprite selector needs to be
 
+        if self.powerupState == 0:
+            xPos = x_offset * self.playerSprite.width/10
+            yPos = y_offset * self.playerSprite.height/10
+        elif self.powerupState == 1:
+            xPos = x_offset * self.playerSprite.width/12
+            yPos = y_offset * self.playerSprite.height/12
+        elif self.powerupState == 2:
+            xPos = x_offset * self.playerSprite.width/10
+            yPos = y_offset * self.playerSprite.height/10
+        elif self.powerupState == 3:
+            xPos = x_offset * self.playerSprite.width/10
+            yPos = y_offset * self.playerSprite.height/10
+        elif self.powerupState == 4:
+            xPos = x_offset * self.playerSprite.width/10
+            yPos = y_offset * self.playerSprite.height/10
+        elif self.powerupState == 5:
+            xPos = x_offset * self.playerSprite.width/10
+            yPos = y_offset * self.playerSprite.height/10
+        elif self.powerupState == 6:
+            xPos = x_offset * self.playerSprite.width/10
+            yPos = y_offset * self.playerSprite.height/10
+        elif self.powerupState == 7:
+            xPos = x_offset * self.playerSprite.width/10
+            yPos = y_offset * self.playerSprite.height/10
+        elif self.powerupState == 8:
+            xPos = x_offset * self.playerSprite.width/10
+            yPos = y_offset * self.playerSprite.height/10
+        elif self.powerupState == 9:
+            xPos = x_offset * self.playerSprite.width/10
+            yPos = y_offset * self.playerSprite.height/10
+        elif self.powerupState == 10:
+            xPos = x_offset * self.playerSprite.width/10
+            yPos = y_offset * self.playerSprite.height/10
+        elif self.powerupState == 11:
+            xPos = x_offset * self.playerSprite.width/10
+            yPos = y_offset * self.playerSprite.height/10
+
+        # Set the player sprite back to a Texture2D
         self.playerSprite = load_texture_from_image(playerSprite)
 
-        self.frame_rec = Rectangle(xPos, yPos, self.playerSprite.width/10, self.playerSprite.height)
+        # Account for the difference in frames for each powerup
+        if self.powerupState == 0:
+            self.frame_rec = Rectangle(xPos, yPos, self.playerSprite.width/10, self.playerSprite.height)
+        elif self.powerupState == 1:
+            self.frame_rec = Rectangle(xPos, yPos, self.playerSprite.width/12, self.playerSprite.height)
+        elif self.powerupState == 2:
+            self.frame_rec = Rectangle(xPos, yPos, self.playerSprite.width/10, self.playerSprite.height)
+        elif self.powerupState == 3:
+            self.frame_rec = Rectangle(xPos, yPos, self.playerSprite.width/10, self.playerSprite.height)
+        elif self.powerupState == 4:
+            self.frame_rec = Rectangle(xPos, yPos, self.playerSprite.width/10, self.playerSprite.height)
+        elif self.powerupState == 5:
+            self.frame_rec = Rectangle(xPos, yPos, self.playerSprite.width/10, self.playerSprite.height)
+        elif self.powerupState == 6:
+            self.frame_rec = Rectangle(xPos, yPos, self.playerSprite.width/10, self.playerSprite.height)
+        elif self.powerupState == 7:
+            self.frame_rec = Rectangle(xPos, yPos, self.playerSprite.width/10, self.playerSprite.height)
+        elif self.powerupState == 8:
+            self.frame_rec = Rectangle(xPos, yPos, self.playerSprite.width/10, self.playerSprite.height)
+        elif self.powerupState == 9:
+            self.frame_rec = Rectangle(xPos, yPos, self.playerSprite.width/10, self.playerSprite.height)
+        elif self.powerupState == 10:
+            self.frame_rec = Rectangle(xPos, yPos, self.playerSprite.width/10, self.playerSprite.height)
+        elif self.powerupState == 11:
+            self.frame_rec = Rectangle(xPos, yPos, self.playerSprite.width/10, self.playerSprite.height)
 
     def spriteChanger(self, newSprite):
         if (self.playerSprite != None):
@@ -414,6 +488,7 @@ class Player(object):
 
             spriteSheet = self.playerSprites + "super.png"
             self.spriteChanger(spriteSheet)
+            self.spriteSheet = spriteSheet
             return spriteSheet
 
         elif (powerupID == 2):
@@ -428,6 +503,7 @@ class Player(object):
 
             spriteSheet = self.playerSprites + "fire.png"
             self.spriteChanger(spriteSheet)
+            self.spriteSheet = spriteSheet
             return spriteSheet
     
     # If the player gets hurt, make them shrink one powerup, otherwise kill the player
