@@ -43,6 +43,9 @@ class Player(object):
         self.draw_width = draw_width
         self.draw_height = draw_height
 
+        # Define player texture bounding box
+        frame_rec = None
+
         # Define some physics related variables
         self.weight = 0.2
         self.SPEED_CAP = 2

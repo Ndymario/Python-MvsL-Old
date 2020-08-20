@@ -63,16 +63,10 @@ class Game(object):
 
         # This creates the collision map and the camera collision map from the level file automatically
         #TODO: Fix relative path for 1-1.lvl file (to run, you'll need the entire file path)
-        cmap = CMap("Cmap/1-1.cmap")
+        cmap = CMap(dirname + "Cmap/1-1.cmap")
         cmap.create_cmap(dirname + "/Levels/1-1.lvl")
         cmap.create_camera_map(dirname + "/Levels/1-1.lvl")
         level = Level(dirname + "/Levels/1-1.lvl")
-
-        levelTextures = []
-
-        for tile in level.tiles:
-            texture = load_texture(tile.tile_image)
-            levelTextures.append(texture)
 
         # Frame handler (used for any sprite animation)
         frame = 0
@@ -101,10 +95,16 @@ class Game(object):
             # The powerup handler already creates the player sprite, so use this to initalize the players
             player.powerupHandler(0)
 
+        level_has_loaded = False
+
         while inGame:
             # Prepare textures to draw
             for player in self.players:
                 load_texture(player.playerSprites)
+
+            # Create bounding box for the player sprites
+            for player in self.players:
+                player.frame_rec = Rectangle(0.0, 0.0, player.playerSprite.width/10, player.playerSprite.height)
 
             # Get player inputs
             for player in self.players:
@@ -151,17 +151,34 @@ class Game(object):
 
             clear_background(RAYWHITE)
 
-            for tile in level.tiles:
-                for w in range(int((tile.width) / 16)):
-                    for h in range(int(tile.height / 16)):
-                        for texture in levelTextures:
+            textures = []
+
+            if level_has_loaded == False:
+                for tile in level.tiles:
+                    for w in range(int((tile.width) / 16)):
+                        for h in range(int(tile.height / 16)):
                             # (Image to load, [(left coord of tile * width) - View, (bottom coord of tile - height)])
-                            draw_texture(texture, tile.x + (w * 16), tile.y + (h * 16), RAYWHITE)
+                            draw_texture(load_texture(tile.tile_image), tile.x + (w * 16), tile.y + (h * 16), RAYWHITE)
+                                
+                            textures.append(tile.tile_image)
+
+            else:
+                for texture in textures:
+                    draw_texture(texture, tile.x + (w * 16), tile.y + (h * 16), RAYWHITE)
+
 
             # Update the player's sprite location
             for player in self.players:
                 #(Player Sprite, (player x + width offset - View), (player y + height offset))
-                draw_texture(player.playerSprite, player.position[0], player.position[1], RAYWHITE)
+                tempX = player.position[0]
+                tempY = player.position[1]
+
+                tempX += player.draw_width
+                tempY += player.draw_height
+
+                tempPosition = Vector2(tempX, tempY)
+
+                draw_texture_rec(player.playerSprite, player.frame_rec, tempPosition, RAYWHITE)
 
             end_drawing()
 
