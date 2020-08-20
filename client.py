@@ -10,7 +10,6 @@
 # Import things I might need
 import os
 from raylibpy import *
-import sys
 from level import *
 from player import *
 from cmap import *
@@ -95,10 +94,6 @@ class Game(object):
             # The powerup handler already creates the player sprite, so use this to initalize the players
             player.powerupHandler(0)
 
-        level_has_loaded = False
-
-        textures = []
-
         while inGame:
 
             # Create bounding box for the player sprites
@@ -171,8 +166,6 @@ class Game(object):
                 draw_texture_rec(player.playerSprite, player.frame_rec, tempPosition, RAYWHITE)
 
             end_drawing()
-
-            level_has_loaded = True
 
             # Limits the frame rate of sprites (60 FPS walk cycle is bad)
             if get_time() > nextFrame:

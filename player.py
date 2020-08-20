@@ -44,7 +44,7 @@ class Player(object):
         self.draw_height = draw_height
 
         # Define player texture bounding box
-        frame_rec = None
+        self.frame_rec = None
 
         # Define some physics related variables
         self.weight = 0.2
@@ -162,67 +162,58 @@ class Player(object):
         if (self.powerupState == 0):
             if (action == "idle"):
                 if (last_held_direction == "right"):
-                    #changeSpriteImage(self.playerSprite)
-                    pass
+                    self.frame_rec.x = 0
                 elif (last_held_direction == "left"):
-                    #changeSpriteImage(self.playerSprite, 0)
-                    pass
+                    self.frame_rec.x = 0
 
             elif (action == "jump"):
                 if (last_held_direction == "right"):
-                    #changeSpriteImage(self.playerSprite, 9)
-                    pass
+                    self.frame_rec.x += 4 * (self.playerSprite.width/10)
+
                 elif (last_held_direction == "left"):
-                    #changeSpriteImage(self.playerSprite, 4)
-                    pass
+                    self.frame_rec.x += 4 * (self.playerSprite.width/10)
             
             elif (action == "fall"):
                 if (last_held_direction == "right"):
-                    #changeSpriteImage(self.playerSprite, 8)
-                    pass
+                    self.frame_rec.x += 5 * (self.playerSprite.width/10)
+
                 elif (last_held_direction == "left"):
-                    #changeSpriteImage(self.playerSprite, 5)
-                    pass
+                    self.frame_rec.x += 5 * (self.playerSprite.width/10)
 
             elif (action == "walk"):
                 if (last_held_direction == "right"):
-                    #changeSpriteImage(self.playerSprite, 13 - frame)
-                    pass
+                    self.frame_rec.x += (0 + superFrame) * (self.playerSprite.width/10)
+
                 elif (last_held_direction == "left"):
-                    #changeSpriteImage(self.playerSprite, 0 + frame)
-                    pass
+                    self.frame_rec.x += (0 + superFrame) * (self.playerSprite.width/10)
 
             elif (action == "run"):
                 if (last_held_direction == "right"):
-                    #changeSpriteImage(self.playerSprite, 11 - frame)
-                    pass
+                    self.frame_rec.x += (2 + superFrame) * (self.playerSprite.width/10)
+
                 elif (last_held_direction == "left"):
-                    #changeSpriteImage(self.playerSprite, 2 + frame)
-                    pass
+                    self.frame_rec.x += (2 + superFrame) * (self.playerSprite.width/10)
 
             elif (action == "skidding"):
                 if (last_held_direction == "right"):
-                    #changeSpriteImage(self.playerSprite, 14)
-                    pass
+                    self.frame_rec.x += 7 * (self.playerSprite.width/10)
+
                 elif (last_held_direction == "left"):
-                    #changeSpriteImage(self.playerSprite, 15)
-                    pass
+                    self.frame_rec.x += 7 * (self.playerSprite.width/10)
             
             elif (action == "duck"):
                 if (last_held_direction == "right"):
-                    #changeSpriteImage(self.playerSprite, 17)
-                    pass
+                    self.frame_rec.x += 8 * (self.playerSprite.width/10)
+
                 elif (last_held_direction == "left"):
-                    #changeSpriteImage(self.playerSprite, 16)
-                    pass
+                    self.frame_rec.x += 8 * (self.playerSprite.width/10)
 
             elif (action == "looking_up"):
                 if (last_held_direction == "right"):
-                    #changeSpriteImage(self.playerSprite, 19)
-                    pass
+                    self.frame_rec.x += 9 * (self.playerSprite.width/10)
+                    
                 elif (last_held_direction == "left"):
-                    #changeSpriteImage(self.playerSprite, 18)
-                    pass
+                    self.frame_rec.x += 9 * (self.playerSprite.width/10)
 
         elif (self.powerupState  == 1):
             if (action == "idle"):
