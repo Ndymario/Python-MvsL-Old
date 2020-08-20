@@ -361,8 +361,8 @@ class Player(object):
 
     def spriteChanger(self, newSprite):
         if (self.playerSprite != None):
-            unload_image(self.playerSprite)
-        self.playerSprite = load_image(newSprite)
+            unload_texture(self.playerSprite)
+        self.playerSprite = load_texture(newSprite)
     
     def powerupHandler(self, powerupID):
         # 0 - Small

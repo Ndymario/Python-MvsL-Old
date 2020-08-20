@@ -8,15 +8,15 @@
 ##########--Begin System Level Stuff--##########
 
 # Import things I might need
+import os
 from raylibpy import *
 import sys
 from level import *
 from player import *
 from cmap import *
 
-# Allows us to use another folder than the folder this file is located
-sys.path.insert(1, "./Sprites")
-sys.path.insert(1, "./Levels")
+# Get the program's directory (used for relative pathing)
+dirname = os.path.dirname(__file__)
 
 ##########--End System Level Stuff--##########
 
@@ -64,9 +64,15 @@ class Game(object):
         # This creates the collision map and the camera collision map from the level file automatically
         #TODO: Fix relative path for 1-1.lvl file (to run, you'll need the entire file path)
         cmap = CMap("Cmap/1-1.cmap")
-        cmap.create_cmap("/Users/ndymario/Desktop/Programming/Python/MvsL/Python-MvsL/Levels/1-1.lvl")
-        cmap.create_camera_map("/Users/ndymario/Desktop/Programming/Python/MvsL/Python-MvsL/Levels/1-1.lvl")
-        level = Level("/Users/ndymario/Desktop/Programming/Python/MvsL/Python-MvsL/Levels/1-1.lvl")
+        cmap.create_cmap(dirname + "/Levels/1-1.lvl")
+        cmap.create_camera_map(dirname + "/Levels/1-1.lvl")
+        level = Level(dirname + "/Levels/1-1.lvl")
+
+        levelTextures = []
+
+        for tile in level.tiles:
+            texture = load_texture(tile.tile_image)
+            levelTextures.append(texture)
 
         # Frame handler (used for any sprite animation)
         frame = 0
@@ -74,10 +80,10 @@ class Game(object):
         nextFrame = get_time()
 
         # Create a player
-        mario = Player("Sprites/Mario/")
+        mario = Player(dirname + "/Sprites/Mario/")
 
         if P2: #Experimental 
-            luigi = Player("Sprites/Luigi/", [KEY_W, KEY_S, KEY_A, KEY_D, KEY_Q, KEY_LEFT_SHIFT]\
+            luigi = Player(dirname + "/Sprites/Luigi/", [KEY_W, KEY_S, KEY_A, KEY_D, KEY_Q, KEY_LEFT_SHIFT]\
                         , 1, 10, 20)
             self.players = [mario, luigi]
         else:
@@ -145,17 +151,17 @@ class Game(object):
 
             clear_background(RAYWHITE)
 
-            #for tile in level.tiles:
-                #for w in range(int((tile.width) / 16)):
-                    #for h in range(int(tile.height / 16)):
-                        # (Image to load, [(left coord of tile * width) - View, (bottom coord of tile - height)])
-                        #draw_texture(tile.tile_image, tile.x + (w * 16) - camera[0], tile.y + (h * 16), None)
+            for tile in level.tiles:
+                for w in range(int((tile.width) / 16)):
+                    for h in range(int(tile.height / 16)):
+                        for texture in levelTextures:
+                            # (Image to load, [(left coord of tile * width) - View, (bottom coord of tile - height)])
+                            draw_texture(texture, tile.x + (w * 16), tile.y + (h * 16), RAYWHITE)
 
             # Update the player's sprite location
             for player in self.players:
                 #(Player Sprite, (player x + width offset - View), (player y + height offset))
-                playerX, playerY = player.position
-                draw_texture(player.playerSprites, playerX, playerY, WHITE)
+                draw_texture(player.playerSprite, player.position[0], player.position[1], RAYWHITE)
 
             end_drawing()
 
@@ -168,7 +174,7 @@ class Game(object):
     def clearGame(self):
         # Remove all player sprites 
         for player in self.players:
-            unload_image(player.playerSprite)
+            unload_texture(player.playerSprite)
         # Remove all players from the player list
         self.players.clear()
 
