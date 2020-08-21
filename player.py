@@ -71,54 +71,56 @@ class Player(object):
         self.skidding = False
         self.initalized = False
         self.jumping = False
+        self.jumpTimer = 0
 
         # Powerup state for the player
         self.powerupState = 0
         self.released_up = True
         self.sprinting = False
 
-    def approach(self, current, goal, dt):
-        # Why are we subtracting the position from the velocity and comparing that to dt? And why does that result in
-        # the new velocity?
-        difference = goal - current
+    def approach(self, position, velocity, airTime, y = False):
+        # Velocity needs to be calculated differently for X and Y
+        if y == False: 
+            velocity = velocity
+        if y == True: 
+            velocity = (4.17 * airTime) + (0.149 * pow(airTime, 2))
 
-        if (self.skidding):
-            if (difference > dt):
-                return current + dt * 2
-            elif (difference < -dt):
-                return current - dt * 2
-        else:
-            # Unless friction automatically sets the velocity to 0, this will cause the velocity to go way above the
-            # cap.
-            if (difference > dt):
-                return current + dt
-            elif (difference < -dt):
-                return current - dt
-        return goal
+            if velocity >= self.DSPEED_CAP:
+                velocity = self.DSPEED_CAP
 
-    def calculatePosition(self, dt, cmap):
-        tempX, tempY = self.position
+
+        return velocity
+
+    def calculatePosition(self, cmap, airTime):
+        tempX = self.position[0]
         # Make it so the player wraps around on the left and right (if enabled)
         if (wrap_around):
-            x, y = self.position
+            x = self.position[0]
+            y = self.position[1]
             if ((x >= WIDTH) and (tempX >= 0)):
                 self.x = 1
             elif ((x <= 0) and (tempX <= 0)):
                 self.x = WIDTH
         
         # Calculate x & y velocity using fancy Vector math
-        tempPX, tempPY = self.position
-        tempVX, tempVY = self.velocity
-        # I don't know why dt exists, it doesn't seem to be implemented correctly. I have to set the value dt is being
-        # multiplied by to a value above or equal to the width of the stage divided by 10 to prevent dumbness.
-        x = self.approach(tempPX, tempVX, dt * 1000)
-        y = self.approach(tempPY, tempVY, dt * 1000)
-        self.velocity = (x, y)
+        tempPX = self.position[0]
+        tempPY = self.position[1]
+        tempVX = self.velocity[0]
+        tempVY = self.velocity[1]
+
+        x = self.approach(tempPX, tempVX, self.jumpTimer)
+        y = self.approach(tempPY, tempVY, self.jumpTimer, True)
 
         # Update the player's position and velocity
+        self.velocity = Vector2(x, y)
+
         pX, pY = self.position
         vX, vY = self.velocity
         gX, gY = self.gravity
+
+        # Add position and velocity
+        pX = pX + vX
+        pY = pY + vY
 
         # Cap the player's speed
         if vX >= (self.SPEED_CAP):
@@ -130,10 +132,6 @@ class Player(object):
             vY = self.VSPEED_CAP
         elif vY <= (-self.VSPEED_CAP):
             vY = -self.VSPEED_CAP
-
-        # Add the player's X/Y position, and the appropriate velocity
-        pX += vX
-        pY += vY
 
         # If the player is not on the ground, account for gravity too
         if (self.check_jump(cmap) == False):
@@ -149,12 +147,10 @@ class Player(object):
                 vY = self.VSPEED_CAP
             elif vY <= (-self.VSPEED_CAP):
                 vY = -self.VSPEED_CAP
+        
+        # Finalize the position and velocity changes
         self.position = (pX, pY)
         self.velocity = (vX, vY)
-
-    # Calculate the players vertical velocity
-    def VerticalVelocity(self):
-        pass
     
     # Used to determine what sprite to use for each animation
     # (Not all spritesheets will be layed out the same!)
@@ -651,7 +647,6 @@ class Player(object):
 
                 self.velocity = (x, self.DSPEED_CAP)
 
-                #playSound(jump)
                 self.released_up = False
                 if is_key_down(self.down):
                     self.animationController("duck", last_held_direction, frame, superFrame)
@@ -688,6 +683,11 @@ class Player(object):
         else:
             self.SPEED_CAP = 2
             self.ACCELERATION = .17
+
+        if self.check_jump(cmap) == False:
+            self.jumpTimer += 1
+        else:
+            self.jumpTimer = 0
 
     # Make the player have friction against the ground
     def Friction(self,x):
