@@ -21,7 +21,7 @@ GRAVITY = 0.149
 
 class Player(object):
     def __init__(self, playerSprites = None, controls = [KEY_UP, KEY_DOWN, KEY_LEFT, KEY_RIGHT, KEY_SPACE, KEY_RIGHT_SHIFT]\
-                 , player_number = 0, x = 50, y = 100, width = 10, height = 20, draw_width = -4, draw_height = -13):
+                 , player_number = 0, x = 50, y = 50, width = 10, height = 20, draw_width = -4, draw_height = -13):
         # Keep track of the player number
         self.player_number = player_number
 
@@ -120,7 +120,7 @@ class Player(object):
 
         # Add position and velocity
         pX = pX + vX
-        pY = pY + vY
+        pY = pY - vY
 
         # Cap the player's speed
         if vX >= (self.SPEED_CAP):
@@ -149,8 +149,8 @@ class Player(object):
                 vY = -self.VSPEED_CAP
         
         # Finalize the position and velocity changes
-        self.position = (pX, pY)
-        self.velocity = (vX, vY)
+        self.position = Vector2(pX, pY)
+        self.velocity = Vector2(vX, vY)
     
     # Used to determine what sprite to use for each animation
     # (Not all spritesheets will be layed out the same!)
