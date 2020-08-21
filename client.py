@@ -106,7 +106,7 @@ class Game(object):
                 player.RefineInput(cmap, player.playerSprite, player.last_held_direction, frame, superFrame, level)        
             
                 # Calculate and update player position
-                player.calculatePosition(cmap, player.jumpTimer)
+                player.calculatePosition(cmap)
                 updated_position = player.check_collision(cmap)
                 player.position = (updated_position[0], updated_position[1])
                 player.velocity = (updated_position[2], updated_position[3])

@@ -14,7 +14,7 @@ wrap_around = True
 
 # Define some in game constants (used for the Physics "engine")
 FRICTION = 0.2
-GRAVITY = 0.149
+GRAVITY = 0.05
 
 # Create player sound effects
 #jump = makeSound("Sounds/jump.wav")
@@ -71,31 +71,34 @@ class Player(object):
         self.skidding = False
         self.initalized = False
         self.jumping = False
-        self.jumpTimer = 0
 
         # Powerup state for the player
         self.powerupState = 0
         self.released_up = True
         self.sprinting = False
 
-    def approach(self, position, velocity, airTime, y = False):
+    def approach(self, position, velocity, y = False):
         # Velocity needs to be calculated differently for X and Y
         if y == False: 
             velocity = velocity
         if y == True:
-            # Velocity funtion; Desmos Graph: y = x + (((x-7.5)^2)/5)
-            velocity = velocity + ((pow(velocity - 2.739, 2))/5)
+            if velocity == 0:
+                return velocity
+            else:
+                # Velocity funtion; Desmos Graph: y = x + (((x-7.5)^2)/5)
+                velocity = velocity + ((pow(abs(velocity) - 2.739, 2))/5)
 
-            if velocity <= self.DSPEED_CAP:
-                velocity = self.DSPEED_CAP
-            
-            if velocity >= self.VSPEED_CAP:
-                velocity = self.VSPEED_CAP
+                if velocity <= self.DSPEED_CAP:
+                    velocity = self.DSPEED_CAP
+                
+                if velocity >= self.VSPEED_CAP:
+                    velocity = self.VSPEED_CAP
 
         return velocity
 
-    def calculatePosition(self, cmap, airTime):
+    def calculatePosition(self, cmap):
         tempX = self.position[0]
+        
         # Make it so the player wraps around on the left and right (if enabled)
         if (wrap_around):
             x = self.position[0]
@@ -111,11 +114,11 @@ class Player(object):
         tempVX = self.velocity[0]
         tempVY = self.velocity[1]
 
-        x = self.approach(tempPX, tempVX, self.jumpTimer)
-        y = self.approach(tempPY, tempVY, self.jumpTimer, True)
+        x = self.approach(tempPX, tempVX)
+        y = self.approach(tempPY, tempVY, True)
 
         # Update the player's position and velocity
-        self.velocity = Vector2(x, y)
+        self.velocity = (x, y)
 
         pX, pY = self.position
         vX, vY = self.velocity
@@ -331,6 +334,7 @@ class Player(object):
                     pass
         
     def spriteSheetHandler(self, x_offset = 0, y_offset = 0, flipX = False, flipY = False):
+        # Unload the previous player sprite; prevents a memory leak
         unload_texture(self.playerSprite)
         
         # Load the spite sheet as an image so we can transform it
@@ -663,7 +667,6 @@ class Player(object):
                 if is_key_down(self.down):
                     self.animationController("duck", last_held_direction, frame, superFrame)
 
-        # Apply gravity to the player
         elif (self.check_jump(cmap) == False):
             # Update the player's sprite if the peak of the jump has been passed, then apply gravity
             if (y > 0):
@@ -688,11 +691,6 @@ class Player(object):
         else:
             self.SPEED_CAP = 2
             self.ACCELERATION = .17
-
-        if self.check_jump(cmap) == False:
-            self.jumpTimer += 0.01
-        else:
-            self.jumpTimer = 0
 
     # Make the player have friction against the ground
     def Friction(self,x):
