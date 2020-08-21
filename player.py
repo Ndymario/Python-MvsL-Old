@@ -82,12 +82,15 @@ class Player(object):
         # Velocity needs to be calculated differently for X and Y
         if y == False: 
             velocity = velocity
-        if y == True: 
-            velocity = (4.17 * airTime) + (0.149 * pow(airTime, 2))
+        if y == True:
+            # Velocity funtion; Desmos Graph: y = x + (((x-7.5)^2)/5)
+            velocity = velocity + ((pow(velocity - 2.739, 2))/5)
 
-            if velocity >= self.DSPEED_CAP:
+            if velocity <= self.DSPEED_CAP:
                 velocity = self.DSPEED_CAP
-
+            
+            if velocity >= self.VSPEED_CAP:
+                velocity = self.VSPEED_CAP
 
         return velocity
 
@@ -120,7 +123,7 @@ class Player(object):
 
         # Add position and velocity
         pX = pX + vX
-        pY = pY - vY
+        pY = pY + vY
 
         # Cap the player's speed
         if vX >= (self.SPEED_CAP):
@@ -145,8 +148,8 @@ class Player(object):
 
             if vY >= (self.VSPEED_CAP):
                 vY = self.VSPEED_CAP
-            elif vY <= (-self.VSPEED_CAP):
-                vY = -self.VSPEED_CAP
+            elif vY <= (self.DSPEED_CAP):
+                vY = self.DSPEED_CAP
         
         # Finalize the position and velocity changes
         self.position = Vector2(pX, pY)
@@ -328,6 +331,8 @@ class Player(object):
                     pass
         
     def spriteSheetHandler(self, x_offset = 0, y_offset = 0, flipX = False, flipY = False):
+        unload_texture(self.playerSprite)
+        
         # Load the spite sheet as an image so we can transform it
         playerSprite = load_image(self.spriteSheet)
 
@@ -685,7 +690,7 @@ class Player(object):
             self.ACCELERATION = .17
 
         if self.check_jump(cmap) == False:
-            self.jumpTimer += 1
+            self.jumpTimer += 0.01
         else:
             self.jumpTimer = 0
 
