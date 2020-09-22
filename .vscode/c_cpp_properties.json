@@ -15,9 +15,21 @@
                 "PLATFORM_DESKTOP"
             ],
             "windowsSdkVersion": "10.0.17134.0",
-            "compilerPath": "C:/raylib/mingw/bin/gcc.exe",
+            "compilerPath": "/usr/bin/clang++",
             "cStandard": "c99",
             "cppStandard": "c++14",
+            "intelliSenseMode": "gcc-x64"
+        },
+        {
+            "name": "Mac",
+            "includePath": [
+                "${workspaceFolder}/**"
+            ],
+            "defines": [],
+            "macFrameworkPath": [],
+            "compilerPath": "/usr/bin/clang++",
+            "cStandard": "gnu18",
+            "cppStandard": "gnu++14",
             "intelliSenseMode": "gcc-x64"
         }
     ],

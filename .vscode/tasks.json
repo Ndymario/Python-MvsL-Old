@@ -3,33 +3,26 @@
     // for the documentation about the tasks.json format
     "version": "2.0.0",
     "tasks": [
-        {
-            "label": "(WIN) build release",
-            "type": "shell",
-            "command": "c:/raylib/mingw/bin/mingw32-make.exe",
-            "args": [
-                "PROJECT_NAME=game"
-            ],
-            "group": "build",
-            "problemMatcher": [
-                "$gcc"
-            ]
+      {
+        "type": "shell",
+        "label": "clang++ build active file",
+        "command": "/usr/bin/clang++",
+        "args": [
+          "-std=c++17",
+          "-stdlib=libc++",
+          "-g",
+          "${file}",
+          "-o",
+          "${fileDirname}/${fileBasenameNoExtension}"
+        ],
+        "options": {
+          "cwd": "${workspaceFolder}"
         },
-        {
-            "label": "(WIN) build debug",
-            "type": "shell",
-            "command": "c:/raylib/mingw/bin/mingw32-make.exe",
-            "args": [
-                "PROJECT_NAME=game",
-                "DEBUGGING=TRUE"
-            ],
-            "group": {
-                "kind": "build",
-                "isDefault": true
-            },
-            "problemMatcher": [
-                "$gcc"
-            ]
+        "problemMatcher": ["$gcc"],
+        "group": {
+          "kind": "build",
+          "isDefault": true
         }
+      }
     ]
-}
+  }
