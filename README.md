@@ -1,3 +1,7 @@
+# This project is now depricated, please visit the new repository for the C++ version.
+Thank you everyone who contributed for making this a fun project to work on to test my Phyton skills.
+Link to the new repository: https://github.com/Ndymario/MvsL-Recoded
+
 # MvsL-Recoded
 My goal is to port Mario vs Luigi to PC/Mac! (Or at least try to)
 
