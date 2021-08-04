@@ -1,4 +1,4 @@
-# This project is now depricated, please visit the new repository for the C++ version.
+# This project is open for fun, if you are serious about contributing take a look at the other repo!
 Thank you everyone who contributed for making this a fun project to work on to test my Phyton skills.
 Link to the new repository: https://github.com/Ndymario/MvsL-Recoded
 
