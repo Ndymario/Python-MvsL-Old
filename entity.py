@@ -1,16 +1,36 @@
 ########################################################################
 #   Author: Nolan Y.                                                   #
-#   Description: File that contains any entities                       #
+#   Description: File that defines the base entity class               #
 ########################################################################
 
-class Fireball(object):
-    def __init__(self, playerNumber):
-        self.playerNumber = playerNumber
+class Entity:
+    def __init__(self, sprites, entity_id, coordinates, spite_drawing_info, physics_info) -> None:
+        # Keep track of this Entity's ID
+        self.entity_id = entity_id
 
-    def playerCollision(self, player):
+        # Keep track of the Entity's sprite information
+        self.sprites = sprites
+        self.sprite_drawing_info = spite_drawing_info
 
-        #Function to make the other player drop a big star.
-        if (self.playerNumber != player.playerNumber):
-            pass
+        # Keep track of the Entity's coordinates
+        self.coodinates = coordinates
 
-        # TODO: Make the fireball have physics and destroy on hitting a wall.
+        # Keep track of the Entity's physics related properties (used for the physics engine)
+        self.physics = physics_info
+
+# Default coordinates template
+coordinates = {
+    "x": 0,
+    "y": 0,
+    "x velocity": 0,
+    "y velocity": 0
+}
+
+# Default physics template
+physics_info = {
+    "weight": 0.2,
+    "speed cap": 2,
+    "top speed": 8,
+    "air speed cap": 7.5,
+    "acceleation": 0.05
+}

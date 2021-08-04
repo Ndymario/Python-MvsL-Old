@@ -30,8 +30,8 @@ class Game(object):
         self.players = []
 
     def text_objects(self, text, font):
-        textSurface = font.render(text, True, BLACK)
-        return textSurface, textSurface.get_rect()
+        text_surface = font.render(text, True, BLACK)
+        return text_surface, text_surface.get_rect()
 
     def game_intro(self):
         screen = screenSize(800, 600, None, None, False)
@@ -51,23 +51,23 @@ class Game(object):
                 intro = False
                     
             screen.fill(WHITE)
-            largeText = pygame.font.Font('freesansbold.ttf', 100)
-            TextSurf, TextRect = self.text_objects("Mario vs Luigi", largeText)
-            TextRect.center = ((800/2),(600/2))
-            screen.blit(TextSurf, TextRect)
+            large_text = pygame.font.Font('freesansbold.ttf', 100)
+            text_surf, text_rect = self.text_objects("Mario vs Luigi", large_text)
+            text_rect.center = ((800/2),(600/2))
+            screen.blit(text_surf, text_rect)
             pygame.display.update()
             tick(15)
         
         # Run the game if the title screen is cleared
-        self.gameLoop()
+        self.game_loop()
 
-    def gameLoop(self):
+    def game_loop(self):
 
         # Setup the screen and other display stuff
         # Note: WIDTH & HEIGHT are imported from player.py!
         screen = screenSize(WIDTH, HEIGHT, None, None, False)
 
-        inGame = True
+        in_game = True
 
         # Load Level Data
         levelchunk1 = []
@@ -79,8 +79,8 @@ class Game(object):
 
         # Frame handler (used for any sprite animation)
         frame = 0
-        superFrame = 0
-        nextFrame = clock()
+        super_frame = 0
+        next_frame = clock()
 
         # Create a player
         mario = Player("Sprites/Mario/")
@@ -95,9 +95,9 @@ class Game(object):
         # Load the Player's sprites
         for player in self.players:
             # The powerup handler already creates the player sprite, so use this to initalize the players
-            player.powerupHandler(0)
+            player.powerup_handler(0)
 
-        while inGame:
+        while in_game:
             events = pygame.event.get()
             for event in events:
                 if event.type == pygame.QUIT: sys.exit()
@@ -106,10 +106,10 @@ class Game(object):
             # Get player inputs
             for player in self.players:
                 # Turn inputs into movement
-                player.RefineInput(keys, cmap, player.playerSprite, player.last_held_direction, frame, superFrame, level)        
+                player.refine_input(keys, cmap, player.player_sprite, player.last_held_direction, frame, super_frame, level)        
             
                 # Calculate and update position
-                player.calculatePosition()
+                player.calculate_position()
                 updated_position = player.check_collision(cmap)        
                 player.x = updated_position[0]
                 player.y = updated_position[1]
@@ -123,21 +123,21 @@ class Game(object):
                 if (DEBUG):
                     # Make the Bros. Small
                     if keys[pygame.K_0]:
-                        mario.powerupHandler(0)
-                        luigi.powerupHandler(0)
+                        mario.powerup_handler(0)
+                        luigi.powerup_handler(0)
 
                     # Make both Bros. Super
                     if keys[pygame.K_1]:
-                        mario.powerupHandler(1)
-                        luigi.powerupHandler(1)
+                        mario.powerup_handler(1)
+                        luigi.powerup_handler(1)
                     
                     # Make Mario Fire Mario
                     if keys[pygame.K_2]:
-                        mario.powerupHandler(2)
+                        mario.powerup_handler(2)
 
                     # Return to the title screen
                     if keys[pygame.K_9]:
-                        self.clearGame()
+                        self.clear_game()
                 
             # Limit the framerate to 60 FPS
             tick(60)
@@ -151,19 +151,19 @@ class Game(object):
 
             # Update the player's sprite location
             for player in self.players:
-                moveSprite(player.playerSprite, player.x + player.draw_width, player.y + player.draw_height)
+                moveSprite(player.player_sprite, player.x + player.draw_width, player.y + player.draw_height)
 
             updateDisplay()
             # Limits the frame rate of sprites (60 FPS walk cycle is bad)
-            if clock() > nextFrame:
+            if clock() > next_frame:
                 frame = (frame+1)%2
-                superFrame = (superFrame+1)%3
-                nextFrame += 60
+                super_frame = (super_frame+1)%3
+                next_frame += 60
 
-    def clearGame(self):
+    def clear_game(self):
         # Remove all player sprites 
         for player in self.players:
-            hideSprite(player.playerSprite)
+            hideSprite(player.player_sprite)
         # Remove all players from the player list
         self.players.clear()
 

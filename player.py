@@ -3,8 +3,7 @@
 #   Description: Player class/functions                                #
 ########################################################################
 
-from pygame_functions import *
-from level import *
+from pygame_functions import pygame, makeSound, changeSpriteImage, hideSprite, showSprite, makeSprite, playSound
 from cmap import *
 SIZE = WIDTH, HEIGHT = 256, 192
 wrap_around = True
@@ -17,14 +16,14 @@ GRAVITY = 2.8
 jump = makeSound("Sounds/jump.wav")
 
 class Player(object):
-    def __init__(self, playerSprites = None, controls = [pygame.K_UP, pygame.K_DOWN, pygame.K_LEFT, pygame.K_RIGHT, pygame.K_SPACE, pygame.K_RSHIFT]\
-                 , player_number = 0, x = 50, y = 100, width = 10, height = 20, draw_width = 4, draw_height = -13):
+    def __init__(self, controls, player_sprites = None, player_number = 0, x = 50, y = 100,\
+         width = 10, height = 20, draw_width = 4, draw_height = -13):
         # Keep track of the player number
         self.player_number = player_number
 
         # Used to determine what sprites to load for the player
-        self.playerSprite = None
-        self.playerSprites = playerSprites
+        self.player_sprite = None
+        self.player_sprites = player_sprites
 
         # Player Positioning variables
         self.x = x
@@ -49,7 +48,7 @@ class Player(object):
         self.ACCELERATION = 0.05
 
         # Define player controls
-        self.controls = controls
+        self.controls = [pygame.K_UP, pygame.K_DOWN, pygame.K_LEFT, pygame.K_RIGHT, pygame.K_SPACE, pygame.K_RSHIFT]
         self.up = controls[0]
         self.down = controls[1]
         self.left = controls[2]
@@ -64,7 +63,7 @@ class Player(object):
         self.initalized = False
 
         # Powerup state for the player
-        self.powerupState = 0
+        self.powerup_state = 0
         self.released_up = True
         self.sprinting = False
     
@@ -101,168 +100,168 @@ class Player(object):
 
     # Used to determine what sprite to use for each animation
     # (Not all spritesheets will be layed out the same!)
-    def animationController(self, action, last_held_direction, frame = 0, superFrame = 0):
+    def animation_controller(self, action, last_held_direction, frame = 0, super_frame = 0):
         # Sprites for powerup state 0
-        if (self.powerupState == 0):
+        if (self.powerup_state == 0):
             if (action == "idle"):
                 if (last_held_direction == "right"):
-                    changeSpriteImage(self.playerSprite, 13)
+                    changeSpriteImage(self.player_sprite, 13)
                 elif (last_held_direction == "left"):
-                    changeSpriteImage(self.playerSprite, 0)
+                    changeSpriteImage(self.player_sprite, 0)
 
             elif (action == "jump"):
                 if (last_held_direction == "right"):
-                    changeSpriteImage(self.playerSprite, 9)
+                    changeSpriteImage(self.player_sprite, 9)
                 elif (last_held_direction == "left"):
-                    changeSpriteImage(self.playerSprite, 4)
+                    changeSpriteImage(self.player_sprite, 4)
             
             elif (action == "fall"):
                 if (last_held_direction == "right"):
-                    changeSpriteImage(self.playerSprite, 8)
+                    changeSpriteImage(self.player_sprite, 8)
                 elif (last_held_direction == "left"):
-                    changeSpriteImage(self.playerSprite, 5)
+                    changeSpriteImage(self.player_sprite, 5)
 
             elif (action == "walk"):
                 if (last_held_direction == "right"):
-                    changeSpriteImage(self.playerSprite, 13 - frame)
+                    changeSpriteImage(self.player_sprite, 13 - frame)
                 elif (last_held_direction == "left"):
-                    changeSpriteImage(self.playerSprite, 0 + frame)
+                    changeSpriteImage(self.player_sprite, 0 + frame)
 
             elif (action == "run"):
                 if (last_held_direction == "right"):
-                    changeSpriteImage(self.playerSprite, 11 - frame)
+                    changeSpriteImage(self.player_sprite, 11 - frame)
                 elif (last_held_direction == "left"):
-                    changeSpriteImage(self.playerSprite, 2 + frame)
+                    changeSpriteImage(self.player_sprite, 2 + frame)
 
             elif (action == "skidding"):
                 if (last_held_direction == "right"):
-                    changeSpriteImage(self.playerSprite, 14)
+                    changeSpriteImage(self.player_sprite, 14)
                 elif (last_held_direction == "left"):
-                    changeSpriteImage(self.playerSprite, 15)
+                    changeSpriteImage(self.player_sprite, 15)
             
             elif (action == "duck"):
                 if (last_held_direction == "right"):
-                    changeSpriteImage(self.playerSprite, 17)
+                    changeSpriteImage(self.player_sprite, 17)
                 elif (last_held_direction == "left"):
-                    changeSpriteImage(self.playerSprite, 16)
+                    changeSpriteImage(self.player_sprite, 16)
 
             elif (action == "looking_up"):
                 if (last_held_direction == "right"):
-                    changeSpriteImage(self.playerSprite, 19)
+                    changeSpriteImage(self.player_sprite, 19)
                 elif (last_held_direction == "left"):
-                    changeSpriteImage(self.playerSprite, 18)
+                    changeSpriteImage(self.player_sprite, 18)
 
-        elif (self.powerupState  == 1):
+        elif (self.powerup_state  == 1):
             if (action == "idle"):
                 if (last_held_direction == "right"):
-                    changeSpriteImage(self.playerSprite, 17)
+                    changeSpriteImage(self.player_sprite, 17)
                 elif (last_held_direction == "left"):
-                    changeSpriteImage(self.playerSprite, 0)
+                    changeSpriteImage(self.player_sprite, 0)
             
             elif (action == "jump"):
                 if (last_held_direction == "right"):
-                    changeSpriteImage(self.playerSprite, 11)
+                    changeSpriteImage(self.player_sprite, 11)
                 elif (last_held_direction == "left"):
-                    changeSpriteImage(self.playerSprite, 6)
+                    changeSpriteImage(self.player_sprite, 6)
             
             elif (action == "fall"):
                 if (last_held_direction == "right"):
-                    changeSpriteImage(self.playerSprite, 10)
+                    changeSpriteImage(self.player_sprite, 10)
                 elif (last_held_direction == "left"):
-                    changeSpriteImage(self.playerSprite, 7)
+                    changeSpriteImage(self.player_sprite, 7)
 
             elif (action == "walk"):
                 if (last_held_direction == "right"):
-                    changeSpriteImage(self.playerSprite, 17 - superFrame)
+                    changeSpriteImage(self.player_sprite, 17 - super_frame)
                 elif (last_held_direction == "left"):
-                    changeSpriteImage(self.playerSprite, 0 + superFrame)
+                    changeSpriteImage(self.player_sprite, 0 + super_frame)
             
             elif (action == "run"):
                 if (last_held_direction == "right"):
-                    changeSpriteImage(self.playerSprite, 14 - superFrame)
+                    changeSpriteImage(self.player_sprite, 14 - super_frame)
                 elif (last_held_direction == "left"):
-                    changeSpriteImage(self.playerSprite, 3 + superFrame)
+                    changeSpriteImage(self.player_sprite, 3 + super_frame)
             
             elif (action == "skidding"):
                 if (last_held_direction == "right"):
-                    changeSpriteImage(self.playerSprite, 18)
+                    changeSpriteImage(self.player_sprite, 18)
                 elif (last_held_direction == "left"):
-                    changeSpriteImage(self.playerSprite, 19)
+                    changeSpriteImage(self.player_sprite, 19)
             
             elif (action == "duck"):
                 if (last_held_direction == "right"):
-                    changeSpriteImage(self.playerSprite, 21)
+                    changeSpriteImage(self.player_sprite, 21)
                 elif (last_held_direction == "left"):
-                    changeSpriteImage(self.playerSprite, 20)
+                    changeSpriteImage(self.player_sprite, 20)
 
             elif (action == "looking_up"):
                 if (last_held_direction == "right"):
-                    changeSpriteImage(self.playerSprite, 22)
+                    changeSpriteImage(self.player_sprite, 22)
                 elif (last_held_direction == "left"):
-                    changeSpriteImage(self.playerSprite, 23)
+                    changeSpriteImage(self.player_sprite, 23)
         
-        elif (self.powerupState  == 2):
+        elif (self.powerup_state  == 2):
             if (action == "idle"):
                 if (last_held_direction == "right"):
-                    changeSpriteImage(self.playerSprite, 17)
+                    changeSpriteImage(self.player_sprite, 17)
                 elif (last_held_direction == "left"):
-                    changeSpriteImage(self.playerSprite, 0)
+                    changeSpriteImage(self.player_sprite, 0)
             
             elif (action == "jump"):
                 if (last_held_direction == "right"):
-                    changeSpriteImage(self.playerSprite, 11)
+                    changeSpriteImage(self.player_sprite, 11)
                 elif (last_held_direction == "left"):
-                    changeSpriteImage(self.playerSprite, 6)
+                    changeSpriteImage(self.player_sprite, 6)
             
             elif (action == "fall"):
                 if (last_held_direction == "right"):
-                    changeSpriteImage(self.playerSprite, 10)
+                    changeSpriteImage(self.player_sprite, 10)
                 elif (last_held_direction == "left"):
-                    changeSpriteImage(self.playerSprite, 7)
+                    changeSpriteImage(self.player_sprite, 7)
 
             elif (action == "walk"):
                 if (last_held_direction == "right"):
-                    changeSpriteImage(self.playerSprite, 17 - superFrame)
+                    changeSpriteImage(self.player_sprite, 17 - super_frame)
                 elif (last_held_direction == "left"):
-                    changeSpriteImage(self.playerSprite, 0 + superFrame)
+                    changeSpriteImage(self.player_sprite, 0 + super_frame)
             
             elif (action == "run"):
                 if (last_held_direction == "right"):
-                    changeSpriteImage(self.playerSprite, 14 - superFrame)
+                    changeSpriteImage(self.player_sprite, 14 - super_frame)
                 elif (last_held_direction == "left"):
-                    changeSpriteImage(self.playerSprite, 3 + superFrame)
+                    changeSpriteImage(self.player_sprite, 3 + super_frame)
             
             elif (action == "skidding"):
                 if (last_held_direction == "right"):
-                    changeSpriteImage(self.playerSprite, 18)
+                    changeSpriteImage(self.player_sprite, 18)
                 elif (last_held_direction == "left"):
-                    changeSpriteImage(self.playerSprite, 19)
+                    changeSpriteImage(self.player_sprite, 19)
             
             elif (action == "duck"):
                 if (last_held_direction == "right"):
-                    changeSpriteImage(self.playerSprite, 21)
+                    changeSpriteImage(self.player_sprite, 21)
                 elif (last_held_direction == "left"):
-                    changeSpriteImage(self.playerSprite, 20)
+                    changeSpriteImage(self.player_sprite, 20)
 
             elif (action == "looking_up"):
                 if (last_held_direction == "right"):
-                    changeSpriteImage(self.playerSprite, 23)
+                    changeSpriteImage(self.player_sprite, 23)
                 elif (last_held_direction == "left"):
-                    changeSpriteImage(self.playerSprite, 22)
+                    changeSpriteImage(self.player_sprite, 22)
             
             elif (action == "fire"):
                 if (last_held_direction == "right"):
-                    changeSpriteImage(self.playerSprite, 25)
+                    changeSpriteImage(self.player_sprite, 25)
                 elif (last_held_direction == "left"):
-                    changeSpriteImage(self.playerSprite, 24)
+                    changeSpriteImage(self.player_sprite, 24)
 
-    def spriteChanger(self, newSprite, frames):
-        if (self.playerSprite != None):
-            hideSprite(self.playerSprite)
-        self.playerSprite = makeSprite(newSprite, frames)
-        showSprite(self.playerSprite)
+    def sprite_changer(self, new_sprite, frames):
+        if (self.player_sprite != None):
+            hideSprite(self.player_sprite)
+        self.player_sprite = makeSprite(new_sprite, frames)
+        showSprite(self.player_sprite)
     
-    def powerupHandler(self, powerupID):
+    def powerup_handler(self, powerup_id):
         # 0 - Small
         # 1 - Super
         # 2 - Fire Flower
@@ -277,11 +276,11 @@ class Player(object):
         # 11 - Mari0 (Portal Gun + Mario)
 
         # Change the player's powerup state to the coorect powerup ID
-        self.powerupState = powerupID
+        self.powerup_state = powerup_id
 
         # Load the correct spritesheet depending on the powerup
-        if (powerupID == 0):
-            self.powerupState = 0
+        if (powerup_id == 0):
+            self.powerup_state = 0
 
             if (self.player_number == 0):
                 self.draw_height  = -21
@@ -290,26 +289,12 @@ class Player(object):
                 self.draw_height  = -23
                 self.height = 15
             
-            spriteSheet = self.playerSprites + "small.png"
-            self.spriteChanger(spriteSheet, 20)
-            return spriteSheet
+            sprite_sheet = self.player_sprites + "small.png"
+            self.sprite_changer(sprite_sheet, 20)
+            return sprite_sheet
 
-        elif (powerupID == 1):
-            self.powerupState = 1
-
-            if (self.player_number == 0):
-                self.draw_height  = -30
-                self.height = 27
-            elif (self.player_number == 1):
-                self.draw_height  = -30
-                self.height = 20
-
-            spriteSheet = self.playerSprites + "super.png"
-            self.spriteChanger(spriteSheet, 24)
-            return spriteSheet
-
-        elif (powerupID == 2):
-            self.powerupState = 2
+        elif (powerup_id == 1):
+            self.powerup_state = 1
 
             if (self.player_number == 0):
                 self.draw_height  = -30
@@ -318,25 +303,39 @@ class Player(object):
                 self.draw_height  = -30
                 self.height = 20
 
-            spriteSheet = self.playerSprites + "fire.png"
-            self.spriteChanger(spriteSheet, 26)
-            return spriteSheet
+            sprite_sheet = self.player_sprites + "super.png"
+            self.sprite_changer(sprite_sheet, 24)
+            return sprite_sheet
+
+        elif (powerup_id == 2):
+            self.powerup_state = 2
+
+            if (self.player_number == 0):
+                self.draw_height  = -30
+                self.height = 27
+            elif (self.player_number == 1):
+                self.draw_height  = -30
+                self.height = 20
+
+            sprite_sheet = self.player_sprites + "fire.png"
+            self.sprite_changer(sprite_sheet, 26)
+            return sprite_sheet
     
     # If the player gets hurt, make them shrink one powerup, otherwise kill the player
     def hurt(self):
-        if (self.powerupState > 1):
+        if (self.powerup_state > 1):
             self.draw_height = -18
             self.height = 20
-            self.powerupState = 1
-            self.powerupHandler(1)
+            self.powerup_state = 1
+            self.powerup_handler(1)
 
-        elif (self.powerupState == 1):
-            self.powerupState = 0
+        elif (self.powerup_state == 1):
+            self.powerup_state = 0
             self.draw_height  = -13
             self.height = 26
-            self.powerupHandler(0)
+            self.powerup_handler(0)
 
-        elif (self.powerupState == 0):
+        elif (self.powerup_state == 0):
             self.respawn()
 
     # "Kill" the player when their y value >= 4000
@@ -363,7 +362,7 @@ class Player(object):
             return cmap.on_tile(self.x, self.y,self.width,self.height)
         return False
 
-    def calculatePosition(self):
+    def calculate_position(self):
         # Make it so the player wraps around on the left and right (if enabled)
         if (wrap_around):
             if ((self.x >= WIDTH) and self.x_velocity >= 0):
@@ -383,7 +382,7 @@ class Player(object):
         return cmap.in_tile(self.x,self.y,self.x_velocity,self.y_velocity,self.width,self.height)
             
     # Make the player have friction against the ground
-    def Friction(self):
+    def friction(self):
         if ((self.x_velocity <= self.MAX_SPEED_CAP) and (self.x_velocity > 0)):
                 if ((self.x_velocity <= self.MAX_SPEED_CAP) and (self.x_velocity > 0)):
                     self.x_velocity -= FRICTION
@@ -401,14 +400,14 @@ class Player(object):
                 self.x_velocity = 0.0
 
     # Calculate the player's horizontal velocity
-    def HorizontalVelocity(self, last_held_direction, skidding, playerSprite):
+    def horizontal_velocity(self, last_held_direction, skidding, playerSprite):
         if (last_held_direction == "right"):
                 # Cap the player's horizontal speed to the right
                 if (self.x_velocity <= self.SPEED_CAP):
                     if (self.x_velocity < -0.5):
                         if (skidding == False):
                             # Update the player to their skidding animation when turning around
-                            self.animationController("skidding", last_held_direction)
+                            self.animation_controller("skidding", last_held_direction)
                             skidding = True
                     else:
                         skidding = False
@@ -429,7 +428,7 @@ class Player(object):
                     if (self.x_velocity > 0.5):
                         if (skidding == False):
                             # Update the player to their skidding animation when turning around
-                            self.animationController("skidding", last_held_direction)
+                            self.animation_controller("skidding", last_held_direction)
                             skidding = True
                     else:
                         skidding = False
@@ -441,23 +440,20 @@ class Player(object):
                         self.x_velocity -= self.ACCELERATION
 
                     if self.x_velocity <= -self.SPEED_CAP:
-                        self.Friction()
+                        self.friction()
                 elif (self.x_velocity <= -self.SPEED_CAP):
-                    self.Friction()
+                    self.friction()
 
     # Calculate the players vertical velocity
-    def VerticalVelocity(self):
-        if (self.y_velocity > self.VSPEED_CAP):
-            self.y_velocity = self.VSPEED_CAP
-        elif (self.y_velocity < self.VSPEED_CAP):
+    def vertical_velocity(self):
+        if ((self.y_velocity > self.VSPEED_CAP) or (self.y_velocity < self.VSPEED_CAP)):
             self.y_velocity = self.VSPEED_CAP
 
     # Allow the user to control the player
-    def RefineInput(self, keys, cmap, playerSprite, last_held_direction, frame, superFrame, level):
+    def refine_input(self, keys, cmap, player_sprite, last_held_direction, frame, super_frame, level):
         # Update the player's sprite when idling
-        if (self.check_jump(cmap) == True):
-            if (self.idle == False):
-                self.animationController("idle", last_held_direction, frame, superFrame)
+        if ((self.check_jump(cmap) == True) and (self.idle == False)):
+            self.animation_controller("idle", last_held_direction, frame, super_frame)
 
         # Set the last held direction to right, and update the player's walk animation if they're on the ground
 
@@ -468,7 +464,7 @@ class Player(object):
         
         if keys[self.up]:
             if (self.check_jump(cmap) == True):
-                self.animationController("looking_up", last_held_direction, frame, superFrame)
+                self.animation_controller("looking_up", last_held_direction, frame, super_frame)
         
         if keys[self.right]:
             self.last_held_direction = "right"
@@ -477,21 +473,21 @@ class Player(object):
             if (self.check_jump(cmap) == True):
                 # Check to see if ducking
                 if keys[self.down]:
-                    self.animationController("duck", last_held_direction, frame, superFrame)
-                    self.Friction()
+                    self.animation_controller("duck", last_held_direction, frame, super_frame)
+                    self.friction()
                 else:
                     # Update the player's sprite when walking
                     if (self.x_velocity <= 2):
-                        self.animationController("walk", last_held_direction, frame, superFrame)
+                        self.animation_controller("walk", last_held_direction, frame, super_frame)
                     # Update the player's sprite when running
                     else:
-                        self.animationController("run", last_held_direction, frame, superFrame)
-                    self.HorizontalVelocity(self.last_held_direction, self.skidding, playerSprite)
+                        self.animation_controller("run", last_held_direction, frame, super_frame)
+                    self.horizontal_velocity(self.last_held_direction, self.skidding, player_sprite)
             else:
-                self.HorizontalVelocity(self.last_held_direction, self.skidding, playerSprite)
+                self.horizontal_velocity(self.last_held_direction, self.skidding, player_sprite)
             # Change Sprite to ducking sprite if down is held
             if keys[self.down]:
-                self.animationController("duck", last_held_direction, frame, superFrame)
+                self.animation_controller("duck", last_held_direction, frame, super_frame)
 
         # Set the last held direction to left, and update the player's walk animation if they're on the ground           
         elif keys[self.left]:
@@ -500,75 +496,75 @@ class Player(object):
             if (self.check_jump(cmap) == True):
                 # Check to see if ducking
                 if keys[self.down]:
-                    self.animationController("duck", last_held_direction, frame, superFrame)
-                    self.Friction()
+                    self.animation_controller("duck", last_held_direction, frame, super_frame)
+                    self.friction()
                 else:
                     # Update the player's sprite when walking
                     if (self.x_velocity >= -2):
-                        self.animationController("walk", last_held_direction, frame, superFrame)
+                        self.animation_controller("walk", last_held_direction, frame, super_frame)
                     # Update the player's sprite when running
                     else:
-                        self.animationController("run", last_held_direction, frame, superFrame)
-                    self.HorizontalVelocity(self.last_held_direction, self.skidding, playerSprite)
+                        self.animation_controller("run", last_held_direction, frame, super_frame)
+                    self.horizontal_velocity(self.last_held_direction, self.skidding, player_sprite)
             else:
-                self.HorizontalVelocity(self.last_held_direction, self.skidding, playerSprite)                
+                self.horizontal_velocity(self.last_held_direction, self.skidding, player_sprite)                
             # Change Sprite to ducking sprite if down is held
             if keys[self.down]:
-                self.animationController("duck", last_held_direction, frame, superFrame)
+                self.animation_controller("duck", last_held_direction, frame, super_frame)
 
         elif keys[self.down]:
             # If the player is on the ground, make them duck
             if self.check_jump(cmap) == True:
-                self.animationController("duck", last_held_direction, frame, superFrame)
+                self.animation_controller("duck", last_held_direction, frame, super_frame)
             # Apply friction to the player
-            self.Friction()
+            self.friction()
                 
         # Apply friction to the player if they are not holding a button or ducking
         # (slow them to a hault)
         else:
             # Apply friction to the player
-            self.Friction()
+            self.friction()
 
         # Check to see if the player can jump
         if keys[self.jump]:
             if self.check_jump(cmap) == True and self.released_up == True:
                 # Update the player's sprite, then apply vertical velocity
-                self.animationController("jump", last_held_direction, frame, superFrame)
-                self.VerticalVelocity()
+                self.animation_controller("jump", last_held_direction, frame, super_frame)
+                self.vertical_velocity()
                 playSound(jump)
                 self.released_up = False
                 if keys[self.down]:
-                    self.animationController("duck", last_held_direction, frame, superFrame)
+                    self.animation_controller("duck", last_held_direction, frame, super_frame)
 
             else:
                 # Update the player's sprite if the peak of the jump has been passed, then apply gravity
                 if (self.y_velocity > 0):
-                    self.animationController("fall", last_held_direction, frame, superFrame)
+                    self.animation_controller("fall", last_held_direction, frame, super_frame)
                 self.gravity(GRAVITY,level,cmap)
                 if keys[self.down]:
-                    self.animationController("duck", last_held_direction, frame, superFrame)
+                    self.animation_controller("duck", last_held_direction, frame, super_frame)
 
         # Apply gravity to the player
         elif (self.check_jump(cmap) == False):
             # Update the player's sprite if the peak of the jump has been passed, then apply gravity
             if (self.y_velocity > 0):
-                self.animationController("fall", last_held_direction, frame, superFrame)
+                self.animation_controller("fall", last_held_direction, frame, super_frame)
             self.gravity(GRAVITY,level,cmap)
             self.released_up = True
             if keys[self.down]:
-                self.animationController("duck", last_held_direction, frame, superFrame)
+                self.animation_controller("duck", last_held_direction, frame, super_frame)
 
         else:
             if keys[self.down]:
-                self.animationController("down", last_held_direction, frame, superFrame)
+                self.animation_controller("down", last_held_direction, frame, super_frame)
             self.gravity(GRAVITY,level,cmap)
             self.released_up = True
         self.y = round(self.y)
 
         if keys[self.sprint]:
             # If the player is powerups 2 (Fire), shoot a fireball
-            if (self.powerupState == 2):
-                self.animationController("fire", last_held_direction, frame, superFrame)
+            if (self.powerup_state == 2):
+                self.animation_controller("fire", last_held_direction, frame, super_frame)
 
             self.SPEED_CAP = 4
             self.ACCELERATION = 0.075
