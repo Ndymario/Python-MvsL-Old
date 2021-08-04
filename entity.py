@@ -32,5 +32,5 @@ physics_info = {
     "speed cap": 2,
     "top speed": 8,
     "air speed cap": 7.5,
-    "acceleation": 0.05
+    "acceleration": 0.05
 }
