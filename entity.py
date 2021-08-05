@@ -18,12 +18,19 @@ class Entity:
         # Keep track of the Entity's physics related properties (used for the physics engine)
         self.physics = physics_info
 
+    def __str__(self) -> str:
+        return "Entity ID: {0}\nEntity X-Cord: {1}\nEntity X-Cord: {2}\nEntity X-Cord: {3}\nEntity X-Cord: {4}\
+            \nEntity X-Cord: {5}\nEntity X-Cord: {6}".format(self.entity_id, self.coodinates["x"], self.coodinates["y"]\
+            , self.coodinates["x velocity"], self.coodinates["y velocity"], self.coodinates["facing"], self.coodinates["skidding"])
+
 # Default coordinates template
 coordinates = {
     "x": 0,
     "y": 0,
     "x velocity": 0,
-    "y velocity": 0
+    "y velocity": 0,
+    "facing": "right",
+    "skidding": False
 }
 
 # Default physics template
@@ -34,3 +41,4 @@ physics_info = {
     "air speed cap": 7.5,
     "acceleration": 0.05
 }
+

@@ -16,3 +16,6 @@ class Player(Entity):
 
         # Keep track of the player's powerup state
         self.powerup_state = 0
+
+    def __str__(self) -> str:
+        return super().__str__() + "\nPower Up State: {0}\nReleased Up: {1}\nIs Sprinting: {2}".format(self.powerup_state, self.released_up, self.sprinting)
