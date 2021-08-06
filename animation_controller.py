@@ -14,3 +14,8 @@ class AnimationController():
     # Ex: Changing from "idle" to "walking"
     def update_sprite(self, entity, new_sprite):
         pass
+
+    # Function that will handle upating the entity's sptite sheet
+    # Ex: Changing from "small" to "super"
+    def update_sprite_sheet(self, entity, new_sheet):
+        pass
